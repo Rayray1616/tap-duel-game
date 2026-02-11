@@ -13,7 +13,7 @@
     "lint:fix": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0 --fix",
     "preview": "vite preview",
     "predeploy": "npm run build",
-    "start": "serve -s dist -l $PORT",
+    "start": "npx serve -s dist -l $PORT --cors",
     "railway:start": "npm run build && npm run start"
   },
   "dependencies": {

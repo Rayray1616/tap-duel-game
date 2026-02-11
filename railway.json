@@ -1,1 +1,1 @@
-{"deploy": {"startCommand": "npx serve -s dist -l ${PORT:-3000}"}}
+{"deploy": {"startCommand": "npx serve -s dist -l ${PORT:-3000}", "buildCommand": "npm run build"}}

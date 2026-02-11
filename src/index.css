@@ -191,6 +191,48 @@ body::after {
   animation: breathe 3s ease-in-out infinite;
 }
 
+/* Clean Cyberpunk UI Classes */
+.bg-grid-cyan {
+  background-image: 
+    linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+
+.glitch-text {
+  animation: glitch 3s infinite;
+}
+
+.neon-button-cyber {
+  background: linear-gradient(135deg, #00ffff 0%, #0088ff 50%, #0044aa 100%);
+  border: none;
+  color: #000000;
+  font-weight: bold;
+  box-shadow: 
+    0 0 30px rgba(0, 255, 255, 0.6),
+    0 0 60px rgba(0, 255, 255, 0.4),
+    inset 0 0 30px rgba(0, 255, 255, 0.3);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.neon-button-cyber:hover {
+  background: linear-gradient(135deg, #00ffff 0%, #00aaff 50%, #0044aa 100%);
+  box-shadow: 
+    0 0 40px rgba(0, 255, 255, 0.8),
+    0 0 80px rgba(0, 255, 255, 0.6),
+    inset 0 0 40px rgba(0, 255, 255, 0.4);
+  transform: translateY(-2px) scale(1.05);
+}
+
+.neon-button-cyber:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 
+    0 0 20px rgba(0, 255, 255, 0.6),
+    inset 0 0 20px rgba(0, 255, 255, 0.3);
+}
+
 /* Override Telegram UI styles */
 .telegram-ui-root {
   background: transparent !important;

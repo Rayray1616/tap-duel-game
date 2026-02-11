@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLaunchParams } from '@tma.js/sdk-react';
+import { Button, Cell, Section, Title } from '@telegram-apps/telegram-ui';
 import { supabase } from '@/lib/supabase';
 import { useEnergyRegeneration } from '@/hooks/useEnergyRegeneration';
 import { WalletConnect } from '@/components/WalletConnect';
@@ -121,145 +122,102 @@ export function HomePage() {
   };
 
   if (loading) {
-    return <div className="flex justify-center items-center h-screen cyberpunk-loading">Loading...</div>;
+    return <div className="flex justify-center items-center h-screen">Loading...</div>;
   }
 
   const maxEnergy = 100 + (user?.energy_boost || 0);
-  const energyPercentage = (energy / maxEnergy) * 100;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black text-cyan-400 relative overflow-hidden">
-      {/* Animated background effects */}
-      <div className="absolute inset-0 cyberpunk-grid"></div>
-      <div className="absolute inset-0 cyberpunk-scanlines"></div>
-      <div className="absolute inset-0 cyberpunk-particles"></div>
+    <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black text-cyan-400 p-4 relative overflow-hidden">
+      {/* Background grid effect */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="h-full w-full bg-grid-cyan"></div>
+      </div>
       
-      <div className="relative z-10 min-h-screen flex flex-col">
-        {/* Header */}
-        <div className="text-center pt-6 pb-4">
-          <h1 className="text-6xl md:text-7xl font-black neon-text-cyan glitch-text mb-2">
-            🔥 TAP DUEL 🔥
-          </h1>
-          <div className="text-xl md:text-2xl neon-text-cyan opacity-80">Cyberpunk Battle Arena</div>
-        </div>
+      <div className="max-w-md mx-auto relative z-10">
+        <Title className="text-center mb-6 text-5xl font-black neon-text glitch">
+          🔥 TAP DUEL 🔥
+        </Title>
 
-        {/* Wallet Connect */}
-        <div className="px-4 mb-6">
-          <WalletConnect />
-        </div>
+        <WalletConnect />
 
-        {/* Stats Cards */}
-        <div className="px-4 mb-6">
-          <div className="grid grid-cols-2 gap-3">
-            {/* Player Card */}
-            <div className="cyberpunk-card p-4">
-              <div className="text-sm neon-text-cyan opacity-80 mb-1">PLAYER</div>
-              <div className="text-lg font-bold neon-text-cyan">{user?.username || 'Anonymous'}</div>
+        <Section className="mb-6 neon-border">
+          <Cell>
+            <div className="flex justify-between items-center">
+              <span className="neon-text">👤 Player: {user?.username}</span>
+              <span className="neon-text">⭐ Level: {user?.level}</span>
+            </div>
+          </Cell>
+          <Cell>
+            <div className="flex justify-between items-center">
+              <span className="neon-text">💎 Score: <span className="glitch-text">{user?.score}</span></span>
+              <span className="neon-text">⚡ Energy: {energy}/{maxEnergy}</span>
+            </div>
+          </Cell>
+          <Cell>
+            <div className="flex justify-between items-center">
+              <span className="neon-text">🔥 Multiplier: x{user?.tap_multiplier || 1.0}</span>
+              <span className="neon-text">🚀 Boost: +{user?.energy_boost || 0}</span>
+            </div>
+          </Cell>
+        </Section>
+
+        {!gameActive ? (
+          <div className="text-center mb-8">
+            <Button
+              onClick={startGame}
+              disabled={energy < 10}
+              className="neon-button-cyber font-bold py-6 px-12 rounded-lg text-lg transition-all duration-300 hover:scale-105"
+            >
+              ⚡ START TAPPING (10 Energy) ⚡
+            </Button>
+          </div>
+        ) : (
+          <div className="text-center">
+            <div className="mb-8">
+              <div className="text-8xl font-black mb-4 neon-text glitch animate-pulse">{taps}</div>
+              <div className="text-4xl neon-text breathe">⚡ TIME: {timeLeft}s ⚡</div>
             </div>
             
-            {/* Level Card */}
-            <div className="cyberpunk-card p-4">
-              <div className="text-sm neon-text-cyan opacity-80 mb-1">LEVEL</div>
-              <div className="text-lg font-bold neon-text-cyan">{user?.level || 1}</div>
-            </div>
-            
-            {/* Score Card */}
-            <div className="cyberpunk-card p-4">
-              <div className="text-sm neon-text-cyan opacity-80 mb-1">SCORE</div>
-              <div className="text-lg font-bold neon-text-cyan glitch-text">{user?.score || 0}</div>
-            </div>
-            
-            {/* Multiplier Card */}
-            <div className="cyberpunk-card p-4">
-              <div className="text-sm neon-text-cyan opacity-80 mb-1">MULTI</div>
-              <div className="text-lg font-bold neon-text-cyan">x{user?.tap_multiplier || 1.0}</div>
-            </div>
-          </div>
-        </div>
-
-        {/* Energy Bar */}
-        <div className="px-4 mb-6">
-          <div className="cyberpunk-card p-4">
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-sm neon-text-cyan opacity-80">ENERGY</span>
-              <span className="text-sm neon-text-cyan">{energy}/{maxEnergy}</span>
-            </div>
-            <div className="w-full bg-gray-800 rounded-full h-4 overflow-hidden">
-              <div 
-                className="h-full cyberpunk-energy-bar transition-all duration-500"
-                style={{ width: `${energyPercentage}%` }}
-              ></div>
-            </div>
-          </div>
-        </div>
-
-        {/* Main Game Area */}
-        <div className="flex-1 flex flex-col justify-center px-4">
-          {!gameActive ? (
-            <div className="text-center">
-              <button
-                onClick={startGame}
-                disabled={energy < 10}
-                className="cyberpunk-button-start w-full max-w-sm mx-auto disabled:opacity-50 disabled:scale-100"
-              >
-                ⚡ START TAPPING (10 Energy) ⚡
-              </button>
-            </div>
-          ) : (
-            <div className="text-center">
-              {/* Taps Display */}
-              <div className="mb-8">
-                <div className="text-8xl md:text-9xl font-black neon-text-cyan glitch-text animate-pulse mb-4">
-                  {taps}
-                </div>
-                <div className="text-3xl md:text-4xl neon-text-cyan breathe-text">
-                  ⚡ TIME: {timeLeft}s ⚡
-                </div>
-              </div>
-              
-              {/* Massive TAP Button */}
-              <div className="relative inline-block">
-                <button
-                  onClick={handleTap}
-                  className="cyberpunk-tap-button"
-                >
-                  <span className="cyberpunk-tap-text">TAP!</span>
-                  <div className="cyberpunk-ripple"></div>
-                  <div className="cyberpunk-glow"></div>
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Navigation Buttons */}
-        <div className="px-4 py-6">
-          <div className="grid grid-cols-2 gap-3">
             <button
-              onClick={() => window.location.href = '/duel'}
-              className="cyberpunk-nav-button"
+              onClick={handleTap}
+              className="w-80 h-80 rounded-full transition-all duration-100 transform active:scale-95 text-white text-5xl font-black neon-border pulse breathe relative overflow-hidden mx-auto"
+              style={{
+                background: 'radial-gradient(circle, #00ffff 0%, #0088ff 40%, #0044aa 100%)',
+                boxShadow: '0 0 60px #00ffff, 0 0 120px #00ffff, 0 0 180px #0088ff, inset 0 0 60px rgba(0, 255, 255, 0.6)',
+              }}
             >
-              ⚔️ DUEL
-            </button>
-            <button
-              onClick={() => window.location.href = '/leaderboard'}
-              className="cyberpunk-nav-button"
-            >
-              🏆 LEADERBOARD
-            </button>
-            <button
-              onClick={() => window.location.href = '/rewards'}
-              className="cyberpunk-nav-button"
-            >
-              🎁 REWARDS
-            </button>
-            <button
-              onClick={() => window.location.href = '/shop'}
-              className="cyberpunk-nav-button"
-            >
-              🛒 UPGRADES
+              <span className="relative z-10 drop-shadow-2xl animate-pulse">TAP!</span>
+              <div className="absolute inset-0 rounded-full bg-white opacity-0 animate-ping"></div>
             </button>
           </div>
+        )}
+
+        <div className="grid grid-cols-2 gap-4">
+          <Button
+            onClick={() => window.location.href = '/duel'}
+            className="neon-button-cyber font-bold py-4 px-4 rounded-lg transition-all duration-300 hover:scale-105"
+          >
+            ⚔️ DUEL
+          </Button>
+          <Button
+            onClick={() => window.location.href = '/leaderboard'}
+            className="neon-button-cyber font-bold py-4 px-4 rounded-lg transition-all duration-300 hover:scale-105"
+          >
+            🏆 LEADERBOARD
+          </Button>
+          <Button
+            onClick={() => window.location.href = '/rewards'}
+            className="neon-button-cyber font-bold py-4 px-4 rounded-lg transition-all duration-300 hover:scale-105"
+          >
+            🎁 REWARDS
+          </Button>
+          <Button
+            onClick={() => window.location.href = '/shop'}
+            className="neon-button-cyber font-bold py-4 px-4 rounded-lg transition-all duration-300 hover:scale-105"
+          >
+            🛒 UPGRADES
+          </Button>
         </div>
       </div>
     </div>

@@ -14,15 +14,6 @@ import './index.css';
 // Mock the environment in case, we are outside Telegram.
 import './mockEnv.ts';
 
-// Suppress TMA bridge log spam
-const originalLog = console.log;
-console.log = (...args) => {
-  if (typeof args[0] === 'string' && args[0].includes('Bridge')) {
-    return; // Filter out bridge logs
-  }
-  originalLog.apply(console, args);
-};
-
 const root = ReactDOM.createRoot(document.getElementById('root')!);
 
 try {
@@ -33,7 +24,7 @@ try {
 
   // Configure all application dependencies.
   await init({
-    debug: false, // Force debug to false to suppress logs
+    debug,
     eruda: debug && ['ios', 'android'].includes(platform),
     mockForMacOS: platform === 'macos',
   })

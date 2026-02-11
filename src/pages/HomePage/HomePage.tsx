@@ -130,7 +130,7 @@ export function HomePage() {
   return (
     <div className="min-h-screen bg-black text-cyan-400 p-4">
       <div className="max-w-md mx-auto">
-        <Title className="text-center mb-6 text-4xl font-black neon-text glitch">
+        <Title className="text-center mb-6 text-5xl font-black neon-text glitch">
           🔥 TAP DUEL 🔥
         </Title>
 
@@ -162,55 +162,72 @@ export function HomePage() {
             <Button
               onClick={startGame}
               disabled={energy < 10}
-              className="neon-button pulse font-bold py-4 px-8 rounded-lg"
+              className="neon-button pulse font-bold py-6 px-12 rounded-lg text-xl transition-all duration-300 hover:scale-105 shadow-[0_0_30px_#00ffff,0_0_60px_#00aaff] ring-cyan-500/50"
+              style={{
+                background: 'linear-gradient(135deg, #00ffff 0%, #0088ff 50%, #0044aa 100%)',
+              }}
             >
-              START TAPPING (10 Energy)
+              ⚡ START TAPPING (10 Energy) ⚡
             </Button>
           </div>
         ) : (
           <div className="text-center">
             <div className="mb-6">
-              <div className="text-7xl font-black mb-3 neon-text glitch">{taps}</div>
-              <div className="text-3xl neon-text breathe">⚡ TIME: {timeLeft}s ⚡</div>
+              <div className="text-8xl font-black mb-4 neon-text glitch animate-pulse">{taps}</div>
+              <div className="text-4xl neon-text breathe">⚡ TIME: {timeLeft}s ⚡</div>
             </div>
             
             <button
               onClick={handleTap}
-              className="w-64 h-64 rounded-full transition-all duration-100 transform active:scale-95 text-white text-4xl font-black neon-border pulse breathe relative overflow-hidden"
+              className="w-72 h-72 rounded-full transition-all duration-100 transform active:scale-95 text-white text-5xl font-black neon-border pulse breathe relative overflow-hidden"
               style={{
-                background: 'radial-gradient(circle, #00ffff 0%, #0088ff 50%, #004488 100%)',
-                boxShadow: '0 0 50px #00ffff, 0 0 100px #00ffff, 0 0 150px #0088ff, inset 0 0 50px rgba(0, 255, 255, 0.5)',
+                background: 'radial-gradient(circle, #00ffff 0%, #0088ff 30%, #0044aa 70%, #002255 100%)',
+                boxShadow: '0 0 60px #00ffff, 0 0 120px #00ffff, 0 0 180px #0088ff, inset 0 0 60px rgba(0, 255, 255, 0.6)',
               }}
             >
-              <span className="relative z-10 drop-shadow-2xl">TAP!</span>
+              <span className="relative z-10 drop-shadow-2xl animate-pulse">TAP!</span>
               {/* Ripple effect overlay */}
               <div className="absolute inset-0 rounded-full bg-white opacity-0 animate-ping"></div>
+              {/* Additional glow layers */}
+              <div className="absolute inset-0 rounded-full bg-cyan-400 opacity-20 animate-pulse"></div>
             </button>
           </div>
         )}
 
-        <div className="mt-6 grid grid-cols-2 gap-4">
+        <div className="mt-8 grid grid-cols-2 gap-4">
           <Button
             onClick={() => window.location.href = '/duel'}
-            className="neon-button pulse font-bold py-3 px-6 rounded-lg"
+            className="neon-button pulse font-bold py-4 px-6 rounded-lg transition-all duration-300 hover:scale-105 shadow-[0_0_20px_#00ffff] ring-cyan-500/30"
+            style={{
+              background: 'linear-gradient(135deg, #00ffff 0%, #0088ff 100%)',
+            }}
           >
             ⚔️ DUEL
           </Button>
           <Button
             onClick={() => window.location.href = '/leaderboard'}
-            className="neon-button pulse font-bold py-3 px-6 rounded-lg"
+            className="neon-button pulse font-bold py-4 px-6 rounded-lg transition-all duration-300 hover:scale-105 shadow-[0_0_20px_#00ffff] ring-cyan-500/30"
+            style={{
+              background: 'linear-gradient(135deg, #00ffff 0%, #0088ff 100%)',
+            }}
           >
             🏆 LEADERBOARD
           </Button>
           <Button
             onClick={() => window.location.href = '/rewards'}
-            className="neon-button pulse font-bold py-3 px-6 rounded-lg"
+            className="neon-button pulse font-bold py-4 px-6 rounded-lg transition-all duration-300 hover:scale-105 shadow-[0_0_20px_#00ffff] ring-cyan-500/30"
+            style={{
+              background: 'linear-gradient(135deg, #00ffff 0%, #0088ff 100%)',
+            }}
           >
             🎁 REWARDS
           </Button>
           <Button
             onClick={() => window.location.href = '/shop'}
-            className="neon-button pulse font-bold py-3 px-6 rounded-lg"
+            className="neon-button pulse font-bold py-4 px-6 rounded-lg transition-all duration-300 hover:scale-105 shadow-[0_0_20px_#00ffff] ring-cyan-500/30"
+            style={{
+              background: 'linear-gradient(135deg, #00ffff 0%, #0088ff 100%)',
+            }}
           >
             🛒 UPGRADES
           </Button>

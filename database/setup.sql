@@ -26,6 +26,18 @@ CREATE TABLE IF NOT EXISTS duels (
   player2_taps INTEGER DEFAULT 0,
   winner_id UUID REFERENCES users(id) ON DELETE SET NULL,
   status VARCHAR(20) DEFAULT 'waiting' CHECK (status IN ('waiting', 'active', 'completed')),
+  fee_amount INTEGER DEFAULT 0,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Create fee_transactions table
+CREATE TABLE IF NOT EXISTS fee_transactions (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  duel_id UUID REFERENCES duels(id) ON DELETE CASCADE,
+  winner_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  fee_amount INTEGER NOT NULL,
+  total_winnings INTEGER NOT NULL,
+  fee_percentage DECIMAL(5,2) DEFAULT 10.0,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
@@ -34,10 +46,13 @@ CREATE INDEX IF NOT EXISTS idx_users_telegram_id ON users(telegram_id);
 CREATE INDEX IF NOT EXISTS idx_users_score ON users(score DESC);
 CREATE INDEX IF NOT EXISTS idx_duels_status ON duels(status);
 CREATE INDEX IF NOT EXISTS idx_duels_players ON duels(player1_id, player2_id);
+CREATE INDEX IF NOT EXISTS idx_fee_transactions_duel_id ON fee_transactions(duel_id);
+CREATE INDEX IF NOT EXISTS idx_fee_transactions_winner_id ON fee_transactions(winner_id);
 
 -- Enable Row Level Security
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE duels ENABLE ROW LEVEL SECURITY;
+ALTER TABLE fee_transactions ENABLE ROW LEVEL SECURITY;
 
 -- Create policies
 CREATE POLICY "Users can view their own data" ON users
@@ -60,6 +75,7 @@ CREATE POLICY "Users can update duels they participate in" ON duels
 -- Enable realtime for live updates
 ALTER PUBLICATION supabase_realtime ADD TABLE users;
 ALTER PUBLICATION supabase_realtime ADD TABLE duels;
+ALTER PUBLICATION supabase_realtime ADD TABLE fee_transactions;
 
 -- Function to update updated_at timestamp
 CREATE OR REPLACE FUNCTION update_updated_at_column()

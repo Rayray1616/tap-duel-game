@@ -200,11 +200,21 @@ export function DuelPage() {
     let winnerId = null;
     let bonusPoints = 0;
     let resultMessage = '';
+    let feeDeducted = 0;
 
     if (finalTaps > finalOpponentTaps) {
       winnerId = user.id;
       bonusPoints = 50;
-      resultMessage = `🎉 VICTORY! You won with ${finalTaps} vs ${finalOpponentTaps} taps! +${bonusPoints} bonus points!`;
+      
+      // Calculate 10% fee on winnings (taps + bonus)
+      const totalWinnings = finalTaps + bonusPoints;
+      feeDeducted = Math.floor(totalWinnings * 0.1); // 10% fee, rounded down
+      const netWinnings = totalWinnings - feeDeducted;
+      
+      resultMessage = `🎉 VICTORY! You won with ${finalTaps} vs ${finalOpponentTaps} taps!\n` +
+                     `🏆 +${finalTaps} taps + ${bonusPoints} bonus = ${totalWinnings} total\n` +
+                     `💸 10% fee: -${feeDeducted} points\n` +
+                     `💰 Net: +${netWinnings} points!`;
     } else if (finalTaps < finalOpponentTaps) {
       resultMessage = `😔 DEFEAT! You lost with ${finalTaps} vs ${finalOpponentTaps} taps.`;
     } else {
@@ -218,15 +228,29 @@ export function DuelPage() {
         end_time: new Date().toISOString(),
         winner_id: winnerId,
         status: 'completed',
+        fee_amount: feeDeducted,
       })
       .eq('id', currentDuel.id);
 
-    // Update user score
-    const newScore = user.score + finalTaps + bonusPoints;
+    // Update user score (with fee deducted if winner)
+    const newScore = user.score + finalTaps + bonusPoints - feeDeducted;
     await supabase
       .from('users')
       .update({ score: newScore })
       .eq('id', user.id);
+
+    // Record fee transaction if fee was deducted
+    if (feeDeducted > 0) {
+      await supabase
+        .from('fee_transactions')
+        .insert({
+          duel_id: currentDuel.id,
+          winner_id: user.id,
+          fee_amount: feeDeducted,
+          total_winnings: finalTaps + bonusPoints,
+          created_at: new Date().toISOString()
+        });
+    }
 
     alert(resultMessage);
     setCurrentDuel(null);

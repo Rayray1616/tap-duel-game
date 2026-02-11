@@ -5,7 +5,6 @@ import {
   viewport,
   init as initSDK,
   mockTelegramEnv,
-  type ThemeParams,
   retrieveLaunchParams,
   emitEvent,
   miniApp,
@@ -38,14 +37,14 @@ export async function init(options: {
     mockTelegramEnv({
       onEvent(event, next) {
         if (event.name === 'web_app_request_theme') {
-          let tp: ThemeParams = {};
+          let tp: any = {};
           if (firstThemeSent) {
             tp = themeParams.state();
           } else {
             firstThemeSent = true;
             tp ||= retrieveLaunchParams().tgWebAppThemeParams;
           }
-          return emitEvent('theme_changed', { theme_params: tp });
+          return emitEvent('theme_changed', { theme_params: tp } as any);
         }
 
         if (event.name === 'web_app_request_safe_area') {

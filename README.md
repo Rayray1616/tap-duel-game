@@ -1,212 +1,213 @@
-# Telegram Mini Apps React Template
+# 🔥 Tap Duel - Telegram Mini App Game
 
-This template demonstrates how developers can implement a single-page
-application on the Telegram Mini Apps platform using the following technologies
-and libraries:
+An addictive 10-second tap-and-duel game built for Telegram Mini Apps. Players tap furiously for 10 seconds to rack up points, with energy limits that regenerate over time. Challenge opponents in real-time duels and climb the leaderboard!
 
-- [React](https://react.dev/)
-- [TypeScript](https://www.typescriptlang.org/)
-- [TON Connect](https://docs.ton.org/develop/dapps/ton-connect/overview)
-- [@tma.js SDK](https://docs.telegram-mini-apps.com/packages/tma-js-sdk)
-- [Telegram UI](https://github.com/Telegram-Mini-Apps/TelegramUI)
-- [Vite](https://vitejs.dev/)
+## 🎮 Game Features
 
-> The template was created using [npm](https://www.npmjs.com/). Therefore, it is
-> required to use it for this project as well. Using other package managers, you
-> will receive a corresponding error.
+- **Core Gameplay**: 10-second tapping sessions with energy system
+- **Real-time Duels**: Match with other players for live battles
+- **Energy System**: Limited energy that regenerates over time (2 energy/minute)
+- **Leaderboards**: Global rankings showing top players
+- **Daily Rewards**: Claim daily bonuses with level multipliers
+- **Upgrade System**: Purchase tap multipliers and energy boosts
+- **Dark Neon Theme**: Futuristic cyan neon aesthetic with cyberpunk fonts
 
-## Install Dependencies
+## 🛠️ Tech Stack
 
-If you have just cloned this template, you should install the project
-dependencies using the command:
+- **Frontend**: React 18 + TypeScript + Vite
+- **Telegram Integration**: @tma.js/sdk-react for Mini App auth
+- **Backend**: Supabase (PostgreSQL + Realtime)
+- **Styling**: Tailwind CSS + custom neon theme
+- **Deployment**: Railway-ready configuration
 
-```Bash
+## 📋 Database Schema
+
+### Users Table
+- `telegram_id`: Unique Telegram user ID
+- `username`: Telegram username
+- `score`: Total accumulated points
+- `energy`: Current energy (max 100 + boosts)
+- `level`: Player level (every 100 points)
+- `tap_multiplier`: Tap power multiplier (1.0 - 1.5)
+- `energy_boost`: Additional max energy (0 - 100)
+- `daily_reward_claimed`: Daily reward status
+
+### Duels Table
+- `player1_id`, `player2_id`: Participant user IDs
+- `start_time`, `end_time`: Duel timestamps
+- `player1_taps`, `player2_taps`: Tap counts
+- `winner_id`: Winning player ID
+- `status`: waiting/active/completed
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Node.js 18+
+- Telegram Bot Token
+- Supabase project (URL + Anon Key)
+
+### Installation
+
+1. **Clone and install dependencies**
+```bash
+git clone <your-repo>
+cd tap-duel-game
 npm install
 ```
 
-## Scripts
-
-This project contains the following scripts:
-
-- `dev`. Runs the application in development mode.
-- `dev:https`. Runs the application in development mode using locally created valid SSL-certificates.
-- `build`. Builds the application for production.
-- `lint`. Runs [eslint](https://eslint.org/) to ensure the code quality meets
-  the required standards.
-- `deploy`. Deploys the application to GitHub Pages.
-
-To run a script, use the `npm run` command:
-
-```Bash
-npm run {script}
-# Example: npm run build
-```
-
-## Create Bot and Mini App
-
-Before you start, make sure you have already created a Telegram Bot. Here is
-a [comprehensive guide](https://docs.telegram-mini-apps.com/platform/creating-new-app)
-on how to do it.
-
-## Run
-
-Although Mini Apps are designed to be opened
-within [Telegram applications](https://docs.telegram-mini-apps.com/platform/about#supported-applications),
-you can still develop and test them outside of Telegram during the development
-process.
-
-To run the application in the development mode, use the `dev` script:
-
+2. **Environment Setup**
 ```bash
-npm run dev:https
+cp .env.example .env
+# Edit .env with your credentials:
+# SUPABASE_URL=your_supabase_url_here
+# SUPABASE_ANON_KEY=your_supabase_anon_key_here
+# TELEGRAM_BOT_TOKEN=your_telegram_bot_token_here
 ```
 
-> [!NOTE]
-> As long as we use [vite-plugin-mkcert](https://www.npmjs.com/package/vite-plugin-mkcert),
-> launching the dev mode for the first time, you may see sudo password request.
-> The plugin requires it to properly configure SSL-certificates. To disable the plugin, use the `npm run dev` command.
-
-After this, you will see a similar message in your terminal:
-
+3. **Database Setup**
 ```bash
-VITE v5.2.12  ready in 237 ms
-
-➜  Local:   https://localhost:5173/reactjs-template
-➜  Network: https://172.18.16.1:5173/reactjs-template
-➜  Network: https://172.19.32.1:5173/reactjs-template
-➜  Network: https://192.168.0.171:5173/reactjs-template
-➜  press h + enter to show help
+# Run the SQL setup script in Supabase SQL Editor:
+# database/setup.sql
 ```
 
-Here, you can see the `Local` link, available locally, and `Network` links
-accessible to all devices in the same network with the current device.
+4. **Run Development Server**
+```bash
+npm run dev
+# Visit http://localhost:5173
+```
 
-To view the application, you need to open the `Local`
-link (`https://localhost:5173/reactjs-template` in this example) in your
-browser:
+## 🎯 Game Mechanics
 
-![Application](assets/application.png)
+### Energy System
+- Start with 100 energy
+- Each solo game costs 10 energy
+- Each duel costs 20 energy
+- Regenerates 2 energy per minute
+- Energy boosts increase max capacity
 
-It is important to note that some libraries in this template, such as
-`@tma.js/sdk`, are not intended for use outside of Telegram.
+### Scoring
+- 1 point per tap (multiplied by tap multiplier)
+- Duel winners get +50 bonus points
+- Level up every 100 points
+- Daily rewards: 50 + (level × 10) points
 
-Nevertheless, they appear to function properly. This is because the
-`src/mockEnv.ts` file, which is imported in the application's entry point (
-`src/index.ts`), employs the `mockTelegramEnv` function to simulate the Telegram
-environment. This trick convinces the application that it is running in a
-Telegram-based environment. Therefore, be cautious not to use this function in
-production mode unless you fully understand its implications.
+### Upgrades
+- **Tap Multiplier**: Increase taps per click (up to 1.5x)
+- **Energy Boost**: Increase max energy capacity (+20 per level)
+- **Energy Regeneration**: Faster recovery (planned feature)
 
-> [!WARNING]
-> Because we are using self-signed SSL certificates, the Android and iOS
-> Telegram applications will not be able to display the application. These
-> operating systems enforce stricter security measures, preventing the Mini App
-> from loading. To address this issue, refer to
-> [this guide](https://docs.telegram-mini-apps.com/platform/getting-app-link#remote).
+## 🌐 Deployment
 
-## Deploy
+### Railway Deployment
 
-This boilerplate uses GitHub Pages as the way to host the application
-externally. GitHub Pages provides a CDN which will let your users receive the
-application rapidly. Alternatively, you could use such services
-as [Heroku](https://www.heroku.com/) or [Vercel](https://vercel.com).
+1. **Connect Repository**
+   - Create new Railway project
+   - Connect your GitHub repository
+
+2. **Environment Variables**
+   - Set `SUPABASE_URL`
+   - Set `SUPABASE_ANON_KEY`
+   - Set `TELEGRAM_BOT_TOKEN`
+   - Set `PORT=3000`
+
+3. **Deploy Settings**
+   - Build command: `npm run build`
+   - Start command: `npm run railway:start`
+   - Health check path: `/`
 
 ### Manual Deployment
-
-This boilerplate uses the [gh-pages](https://www.npmjs.com/package/gh-pages)
-tool, which allows deploying your application right from your PC.
-
-#### Configuring
-
-Before running the deployment process, ensure that you have done the following:
-
-1. Replaced the `homepage` value in `package.json`. The GitHub Pages deploy tool
-   uses this value to
-   determine the related GitHub project.
-2. Replaced the `base` value in `vite.config.ts` and have set it to the name of
-   your GitHub
-   repository. Vite will use this value when creating paths to static assets.
-
-For instance, if your GitHub username is `telegram-mini-apps` and the repository
-name is `is-awesome`, the value in the `homepage` field should be the following:
-
-```json
-{
-  "homepage": "https://telegram-mini-apps.github.io/is-awesome"
-}
-```
-
-And `vite.config.ts` should have this content:
-
-```ts
-export default defineConfig({
-  base: '/is-awesome/',
-  // ...
-});
-```
-
-You can find more information on configuring the deployment in the `gh-pages`
-[docs](https://github.com/tschaub/gh-pages?tab=readme-ov-file#github-pages-project-sites).
-
-#### Before Deploying
-
-Before deploying the application, make sure that you've built it and going to
-deploy the fresh static files:
-
 ```bash
 npm run build
+npm start
 ```
 
-Then, run the deployment process, using the `deploy` script:
+## 🎨 Theme & Styling
 
-```Bash
-npm run deploy
+The game features a dark neon cyan theme:
+- **Colors**: Black background with cyan (#00FFFF) accents
+- **Fonts**: Orbitron (Google Fonts) for cyberpunk aesthetic
+- **Effects**: Neon glows, pulse animations, hover states
+- **Responsive**: Optimized for mobile Telegram view
+
+## 🔧 Configuration
+
+### Telegram Bot Setup
+1. Create bot via @BotFather
+2. Set up Mini App in BotFather
+3. Configure web app URL
+4. Add bot token to environment
+
+### Supabase Setup
+1. Create new Supabase project
+2. Run `database/setup.sql` in SQL Editor
+3. Enable Realtime on `users` and `duels` tables
+4. Configure RLS policies (included in setup)
+
+## 🧪 Testing
+
+### Local Testing
+```bash
+npm run dev
+# Opens with mock Telegram environment
 ```
 
-After the deployment completed successfully, visit the page with data according
-to your username and repository name. Here is the page link example using the
-data mentioned above:
-https://telegram-mini-apps.github.io/is-awesome
+### Mobile Testing
+```bash
+npm run dev:https
+# Uses SSL for mobile Telegram testing
+```
 
-### GitHub Workflow
+### Duel Testing
+- Open two browser tabs
+- Join duel simultaneously
+- Test real-time tap updates
 
-To simplify the deployment process, this template includes a
-pre-configured [GitHub workflow](.github/workflows/github-pages-deploy.yml) that
-automatically deploys the project when changes are pushed to the `master`
-branch.
+## 📱 Telegram Integration
 
-To enable this workflow, create a new environment (or edit the existing one) in
-the GitHub repository settings and name it `github-pages`. Then, add the
-`master` branch to the list of deployment branches.
+The app integrates with Telegram Mini Apps using:
+- **Authentication**: Telegram user data via initData
+- **UI Adaptation**: Theme colors and platform detection
+- **Navigation**: Hash-based routing for Mini App compatibility
 
-You can find the environment settings using this
-URL: `https://github.com/{username}/{repository}/settings/environments`.
+## 🐛 Troubleshooting
 
-![img.png](.github/deployment-branches.png)
+### Common Issues
 
-In case, you don't want to do it automatically, or you don't use GitHub as the
-project codebase, remove the `.github` directory.
+1. **"Not enough energy" error**
+   - Wait for energy regeneration (2/min)
+   - Claim daily rewards for +30 energy
 
-### GitHub Web Interface
+2. **Realtime updates not working**
+   - Check Supabase Realtime is enabled
+   - Verify RLS policies allow subscriptions
 
-Alternatively, developers can configure automatic deployment using the GitHub
-web interface. To do this, follow the link:
-`https://github.com/{username}/{repository}/settings/pages`.
+3. **Telegram auth fails**
+   - Ensure bot token is valid
+   - Check Mini App URL configuration
 
-## TON Connect
+4. **Build errors**
+   - Run `npm install` to update dependencies
+   - Check environment variables are set
 
-This boilerplate utilizes
-the [TON Connect](https://docs.ton.org/develop/dapps/ton-connect/overview)
-project to demonstrate how developers can integrate functionality related to TON
-cryptocurrency.
+## 🤝 Contributing
 
-The TON Connect manifest used in this boilerplate is stored in the `public`
-folder, where all publicly accessible static files are located. Remember
-to [configure](https://docs.ton.org/develop/dapps/ton-connect/manifest) this
-file according to your project's information.
+1. Fork the repository
+2. Create feature branch
+3. Make changes
+4. Test thoroughly
+5. Submit pull request
 
-## Useful Links
+## 📄 License
 
-- [Platform documentation](https://docs.telegram-mini-apps.com/)
-- [@tma.js/sdk-react documentation](https://docs.telegram-mini-apps.com/packages/tma-js-sdk-react)
-- [Telegram developers community chat](https://t.me/devs_cis)
+MIT License - feel free to use this code for your own projects!
+
+## 🔗 Links
+
+- [Telegram Mini Apps Docs](https://docs.telegram-mini-apps.com/)
+- [Supabase Documentation](https://supabase.com/docs)
+- [Railway Deployment](https://railway.app/)
+- [@tma.js SDK](https://docs.telegram-mini-apps.com/packages/tma-js-sdk)
+
+---
+
+**Built with ❤️ for the Telegram gaming community!**

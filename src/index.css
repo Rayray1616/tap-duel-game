@@ -1,5 +1,116 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+
+* {
+  font-family: 'Orbitron', monospace;
+}
+
 body {
-  background: var(--tg-theme-secondary-bg-color, white);
+  background: #000000;
+  color: #00FFFF;
   padding: 0;
   margin: 0;
+  overflow-x: hidden;
+}
+
+/* Neon cyan theme */
+.neon-text {
+  color: #00FFFF;
+  text-shadow: 0 0 10px #00FFFF, 0 0 20px #00FFFF, 0 0 30px #00FFFF;
+}
+
+.neon-border {
+  border: 2px solid #00FFFF;
+  box-shadow: 0 0 10px #00FFFF, inset 0 0 10px rgba(0, 255, 255, 0.2);
+}
+
+.neon-button {
+  background: linear-gradient(45deg, #00CCCC, #00FFFF);
+  border: none;
+  color: #000000;
+  font-weight: bold;
+  text-shadow: 0 0 5px #00FFFF;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.5), inset 0 0 20px rgba(0, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.neon-button:hover {
+  background: linear-gradient(45deg, #00FFFF, #00CCCC);
+  box-shadow: 0 0 30px rgba(0, 255, 255, 0.7), inset 0 0 30px rgba(0, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.neon-button:active {
+  transform: translateY(0);
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.5), inset 0 0 15px rgba(0, 255, 255, 0.2);
+}
+
+/* Pulse animation */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.5), inset 0 0 20px rgba(0, 255, 255, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.8), inset 0 0 30px rgba(0, 255, 255, 0.4);
+  }
+  100% {
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.5), inset 0 0 20px rgba(0, 255, 255, 0.2);
+  }
+}
+
+.pulse {
+  animation: pulse 2s infinite;
+}
+
+/* Override Telegram UI styles */
+.telegram-ui-root {
+  background: #000000 !important;
+}
+
+.telegram-ui-section {
+  background: #111111 !important;
+  border: 1px solid #00FFFF !important;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.3) !important;
+}
+
+.telegram-ui-cell {
+  background: transparent !important;
+  color: #00FFFF !important;
+  border-bottom: 1px solid rgba(0, 255, 255, 0.2) !important;
+}
+
+.telegram-ui-title {
+  color: #00FFFF !important;
+  text-shadow: 0 0 10px #00FFFF !important;
+}
+
+.telegram-ui-button {
+  background: linear-gradient(45deg, #00CCCC, #00FFFF) !important;
+  color: #000000 !important;
+  border: none !important;
+  font-weight: bold !important;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.5) !important;
+}
+
+.telegram-ui-button:hover {
+  background: linear-gradient(45deg, #00FFFF, #00CCCC) !important;
+  box-shadow: 0 0 30px rgba(0, 255, 255, 0.7) !important;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #111111;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #00FFFF;
+  border-radius: 4px;
+  box-shadow: 0 0 5px #00FFFF;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00CCCC;
 }

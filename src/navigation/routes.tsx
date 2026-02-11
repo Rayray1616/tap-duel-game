@@ -1,6 +1,10 @@
 import type { ComponentType, JSX } from 'react';
 
-import { IndexPage } from '@/pages/IndexPage/IndexPage';
+import { HomePage } from '@/pages/HomePage/HomePage';
+import { DuelPage } from '@/pages/DuelPage/DuelPage';
+import { LeaderboardPage } from '@/pages/LeaderboardPage/LeaderboardPage';
+import { RewardsPage } from '@/pages/RewardsPage/RewardsPage';
+import { ShopPage } from '@/pages/ShopPage/ShopPage';
 import { InitDataPage } from '@/pages/InitDataPage.tsx';
 import { LaunchParamsPage } from '@/pages/LaunchParamsPage.tsx';
 import { ThemeParamsPage } from '@/pages/ThemeParamsPage.tsx';
@@ -14,7 +18,11 @@ interface Route {
 }
 
 export const routes: Route[] = [
-  { path: '/', Component: IndexPage },
+  { path: '/', Component: HomePage },
+  { path: '/duel', Component: DuelPage },
+  { path: '/leaderboard', Component: LeaderboardPage },
+  { path: '/rewards', Component: RewardsPage },
+  { path: '/shop', Component: ShopPage },
   { path: '/init-data', Component: InitDataPage, title: 'Init Data' },
   { path: '/theme-params', Component: ThemeParamsPage, title: 'Theme Params' },
   { path: '/launch-params', Component: LaunchParamsPage, title: 'Launch Params' },

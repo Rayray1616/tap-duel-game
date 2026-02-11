@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLaunchParams } from '@tma.js/sdk-react';
-import { Button, Cell, Section, Title } from '@telegram-apps/telegram-ui';
+import { Title } from '@telegram-apps/telegram-ui';
 import { supabase } from '@/lib/supabase';
 import { useEnergyRegeneration } from '@/hooks/useEnergyRegeneration';
 import { WalletConnect } from '@/components/WalletConnect';
@@ -126,98 +126,150 @@ export function HomePage() {
   }
 
   const maxEnergy = 100 + (user?.energy_boost || 0);
+  const energyPercentage = (energy / maxEnergy) * 100;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black text-cyan-400 p-4 relative overflow-hidden">
-      {/* Background grid effect */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="h-full w-full bg-grid-cyan"></div>
-      </div>
+    <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black text-cyan-400 p-4 relative overflow-hidden font-orbitron">
+      {/* Animated scanlines */}
+      <div className="absolute inset-0 cyberpunk-scanlines"></div>
       
-      <div className="max-w-md mx-auto relative z-10">
-        <Title className="text-center mb-6 text-5xl font-black neon-text glitch">
+      {/* Floating particles */}
+      <div className="absolute inset-0 cyberpunk-particles"></div>
+      
+      <div className="relative z-10 max-w-md mx-auto">
+        <Title className="text-center mb-8 text-6xl font-black cyberpunk-title">
           🔥 TAP DUEL 🔥
         </Title>
 
-        <WalletConnect />
+        <div className="mb-8">
+          <WalletConnect />
+        </div>
 
-        <Section className="mb-6 neon-border">
-          <Cell>
-            <div className="flex justify-between items-center">
-              <span className="neon-text">👤 Player: {user?.username}</span>
-              <span className="neon-text">⭐ Level: {user?.level}</span>
-            </div>
-          </Cell>
-          <Cell>
-            <div className="flex justify-between items-center">
-              <span className="neon-text">💎 Score: <span className="glitch-text">{user?.score}</span></span>
-              <span className="neon-text">⚡ Energy: {energy}/{maxEnergy}</span>
-            </div>
-          </Cell>
-          <Cell>
-            <div className="flex justify-between items-center">
-              <span className="neon-text">🔥 Multiplier: x{user?.tap_multiplier || 1.0}</span>
-              <span className="neon-text">🚀 Boost: +{user?.energy_boost || 0}</span>
-            </div>
-          </Cell>
-        </Section>
+        {/* Stats Cards */}
+        <div className="grid grid-cols-2 gap-4 mb-8">
+          <div className="cyberpunk-card">
+            <div className="text-sm cyberpunk-label mb-2">PLAYER</div>
+            <div className="text-xl font-bold cyberpunk-text">{user?.username || 'Anonymous'}</div>
+          </div>
+          
+          <div className="cyberpunk-card">
+            <div className="text-sm cyberpunk-label mb-2">LEVEL</div>
+            <div className="text-xl font-bold cyberpunk-text">{user?.level || 1}</div>
+          </div>
+          
+          <div className="cyberpunk-card">
+            <div className="text-sm cyberpunk-label mb-2">SCORE</div>
+            <div className="text-xl font-bold cyberpunk-text cyberpunk-glitch">{user?.score || 0}</div>
+          </div>
+          
+          <div className="cyberpunk-card">
+            <div className="text-sm cyberpunk-label mb-2">MULTI</div>
+            <div className="text-xl font-bold cyberpunk-text">x{user?.tap_multiplier || 1.0}</div>
+          </div>
+        </div>
 
+        {/* Energy Ring */}
+        <div className="mb-8">
+          <div className="cyberpunk-card p-6">
+            <div className="flex items-center justify-between mb-4">
+              <span className="cyberpunk-label">ENERGY</span>
+              <span className="cyberpunk-text">{energy}/{maxEnergy}</span>
+            </div>
+            <div className="relative w-24 h-24 mx-auto">
+              <svg className="w-24 h-24 transform -rotate-90">
+                <circle
+                  cx="48"
+                  cy="48"
+                  r="36"
+                  stroke="rgba(0, 255, 255, 0.2)"
+                  strokeWidth="8"
+                  fill="none"
+                />
+                <circle
+                  cx="48"
+                  cy="48"
+                  r="36"
+                  stroke="url(#energyGradient)"
+                  strokeWidth="8"
+                  fill="none"
+                  strokeDasharray={`${2 * Math.PI * 36}`}
+                  strokeDashoffset={`${2 * Math.PI * 36 * (1 - energyPercentage / 100)}`}
+                  className="transition-all duration-500"
+                />
+                <defs>
+                  <linearGradient id="energyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#00ffff" />
+                    <stop offset="50%" stopColor="#00aaff" />
+                    <stop offset="100%" stopColor="#0044aa" />
+                  </linearGradient>
+                </defs>
+              </svg>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="text-2xl font-bold cyberpunk-text">{Math.round(energyPercentage)}%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Game Area */}
         {!gameActive ? (
           <div className="text-center mb-8">
-            <Button
+            <button
               onClick={startGame}
               disabled={energy < 10}
-              className="neon-button-cyber font-bold py-6 px-12 rounded-lg text-lg transition-all duration-300 hover:scale-105"
+              className="cyberpunk-button-main w-full max-w-sm mx-auto disabled:opacity-50"
             >
               ⚡ START TAPPING (10 Energy) ⚡
-            </Button>
+            </button>
           </div>
         ) : (
-          <div className="text-center">
+          <div className="text-center mb-8">
+            {/* Taps Display */}
             <div className="mb-8">
-              <div className="text-8xl font-black mb-4 neon-text glitch animate-pulse">{taps}</div>
-              <div className="text-4xl neon-text breathe">⚡ TIME: {timeLeft}s ⚡</div>
+              <div className="text-9xl font-black mb-4 cyberpunk-text-cyber cyberpunk-glitch">{taps}</div>
+              <div className="text-4xl cyberpunk-text cyberpunk-breathe">⚡ TIME: {timeLeft}s ⚡</div>
             </div>
             
-            <button
-              onClick={handleTap}
-              className="w-80 h-80 rounded-full transition-all duration-100 transform active:scale-95 text-white text-5xl font-black neon-border pulse breathe relative overflow-hidden mx-auto"
-              style={{
-                background: 'radial-gradient(circle, #00ffff 0%, #0088ff 40%, #0044aa 100%)',
-                boxShadow: '0 0 60px #00ffff, 0 0 120px #00ffff, 0 0 180px #0088ff, inset 0 0 60px rgba(0, 255, 255, 0.6)',
-              }}
-            >
-              <span className="relative z-10 drop-shadow-2xl animate-pulse">TAP!</span>
-              <div className="absolute inset-0 rounded-full bg-white opacity-0 animate-ping"></div>
-            </button>
+            {/* Massive TAP Button */}
+            <div className="relative inline-block">
+              <button
+                onClick={handleTap}
+                className="cyberpunk-tap-button"
+              >
+                <span className="cyberpunk-tap-text">TAP!</span>
+                <div className="cyberpunk-ripple"></div>
+                <div className="cyberpunk-particles-burst"></div>
+              </button>
+            </div>
           </div>
         )}
 
+        {/* Navigation Buttons */}
         <div className="grid grid-cols-2 gap-4">
-          <Button
+          <button
             onClick={() => window.location.href = '/duel'}
-            className="neon-button-cyber font-bold py-4 px-4 rounded-lg transition-all duration-300 hover:scale-105"
+            className="cyberpunk-button-nav"
           >
             ⚔️ DUEL
-          </Button>
-          <Button
+          </button>
+          <button
             onClick={() => window.location.href = '/leaderboard'}
-            className="neon-button-cyber font-bold py-4 px-4 rounded-lg transition-all duration-300 hover:scale-105"
+            className="cyberpunk-button-nav"
           >
             🏆 LEADERBOARD
-          </Button>
-          <Button
+          </button>
+          <button
             onClick={() => window.location.href = '/rewards'}
-            className="neon-button-cyber font-bold py-4 px-4 rounded-lg transition-all duration-300 hover:scale-105"
+            className="cyberpunk-button-nav"
           >
             🎁 REWARDS
-          </Button>
-          <Button
+          </button>
+          <button
             onClick={() => window.location.href = '/shop'}
-            className="neon-button-cyber font-bold py-4 px-4 rounded-lg transition-all duration-300 hover:scale-105"
+            className="cyberpunk-button-nav"
           >
             🛒 UPGRADES
-          </Button>
+          </button>
         </div>
       </div>
     </div>

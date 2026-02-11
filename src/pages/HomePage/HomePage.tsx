@@ -3,7 +3,7 @@ import { useLaunchParams } from '@tma.js/sdk-react';
 import { Button, Cell, Section, Title } from '@telegram-apps/telegram-ui';
 import { supabase } from '@/lib/supabase';
 import { useEnergyRegeneration } from '@/hooks/useEnergyRegeneration';
-import { WalletConnect } from '@/components/WalletConnect/WalletConnect';
+import { WalletConnect } from '@/components/WalletConnect';
 import type { Database } from '@/lib/supabase';
 
 type User = Database['public']['Tables']['users']['Row'];

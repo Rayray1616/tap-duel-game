@@ -25,7 +25,10 @@ export function Root() {
   return (
     <ErrorBoundary fallback={ErrorBoundaryError}>
       <TonConnectUIProvider
-        manifestUrl={publicUrl('tonconnect-manifest.json')}
+        manifestUrl="https://tap-duel-game-production.up.railway.app/tonconnect-manifest.json"
+        actionsConfiguration={{
+          twaReturnUrl: 'https://t.me/tap_duel_bot'
+        }}
       >
         <App/>
       </TonConnectUIProvider>

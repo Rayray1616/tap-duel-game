@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS users (
   level INTEGER DEFAULT 1,
   tap_multiplier DECIMAL(3,2) DEFAULT 1.0,
   energy_boost INTEGER DEFAULT 0,
+  ton_address VARCHAR(255),
   last_energy_regen TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   daily_reward_claimed BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),

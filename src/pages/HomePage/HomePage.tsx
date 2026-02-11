@@ -130,29 +130,29 @@ export function HomePage() {
   return (
     <div className="min-h-screen bg-black text-cyan-400 p-4">
       <div className="max-w-md mx-auto">
-        <Title className="text-center mb-6 text-cyan-400 font-bold neon-text">
+        <Title className="text-center mb-6 text-4xl font-black neon-text glitch">
           🔥 TAP DUEL 🔥
         </Title>
 
         <WalletConnect />
 
-        <Section className="mb-4">
+        <Section className="mb-4 neon-border">
           <Cell>
             <div className="flex justify-between items-center">
-              <span>Player: {user?.username}</span>
-              <span>Level: {user?.level}</span>
+              <span className="neon-text">👤 Player: {user?.username}</span>
+              <span className="neon-text">⭐ Level: {user?.level}</span>
             </div>
           </Cell>
           <Cell>
             <div className="flex justify-between items-center">
-              <span>Score: {user?.score}</span>
-              <span>Energy: {energy}/{maxEnergy}</span>
+              <span className="neon-text">💎 Score: {user?.score}</span>
+              <span className="neon-text">⚡ Energy: {energy}/{maxEnergy}</span>
             </div>
           </Cell>
           <Cell>
             <div className="flex justify-between items-center">
-              <span>Multiplier: x{user?.tap_multiplier || 1.0}</span>
-              <span>Energy Boost: +{user?.energy_boost || 0}</span>
+              <span className="neon-text">🔥 Multiplier: x{user?.tap_multiplier || 1.0}</span>
+              <span className="neon-text">🚀 Boost: +{user?.energy_boost || 0}</span>
             </div>
           </Cell>
         </Section>
@@ -169,19 +169,22 @@ export function HomePage() {
           </div>
         ) : (
           <div className="text-center">
-            <div className="mb-4">
-              <div className="text-6xl font-bold text-cyan-300 mb-2 neon-text">{taps}</div>
-              <div className="text-2xl text-cyan-400 neon-text">Time: {timeLeft}s</div>
+            <div className="mb-6">
+              <div className="text-7xl font-black mb-3 neon-text glitch">{taps}</div>
+              <div className="text-3xl neon-text breathe">⚡ TIME: {timeLeft}s ⚡</div>
             </div>
             
             <button
               onClick={handleTap}
-              className="w-48 h-48 bg-cyan-600 hover:bg-cyan-500 rounded-full shadow-lg shadow-cyan-500/50 transition-all duration-100 transform active:scale-95 text-white text-2xl font-bold neon-border pulse"
+              className="w-64 h-64 rounded-full transition-all duration-100 transform active:scale-95 text-white text-4xl font-black neon-border pulse breathe relative overflow-hidden"
               style={{
-                boxShadow: '0 0 30px rgba(0, 255, 255, 0.5), inset 0 0 30px rgba(0, 255, 255, 0.2)',
+                background: 'radial-gradient(circle, #00ffff 0%, #0088ff 50%, #004488 100%)',
+                boxShadow: '0 0 50px #00ffff, 0 0 100px #00ffff, 0 0 150px #0088ff, inset 0 0 50px rgba(0, 255, 255, 0.5)',
               }}
             >
-              TAP!
+              <span className="relative z-10 drop-shadow-2xl">TAP!</span>
+              {/* Ripple effect overlay */}
+              <div className="absolute inset-0 rounded-full bg-white opacity-0 animate-ping"></div>
             </button>
           </div>
         )}
@@ -189,25 +192,25 @@ export function HomePage() {
         <div className="mt-6 grid grid-cols-2 gap-4">
           <Button
             onClick={() => window.location.href = '/duel'}
-            className="bg-purple-600 hover:bg-purple-500 text-white neon-button"
+            className="neon-button pulse font-bold py-3 px-6 rounded-lg"
           >
             ⚔️ DUEL
           </Button>
           <Button
             onClick={() => window.location.href = '/leaderboard'}
-            className="bg-green-600 hover:bg-green-500 text-white neon-button"
+            className="neon-button pulse font-bold py-3 px-6 rounded-lg"
           >
             🏆 LEADERBOARD
           </Button>
           <Button
             onClick={() => window.location.href = '/rewards'}
-            className="bg-yellow-600 hover:bg-yellow-500 text-white neon-button"
+            className="neon-button pulse font-bold py-3 px-6 rounded-lg"
           >
             🎁 REWARDS
           </Button>
           <Button
             onClick={() => window.location.href = '/shop'}
-            className="bg-orange-600 hover:bg-orange-500 text-white neon-button"
+            className="neon-button pulse font-bold py-3 px-6 rounded-lg"
           >
             🛒 UPGRADES
           </Button>

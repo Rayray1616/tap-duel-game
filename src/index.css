@@ -5,55 +5,169 @@
 }
 
 body {
-  background: #000000;
-  color: #00FFFF;
+  background: linear-gradient(135deg, #0a0a0f 0%, #1a0033 50%, #0a0a0f 100%);
+  color: #00ffff;
   padding: 0;
   margin: 0;
   overflow-x: hidden;
+  min-height: 100vh;
+  position: relative;
 }
 
-/* Neon cyan theme */
+/* Cyberpunk grid background */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
+  background-size: 50px 50px;
+  z-index: -1;
+  animation: grid-move 10s linear infinite;
+}
+
+@keyframes grid-move {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(50px, 50px); }
+}
+
+/* Scanline effect */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.5), transparent);
+  z-index: 1;
+  animation: scanline 8s linear infinite;
+}
+
+@keyframes scanline {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(100vh); }
+}
+
+/* Enhanced neon cyan theme */
 .neon-text {
-  color: #00FFFF;
-  text-shadow: 0 0 10px #00FFFF, 0 0 20px #00FFFF, 0 0 30px #00FFFF;
+  color: #00ffff;
+  text-shadow: 
+    0 0 10px #00ffff,
+    0 0 20px #00ffff,
+    0 0 30px #00ffff,
+    0 0 40px #0088ff;
 }
 
 .neon-border {
-  border: 2px solid #00FFFF;
-  box-shadow: 0 0 10px #00FFFF, inset 0 0 10px rgba(0, 255, 255, 0.2);
+  border: 2px solid #00ffff;
+  box-shadow: 
+    0 0 10px #00ffff,
+    0 0 20px #00ffff,
+    inset 0 0 10px rgba(0, 255, 255, 0.2);
 }
 
 .neon-button {
-  background: linear-gradient(45deg, #00CCCC, #00FFFF);
+  background: linear-gradient(45deg, #0088ff, #00ffff, #0088ff);
   border: none;
   color: #000000;
   font-weight: bold;
-  text-shadow: 0 0 5px #00FFFF;
-  box-shadow: 0 0 20px rgba(0, 255, 255, 0.5), inset 0 0 20px rgba(0, 255, 255, 0.2);
+  text-shadow: 0 0 5px #00ffff;
+  box-shadow: 
+    0 0 20px rgba(0, 255, 255, 0.5),
+    0 0 40px rgba(0, 255, 255, 0.3),
+    inset 0 0 20px rgba(0, 255, 255, 0.2);
   transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.neon-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s;
+}
+
+.neon-button:hover::before {
+  left: 100%;
 }
 
 .neon-button:hover {
-  background: linear-gradient(45deg, #00FFFF, #00CCCC);
-  box-shadow: 0 0 30px rgba(0, 255, 255, 0.7), inset 0 0 30px rgba(0, 255, 255, 0.3);
-  transform: translateY(-2px);
+  background: linear-gradient(45deg, #00ffff, #0088ff, #00ffff);
+  box-shadow: 
+    0 0 30px rgba(0, 255, 255, 0.7),
+    0 0 60px rgba(0, 255, 255, 0.5),
+    inset 0 0 30px rgba(0, 255, 255, 0.3);
+  transform: translateY(-2px) scale(1.05);
 }
 
 .neon-button:active {
-  transform: translateY(0);
-  box-shadow: 0 0 15px rgba(0, 255, 255, 0.5), inset 0 0 15px rgba(0, 255, 255, 0.2);
+  transform: translateY(0) scale(0.98);
+  box-shadow: 
+    0 0 15px rgba(0, 255, 255, 0.5),
+    inset 0 0 15px rgba(0, 255, 255, 0.2);
 }
 
-/* Pulse animation */
-@keyframes pulse {
-  0% {
-    box-shadow: 0 0 20px rgba(0, 255, 255, 0.5), inset 0 0 20px rgba(0, 255, 255, 0.2);
+/* Glitch effect */
+@keyframes glitch {
+  0%, 100% {
+    text-shadow: 
+      0 0 10px #00ffff,
+      0 0 20px #00ffff,
+      0 0 30px #00ffff;
+  }
+  25% {
+    text-shadow: 
+      -2px 0 #ff0080,
+      2px 0 #00ff88,
+      0 0 10px #00ffff;
   }
   50% {
-    box-shadow: 0 0 30px rgba(0, 255, 255, 0.8), inset 0 0 30px rgba(0, 255, 255, 0.4);
+    text-shadow: 
+      2px 0 #ff0080,
+      -2px 0 #00ff88,
+      0 0 20px #00ffff;
+  }
+  75% {
+    text-shadow: 
+      0 0 15px #ff0080,
+      0 0 25px #00ff88,
+      0 0 35px #00ffff;
+  }
+}
+
+.glitch {
+  animation: glitch 3s infinite;
+}
+
+/* Enhanced pulse animation */
+@keyframes pulse {
+  0% {
+    box-shadow: 
+      0 0 20px rgba(0, 255, 255, 0.5),
+      0 0 40px rgba(0, 255, 255, 0.3),
+      inset 0 0 20px rgba(0, 255, 255, 0.2);
+  }
+  50% {
+    box-shadow: 
+      0 0 30px rgba(0, 255, 255, 0.8),
+      0 0 60px rgba(0, 255, 255, 0.6),
+      inset 0 0 30px rgba(0, 255, 255, 0.4);
   }
   100% {
-    box-shadow: 0 0 20px rgba(0, 255, 255, 0.5), inset 0 0 20px rgba(0, 255, 255, 0.2);
+    box-shadow: 
+      0 0 20px rgba(0, 255, 255, 0.5),
+      0 0 40px rgba(0, 255, 255, 0.3),
+      inset 0 0 20px rgba(0, 255, 255, 0.2);
   }
 }
 
@@ -61,39 +175,64 @@ body {
   animation: pulse 2s infinite;
 }
 
+/* Breathing glow effect */
+@keyframes breathe {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+}
+
+.breathe {
+  animation: breathe 3s ease-in-out infinite;
+}
+
 /* Override Telegram UI styles */
 .telegram-ui-root {
-  background: #000000 !important;
+  background: transparent !important;
 }
 
 .telegram-ui-section {
-  background: #111111 !important;
-  border: 1px solid #00FFFF !important;
-  box-shadow: 0 0 10px rgba(0, 255, 255, 0.3) !important;
+  background: rgba(10, 10, 15, 0.8) !important;
+  border: 1px solid #00ffff !important;
+  box-shadow: 
+    0 0 10px rgba(0, 255, 255, 0.3),
+    inset 0 0 10px rgba(0, 255, 255, 0.1) !important;
+  backdrop-filter: blur(10px);
 }
 
 .telegram-ui-cell {
   background: transparent !important;
-  color: #00FFFF !important;
+  color: #00ffff !important;
   border-bottom: 1px solid rgba(0, 255, 255, 0.2) !important;
 }
 
 .telegram-ui-title {
-  color: #00FFFF !important;
-  text-shadow: 0 0 10px #00FFFF !important;
+  color: #00ffff !important;
+  text-shadow: 
+    0 0 10px #00ffff,
+    0 0 20px #00ffff !important;
 }
 
 .telegram-ui-button {
-  background: linear-gradient(45deg, #00CCCC, #00FFFF) !important;
+  background: linear-gradient(45deg, #0088ff, #00ffff, #0088ff) !important;
   color: #000000 !important;
   border: none !important;
   font-weight: bold !important;
-  box-shadow: 0 0 20px rgba(0, 255, 255, 0.5) !important;
+  box-shadow: 
+    0 0 20px rgba(0, 255, 255, 0.5),
+    0 0 40px rgba(0, 255, 255, 0.3) !important;
 }
 
 .telegram-ui-button:hover {
-  background: linear-gradient(45deg, #00FFFF, #00CCCC) !important;
-  box-shadow: 0 0 30px rgba(0, 255, 255, 0.7) !important;
+  background: linear-gradient(45deg, #00ffff, #0088ff, #00ffff) !important;
+  box-shadow: 
+    0 0 30px rgba(0, 255, 255, 0.7),
+    0 0 60px rgba(0, 255, 255, 0.5) !important;
 }
 
 /* Scrollbar styling */
@@ -102,15 +241,15 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #111111;
+  background: #0a0a0f;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #00FFFF;
+  background: linear-gradient(45deg, #0088ff, #00ffff);
   border-radius: 4px;
-  box-shadow: 0 0 5px #00FFFF;
+  box-shadow: 0 0 5px #00ffff;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #00CCCC;
+  background: linear-gradient(45deg, #00ffff, #0088ff);
 }

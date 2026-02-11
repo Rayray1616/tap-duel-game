@@ -265,21 +265,21 @@ export function DuelPage() {
   return (
     <div className="min-h-screen bg-black text-cyan-400 p-4">
       <div className="max-w-md mx-auto">
-        <Title className="text-center mb-6 text-cyan-400 font-bold">
+        <Title className="text-center mb-6 text-4xl font-black neon-text glitch">
           ⚔️ DUEL ARENA ⚔️
         </Title>
 
-        <Section className="mb-4">
+        <Section className="mb-4 neon-border">
           <Cell>
             <div className="flex justify-between items-center">
-              <span>Player: {user?.username}</span>
-              <span>Energy: {user?.energy}/100</span>
+              <span className="neon-text">👤 Player: {user?.username}</span>
+              <span className="neon-text">⚡ Energy: {user?.energy}/100</span>
             </div>
           </Cell>
           <Cell>
             <div className="flex justify-between items-center">
-              <span>Score: {user?.score}</span>
-              <span>Level: {user?.level}</span>
+              <span className="neon-text">💎 Score: {user?.score}</span>
+              <span className="neon-text">⭐ Level: {user?.level}</span>
             </div>
           </Cell>
         </Section>
@@ -289,7 +289,7 @@ export function DuelPage() {
             <Button
               onClick={findDuel}
               disabled={searching || (user?.energy || 0) < 20}
-              className="bg-purple-600 hover:bg-purple-500 text-white font-bold py-4 px-8 rounded-lg shadow-lg shadow-purple-500/50 transition-all duration-200 transform hover:scale-105"
+              className="neon-button pulse font-bold py-4 px-8 rounded-lg"
             >
               {searching ? 'SEARCHING...' : 'FIND DUEL (20 Energy)'}
             </Button>
@@ -311,28 +311,30 @@ export function DuelPage() {
               <div>
                 <div className="grid grid-cols-2 gap-4 mb-6">
                   <div className="text-center">
-                    <div className="text-sm text-cyan-300">You</div>
-                    <div className="text-3xl font-bold text-cyan-400">{taps}</div>
+                    <div className="text-sm neon-text mb-2">⚔️ YOU</div>
+                    <div className="text-4xl font-black neon-text glitch">{taps}</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-sm text-cyan-300">Opponent</div>
-                    <div className="text-3xl font-bold text-cyan-400">{opponentTaps}</div>
+                    <div className="text-sm neon-text mb-2">👹 OPPONENT</div>
+                    <div className="text-4xl font-black neon-text glitch">{opponentTaps}</div>
                   </div>
                 </div>
                 
-                <div className="text-center mb-4">
-                  <div className="text-2xl text-cyan-400">Time: {timeLeft}s</div>
+                <div className="text-center mb-6">
+                  <div className="text-3xl neon-text breathe">⚡ TIME: {timeLeft}s ⚡</div>
                 </div>
                 
                 <div className="text-center">
                   <button
                     onClick={handleTap}
-                    className="w-48 h-48 bg-purple-600 hover:bg-purple-500 rounded-full shadow-lg shadow-purple-500/50 transition-all duration-100 transform active:scale-95 text-white text-2xl font-bold"
+                    className="w-64 h-64 rounded-full transition-all duration-100 transform active:scale-95 text-white text-4xl font-black neon-border pulse breathe relative overflow-hidden"
                     style={{
-                      boxShadow: '0 0 30px rgba(147, 51, 234, 0.5), inset 0 0 30px rgba(147, 51, 234, 0.2)',
+                      background: 'radial-gradient(circle, #ff00ff 0%, #8800ff 50%, #440088 100%)',
+                      boxShadow: '0 0 50px #ff00ff, 0 0 100px #ff00ff, 0 0 150px #8800ff, inset 0 0 50px rgba(255, 0, 255, 0.5)',
                     }}
                   >
-                    TAP!
+                    <span className="relative z-10 drop-shadow-2xl">TAP!</span>
+                    <div className="absolute inset-0 rounded-full bg-white opacity-0 animate-ping"></div>
                   </button>
                 </div>
               </div>
@@ -343,7 +345,7 @@ export function DuelPage() {
         <div className="mt-6">
           <Button
             onClick={() => window.location.href = '/'}
-            className="bg-gray-600 hover:bg-gray-500 text-white w-full"
+            className="neon-button pulse font-bold py-3 px-6 rounded-lg w-full"
           >
             🏠 HOME
           </Button>

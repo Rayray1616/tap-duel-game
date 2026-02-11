@@ -8,7 +8,7 @@ type User = Database['public']['Tables']['users']['Row'];
 type Duel = Database['public']['Tables']['duels']['Row'];
 
 export function DuelPage() {
-  const { initDataUnsafe } = useLaunchParams();
+  const { initData } = useLaunchParams();
   const [user, setUser] = useState<User | null>(null);
   const [currentDuel, setCurrentDuel] = useState<Duel | null>(null);
   const [loading, setLoading] = useState(true);
@@ -65,7 +65,7 @@ export function DuelPage() {
   }, [currentDuel, user]);
 
   const initializeUser = async () => {
-    const telegramUser = (initDataUnsafe as any)?.user;
+    const telegramUser = (initData as any)?.user;
     if (!telegramUser?.id) return;
 
     try {

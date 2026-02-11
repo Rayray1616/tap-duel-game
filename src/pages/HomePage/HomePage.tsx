@@ -9,7 +9,7 @@ import type { Database } from '@/lib/supabase';
 type User = Database['public']['Tables']['users']['Row'];
 
 export function HomePage() {
-  const { initDataUnsafe } = useLaunchParams();
+  const { initData } = useLaunchParams();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [gameActive, setGameActive] = useState(false);
@@ -33,7 +33,7 @@ export function HomePage() {
   }, [gameActive, timeLeft]);
 
   const initializeUser = async () => {
-    const telegramUser = (initDataUnsafe as any)?.user;
+    const telegramUser = (initData as any)?.user;
     if (!telegramUser?.id) return;
 
     try {

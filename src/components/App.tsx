@@ -1,15 +1,22 @@
 import { Navigate, Route, Routes, HashRouter } from 'react-router-dom';
 import { useLaunchParams, useMiniApp } from '@tma.js/sdk-react';
 import { AppRoot } from '@telegram-apps/telegram-ui';
+import { useEffect } from 'react';
 
 import { routes } from '@/navigation/routes.tsx';
 import LobbyScreen from '../screens/LobbyScreen';
 import DuelScreen from '../screens/DuelScreen';
+import { useTelegram } from './telegram/useTelegram';
 
 export function App() {
   const lp = useLaunchParams();
   const miniApp = useMiniApp();
   const isDark = miniApp.isDark;
+  const { tg, user, init } = useTelegram();
+
+  useEffect(() => {
+    init();
+  }, []);
 
   return (
     <AppRoot

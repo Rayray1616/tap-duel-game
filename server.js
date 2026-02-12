@@ -286,6 +286,20 @@ function finishDuel(duelId) {
   const [winner, winnerTaps] = entries[0] || [null, 0];
   const [second, secondTaps] = entries[1] || [null, 0];
 
+  // Calculate payout + fee
+  const stake = duel.stakeTon;
+  const feeTon = stake * 0.10;
+  const payoutTon = stake * 0.90;
+
+  const feeNano = Math.floor(feeTon * 1e9);
+  const payoutNano = Math.floor(payoutTon * 1e9);
+
+  console.log("Stake:", stake, "Payout:", payoutTon, "Fee:", feeTon);
+
+  // Store these values on the duel object
+  duel.feeNano = feeNano;
+  duel.payoutNano = payoutNano;
+
   broadcastToDuel(duelId, {
     type: 'result',
     winner,
@@ -298,6 +312,11 @@ function finishDuel(duelId) {
     duelId,
     taps: Object.fromEntries(duel.taps),
     winner,
+    winnerTaps,
+    second,
+    secondTaps,
+    feeNano,
+    payoutNano,
   });
 
   // Keep in memory for a bit or clean up immediately

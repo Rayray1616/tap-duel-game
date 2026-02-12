@@ -7,6 +7,8 @@ import { WebSocketServer } from 'ws';
 import TelegramBot from "node-telegram-bot-api";
 import { TonClient, HttpApi } from "ton";
 import { Address } from "ton-core";
+import { mnemonicToPrivateKey } from "@ton/crypto";
+import { WalletContractV4, internal } from "ton";
 
 const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: false });
 
@@ -24,7 +26,28 @@ const tonClient = new TonClient({
   apiKey: process.env.TONCENTER_API_KEY || undefined
 });
 
-// Helper: get wallet balance
+// Helper: send TON
+async function sendTon(toAddress, amountNano) {
+  const { wallet, keyPair } = await hotWalletPromise;
+
+  const seqno = await tonClient.getWalletSeqno(wallet.address);
+
+  const transfer = wallet.createTransfer({
+    seqno,
+    secretKey: keyPair.secretKey,
+    messages: [
+      internal({
+        to: Address.parse(toAddress),
+        value: amountNano,
+        bounce: false
+      })
+    ]
+  });
+
+  await tonClient.sendExternalMessage(wallet, transfer);
+  return true;
+}
+
 async function getTonBalance(address) {
   try {
     const result = await tonClient.getBalance(Address.parse(address));
@@ -35,11 +58,25 @@ async function getTonBalance(address) {
   }
 }
 
-// Helper: send TON
-async function sendTon(fromWallet, toAddress, amountNano, secretKey) {
-  // Placeholder — will implement in B5
-  console.log("sendTon called:", { fromWallet, toAddress, amountNano });
+async function loadHotWallet() {
+  const mnemonic = process.env.TON_WALLET_MNEMONIC;
+  if (!mnemonic) {
+    console.error("Missing TON_WALLET_MNEMONIC");
+    return null;
+  }
+
+  const words = mnemonic.split(" ");
+  const keyPair = await mnemonicToPrivateKey(words);
+
+  const wallet = WalletContractV4.create({
+    publicKey: keyPair.publicKey,
+    workchain: 0
+  });
+
+  return { wallet, keyPair };
 }
+
+const hotWalletPromise = loadHotWallet();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

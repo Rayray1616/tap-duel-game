@@ -307,7 +307,24 @@ function finishDuel(duelId) {
       return;
     }
 
-    const winnerWallet = duel[winner + "Wallet"]; // e.g. duel.player1Wallet
+    // Wallet safety checks
+    const winnerWallet = duel[winner + "Wallet"];
+
+    if (!winnerWallet) {
+      console.error("No winner wallet found for duel:", duel.id);
+      return;
+    }
+
+    if (typeof winnerWallet !== "string" || !winnerWallet.startsWith("E") && !winnerWallet.startsWith("UQ")) {
+      console.error("Invalid TON wallet address:", winnerWallet);
+      return;
+    }
+
+    if (!duel.stakeTon || duel.stakeTon <= 0) {
+      console.error("Invalid stake amount for duel:", duel.id);
+      return;
+    }
+
     const houseWallet = "UQAmfGJTJlgcQKrUn6t2dPjGpVCX-6OsoTqdMPz7GNB9DnNU";
 
     console.log("TON payout starting...");

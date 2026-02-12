@@ -2,6 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import http from 'http';
+import { WebSocketServer } from 'ws';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -9,11 +11,21 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
+// --- In-memory real-time duel state ---
+const duels = new Map(); // duelId -> { players: Map<playerId, ws>, taps: Map<playerId, number>, state, createdAt }
+
+const DUEL_STATES = {
+  WAITING: 'waiting',
+  COUNTDOWN: 'countdown',
+  ACTIVE: 'active',
+  FINISHED: 'finished',
+};
+
+// --- Express middleware ---
 app.use(cors());
 app.use(express.json());
 
-// Log all incoming requests
+// Log all incoming HTTP requests
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`, {
     headers: req.headers,
@@ -38,16 +50,22 @@ app.post('/webhook', (req, res) => {
     } : null,
   });
 
-  // Immediately send 200 OK to Telegram
+  // Basic /start handler for now
+  const message = req.body.message;
+  if (message && message.text === '/start') {
+    // Later: send deep link / mini app URL here
+    console.log('📲 /start received from', message.from?.id);
+  }
+
   res.status(200).send('OK');
 });
 
 // Health check endpoint
 app.get('/health', (req, res) => {
-  res.status(200).json({ 
-    status: 'healthy', 
+  res.status(200).json({
+    status: 'healthy',
     timestamp: new Date().toISOString(),
-    webhook: '/webhook' 
+    webhook: '/webhook',
   });
 });
 
@@ -59,11 +77,178 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
+// --- HTTP server + WebSocket server ---
+const server = http.createServer(app);
+const wss = new WebSocketServer({ server });
+
+function broadcastToDuel(duelId, payload) {
+  const duel = duels.get(duelId);
+  if (!duel) return;
+  for (const ws of duel.players.values()) {
+    if (ws.readyState === ws.OPEN) {
+      ws.send(JSON.stringify(payload));
+    }
+  }
+}
+
+function startCountdown(duelId) {
+  const duel = duels.get(duelId);
+  if (!duel || duel.state !== DUEL_STATES.WAITING) return;
+
+  duel.state = DUEL_STATES.COUNTDOWN;
+  let counter = 3;
+
+  const interval = setInterval(() => {
+    if (!duels.has(duelId)) {
+      clearInterval(interval);
+      return;
+    }
+
+    if (counter > 0) {
+      broadcastToDuel(duelId, { type: 'countdown', value: counter });
+      counter -= 1;
+    } else {
+      clearInterval(interval);
+      duel.state = DUEL_STATES.ACTIVE;
+      duel.taps = new Map(
+        Array.from(duel.players.keys()).map((playerId) => [playerId, 0]),
+      );
+      broadcastToDuel(duelId, { type: 'start' });
+
+      // Optional: hard limit duration
+      setTimeout(() => finishDuel(duelId), 5000); // 5s duel
+    }
+  }, 1000);
+}
+
+function finishDuel(duelId) {
+  const duel = duels.get(duelId);
+  if (!duel || duel.state !== DUEL_STATES.ACTIVE) return;
+
+  duel.state = DUEL_STATES.FINISHED;
+
+  const entries = Array.from(duel.taps.entries());
+  entries.sort((a, b) => b[1] - a[1]); // desc by taps
+
+  const [winner, winnerTaps] = entries[0] || [null, 0];
+  const [second, secondTaps] = entries[1] || [null, 0];
+
+  broadcastToDuel(duelId, {
+    type: 'result',
+    winner,
+    winnerTaps,
+    second,
+    secondTaps,
+  });
+
+  console.log('🏁 Duel finished', {
+    duelId,
+    taps: Object.fromEntries(duel.taps),
+    winner,
+  });
+
+  // Keep in memory for a bit or clean up immediately
+  setTimeout(() => {
+    duels.delete(duelId);
+  }, 10000);
+}
+
+wss.on('connection', (ws) => {
+  console.log('🔌 WebSocket client connected');
+
+  let currentDuelId = null;
+  let currentPlayerId = null;
+
+  ws.on('message', (data) => {
+    let msg;
+    try {
+      msg = JSON.parse(data.toString());
+    } catch {
+      console.log('⚠️ Invalid JSON from client');
+      return;
+    }
+
+    const { type } = msg;
+
+    if (type === 'join') {
+      const { duelId, playerId } = msg;
+      if (!duelId || !playerId) return;
+
+      currentDuelId = duelId;
+      currentPlayerId = playerId;
+
+      let duel = duels.get(duelId);
+      if (!duel) {
+        duel = {
+          players: new Map(),
+          taps: new Map(),
+          state: DUEL_STATES.WAITING,
+          createdAt: Date.now(),
+        };
+        duels.set(duelId, duel);
+      }
+
+      duel.players.set(playerId, ws);
+
+      console.log('👥 Player joined duel', { duelId, playerId, players: duel.players.size });
+
+      broadcastToDuel(duelId, {
+        type: 'players',
+        players: Array.from(duel.players.keys()),
+        state: duel.state,
+      });
+
+      if (duel.players.size === 2 && duel.state === DUEL_STATES.WAITING) {
+        startCountdown(duelId);
+      }
+    }
+
+    if (type === 'tap') {
+      const { duelId, playerId } = msg;
+      if (!duelId || !playerId) return;
+
+      const duel = duels.get(duelId);
+      if (!duel || duel.state !== DUEL_STATES.ACTIVE) return;
+
+      const current = duel.taps.get(playerId) || 0;
+      const next = current + 1;
+      duel.taps.set(playerId, next);
+
+      broadcastToDuel(duelId, {
+        type: 'tap_update',
+        playerId,
+        taps: next,
+      });
+    }
+  });
+
+  ws.on('close', () => {
+    console.log('🔌 WebSocket client disconnected');
+    if (!currentDuelId || !currentPlayerId) return;
+
+    const duel = duels.get(currentDuelId);
+    if (!duel) return;
+
+    duel.players.delete(currentPlayerId);
+
+    broadcastToDuel(currentDuelId, {
+      type: 'players',
+      players: Array.from(duel.players.keys()),
+      state: duel.state,
+    });
+
+    if (duel.players.size === 0) {
+      duels.delete(currentDuelId);
+    }
+  });
+});
+
 // Start server
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📡 Telegram webhook: POST /webhook`);
   console.log(`🏥 Health check: GET /health`);
+  console.log(`🔌 WebSocket: ws://<host>/ (behind same server)`);
 });
 
 export default app;

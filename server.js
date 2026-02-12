@@ -300,6 +300,29 @@ function finishDuel(duelId) {
   duel.feeNano = feeNano;
   duel.payoutNano = payoutNano;
 
+  // TON payout execution
+  if (duel.payoutNano > 0 && duel.feeNano >= 0) {
+    const winnerWallet = duel[winner + "Wallet"]; // e.g. duel.player1Wallet
+    const houseWallet = "UQAmfGJTJlgcQKrUn6t2dPjGpVCX-6OsoTqdMPz7GNB9DnNU";
+
+    console.log("TON payout starting...");
+    console.log("Winner:", winnerWallet, "Payout:", duel.payoutNano);
+    console.log("House:", houseWallet, "Fee:", duel.feeNano);
+
+    try {
+      // Pay the winner
+      await sendTon(winnerWallet, duel.payoutNano);
+      console.log("Winner payout successful");
+
+      // Send the fee to the house wallet
+      await sendTon(houseWallet, duel.feeNano);
+      console.log("House fee transfer successful");
+
+    } catch (err) {
+      console.error("TON payout error:", err);
+    }
+  }
+
   broadcastToDuel(duelId, {
     type: 'result',
     winner,

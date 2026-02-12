@@ -34,6 +34,23 @@ export default function DuelScreen({ duelId, playerId }: Props) {
         {result.second && (
           <p>Opponent taps: {taps[result.second] || 0}</p>
         )}
+
+        <button
+          onClick={() => {
+            const duelId = "duel_" + Math.random().toString(36).slice(2, 10);
+            const link = `https://t.me/YOUR_BOT_USERNAME?start=${duelId}`;
+            window.Telegram?.WebApp?.openTelegramLink(link);
+          }}
+          style={{
+            marginTop: 20,
+            padding: "12px 24px",
+            fontSize: 18,
+            borderRadius: 8,
+            cursor: "pointer",
+          }}
+        >
+          Challenge a Friend
+        </button>
       </div>
     );
   }

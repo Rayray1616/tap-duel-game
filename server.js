@@ -57,6 +57,34 @@ app.post('/webhook', (req, res) => {
     console.log('📲 /start received from', message.from?.id);
   }
 
+  // Handle deep link duel start
+  if (message && message.text.startsWith("/start duel_")) {
+    const duelId = message.text.replace("/start duel_", "");
+    const chatId = message.chat.id;
+
+    // Note: You'll need to implement sendMessage function or use a Telegram bot library
+    // This is a placeholder for the actual bot API call
+    console.log('🎯 Duel challenge received:', { duelId, chatId, from: message.from });
+    
+    // TODO: Implement actual Telegram bot API call
+    // await sendMessage(chatId, "A friend challenged you to a duel!", {
+    //   reply_markup: {
+    //     inline_keyboard: [
+    //       [
+    //         {
+    //           text: "Join Duel",
+    //           web_app: {
+    //             url: `https://YOUR_DOMAIN/lobby/${duelId}` 
+    //           }
+    //         }
+    //       ]
+    //     ]
+    //   }
+    // });
+
+    return res.status(200).send('OK');
+  }
+
   res.status(200).send('OK');
 });
 

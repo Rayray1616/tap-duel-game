@@ -5,6 +5,8 @@ import { fileURLToPath } from 'url';
 import http from 'http';
 import { WebSocketServer } from 'ws';
 import TelegramBot from "node-telegram-bot-api";
+import { TonClient, HttpApi } from "ton";
+import { Address } from "ton-core";
 
 const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: false });
 
@@ -14,6 +16,29 @@ async function sendMessage(chatId, text, options = {}) {
   } catch (err) {
     console.error("Telegram sendMessage error:", err);
   }
+}
+
+// TON client (mainnet)
+const tonClient = new TonClient({
+  endpoint: "https://toncenter.com/api/v2/jsonRPC",
+  apiKey: process.env.TONCENTER_API_KEY || undefined
+});
+
+// Helper: get wallet balance
+async function getTonBalance(address) {
+  try {
+    const result = await tonClient.getBalance(Address.parse(address));
+    return result; // in nanoTON
+  } catch (err) {
+    console.error("TON balance error:", err);
+    return null;
+  }
+}
+
+// Helper: send TON
+async function sendTon(fromWallet, toAddress, amountNano, secretKey) {
+  // Placeholder — will implement in B5
+  console.log("sendTon called:", { fromWallet, toAddress, amountNano });
 }
 
 const __filename = fileURLToPath(import.meta.url);

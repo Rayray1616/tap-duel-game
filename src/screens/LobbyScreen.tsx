@@ -22,6 +22,7 @@ export default function LobbyScreen({ duelId, playerId, walletAddress }: Props) 
     : null;
 
   const [tonBalance, setTonBalance] = useState(null);
+  const [stakeTon, setStakeTon] = useState("");
 
   useEffect(() => {
     if (!walletAddress) return;
@@ -34,9 +35,9 @@ export default function LobbyScreen({ duelId, playerId, walletAddress }: Props) 
 
   useEffect(() => {
     if (state === 'active') {
-      navigate(`/duel/${duelId}/${playerId}`);
+      navigate(`/duel/${duelId}?stake=${stakeTon}`);
     }
-  }, [state, duelId, playerId, navigate]);
+  }, [state, duelId, playerId, navigate, stakeTon]);
 
   return (
     <div style={{ padding: 20, textAlign: 'center' }}>
@@ -48,6 +49,27 @@ export default function LobbyScreen({ duelId, playerId, walletAddress }: Props) 
       {tonBalance !== null && (
         <div style={{ marginBottom: 12, fontSize: 14, opacity: 0.8 }}>
           Balance: {tonBalance / 1e9} TON
+        </div>
+      )}
+      {walletAddress && (
+        <div style={{ marginBottom: 16 }}>
+          <label style={{ fontSize: 14, opacity: 0.8 }}>Stake (TON):</label>
+          <input
+            type="number"
+            value={stakeTon}
+            onChange={(e) => setStakeTon(e.target.value)}
+            placeholder="0.1"
+            min="0"
+            step="0.01"
+            style={{
+              width: "100%",
+              padding: "10px",
+              fontSize: 16,
+              borderRadius: 8,
+              border: "1px solid #ccc",
+              marginTop: 6
+            }}
+          />
         </div>
       )}
       <h2>Waiting for Opponent…</h2>

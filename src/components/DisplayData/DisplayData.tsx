@@ -1,4 +1,3 @@
-import { isRGB } from '@tma.js/sdk-react';
 import { Cell, Checkbox, Section } from '@telegram-apps/telegram-ui';
 import type { FC, ReactNode } from 'react';
 
@@ -34,7 +33,9 @@ export const DisplayData: FC<DisplayDataProps> = ({ header, rows }) => (
         if ('type' in item) {
           valueNode = <Link to={item.value}>Open</Link>;
         } else if (typeof item.value === 'string') {
-          valueNode = isRGB(item.value)
+          // Simple RGB pattern check
+          const rgbPattern = /^rgb\(\d+,\s*\d+,\s*\d+\)$/;
+          valueNode = rgbPattern.test(item.value)
             ? <RGB color={item.value}/>
             : item.value;
         } else if (typeof item.value === 'boolean') {

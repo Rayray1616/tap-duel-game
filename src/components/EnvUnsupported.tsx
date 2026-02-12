@@ -1,16 +1,10 @@
 import { Placeholder, AppRoot } from '@telegram-apps/telegram-ui';
-import { retrieveLaunchParams, isColorDark, isRGB } from '@tma.js/sdk-react';
 import { useMemo } from 'react';
 
 export function EnvUnsupported() {
   const [platform, isDark] = useMemo(() => {
-    try {
-      const lp = retrieveLaunchParams();
-      const { bg_color: bgColor } = lp.tgWebAppThemeParams;
-      return [lp.tgWebAppPlatform, bgColor && isRGB(bgColor) ? isColorDark(bgColor) : false];
-    } catch {
-      return ['android', false];
-    }
+    // Default fallback values when not in Telegram
+    return ['android', false];
   }, []);
 
   return (

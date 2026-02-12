@@ -1,58 +1,20 @@
 import { type FC, useMemo } from 'react';
 import {
-  initData,
-  type User,
-  useSignal,
+  useInitData,
 } from '@tma.js/sdk-react';
 import { List, Placeholder } from '@telegram-apps/telegram-ui';
 
 import { DisplayData, type DisplayDataRow } from '@/components/DisplayData/DisplayData.tsx';
 import { Page } from '@/components/Page.tsx';
 
-function getUserRows(user: User): DisplayDataRow[] {
-  return Object.entries(user).map(([title, value]) => ({ title, value }));
+function getUserRows(user: any): DisplayDataRow[] {
+  return Object.entries(user).map(([title, value]) => ({ title, value: String(value) }));
 }
 
 export const InitDataPage: FC = () => {
-  const initDataRaw = useSignal(initData.raw);
-  const initDataState = useSignal(initData.state);
+  const initData = useInitData();
 
-  const initDataRows = useMemo<DisplayDataRow[] | undefined>(() => {
-    if (!initDataState || !initDataRaw) {
-      return;
-    }
-    return [
-      { title: 'raw', value: initDataRaw },
-      ...Object.entries(initDataState).reduce<DisplayDataRow[]>((acc, [title, value]) => {
-        if (value instanceof Date) {
-          acc.push({ title, value: value.toISOString() });
-        } else if (!value || typeof value !== 'object') {
-          acc.push({ title, value });
-        }
-        return acc;
-      }, []),
-    ];
-  }, [initDataState, initDataRaw]);
-
-  const userRows = useMemo<DisplayDataRow[] | undefined>(() => {
-    return initDataState && initDataState.user
-      ? getUserRows(initDataState.user)
-      : undefined;
-  }, [initDataState]);
-
-  const receiverRows = useMemo<DisplayDataRow[] | undefined>(() => {
-    return initDataState && initDataState.receiver
-      ? getUserRows(initDataState.receiver)
-      : undefined;
-  }, [initDataState]);
-
-  const chatRows = useMemo<DisplayDataRow[] | undefined>(() => {
-    return !initDataState?.chat
-      ? undefined
-      : Object.entries(initDataState.chat).map(([title, value]) => ({ title, value }));
-  }, [initDataState]);
-
-  if (!initDataRows) {
+  if (!initData) {
     return (
       <Page>
         <Placeholder
@@ -68,6 +30,39 @@ export const InitDataPage: FC = () => {
       </Page>
     );
   }
+
+  const initDataRows = useMemo<DisplayDataRow[]>(() => {
+    return [
+      { title: 'raw', value: JSON.stringify(initData) },
+      ...Object.entries(initData).reduce<DisplayDataRow[]>((acc, [title, value]) => {
+        if (value instanceof Date) {
+          acc.push({ title, value: value.toISOString() });
+        } else if (!value || typeof value !== 'object') {
+          acc.push({ title, value: String(value) });
+        }
+        return acc;
+      }, []),
+    ];
+  }, [initData]);
+
+  const userRows = useMemo<DisplayDataRow[] | undefined>(() => {
+    return initData.user
+      ? getUserRows(initData.user)
+      : undefined;
+  }, [initData]);
+
+  const receiverRows = useMemo<DisplayDataRow[] | undefined>(() => {
+    return initData.receiver
+      ? getUserRows(initData.receiver)
+      : undefined;
+  }, [initData]);
+
+  const chatRows = useMemo<DisplayDataRow[] | undefined>(() => {
+    return !initData.chat
+      ? undefined
+      : Object.entries(initData.chat).map(([title, value]) => ({ title, value: String(value) }));
+  }, [initData]);
+
   return (
     <Page>
       <List>

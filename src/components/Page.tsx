@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { backButton } from '@tma.js/sdk-react';
+import { useBackButton } from '@tma.js/sdk-react';
 import { type PropsWithChildren, useEffect } from 'react';
 
 export function Page({ children, back = true }: PropsWithChildren<{
@@ -9,6 +9,7 @@ export function Page({ children, back = true }: PropsWithChildren<{
   back?: boolean
 }>) {
   const navigate = useNavigate();
+  const backButton = useBackButton();
 
   useEffect(() => {
     if (back) {
@@ -18,7 +19,7 @@ export function Page({ children, back = true }: PropsWithChildren<{
       });
     }
     backButton.hide();
-  }, [back]);
+  }, [back, backButton]);
 
   return <>{children}</>;
 }

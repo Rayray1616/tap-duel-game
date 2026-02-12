@@ -1,4 +1,4 @@
-import { openLink } from '@tma.js/sdk-react';
+import { useUtils } from '@tma.js/sdk-react';
 import { type FC, type MouseEventHandler, useCallback } from 'react';
 import { Link as RouterLink, type LinkProps } from 'react-router-dom';
 
@@ -12,6 +12,7 @@ export const Link: FC<LinkProps> = ({
   to,
   ...rest
 }) => {
+  const utils = useUtils();
   const onClick = useCallback<MouseEventHandler<HTMLAnchorElement>>((e) => {
     propsOnClick?.(e);
 
@@ -32,9 +33,9 @@ export const Link: FC<LinkProps> = ({
 
     if (isExternal) {
       e.preventDefault();
-      openLink(targetUrl.toString());
+      utils.openLink(targetUrl.toString());
     }
-  }, [to, propsOnClick]);
+  }, [to, propsOnClick, utils]);
 
   return (
     <RouterLink

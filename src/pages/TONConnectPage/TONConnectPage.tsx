@@ -1,4 +1,4 @@
-import { openLink } from '@tma.js/sdk-react';
+import { useUtils } from '@tma.js/sdk-react';
 import { TonConnectButton, useTonWallet } from '@tonconnect/ui-react';
 import {
   Avatar,
@@ -22,6 +22,7 @@ const [, e] = bem('ton-connect-page');
 
 export const TONConnectPage: FC = () => {
   const wallet = useTonWallet();
+  const utils = useUtils();
 
   if (!wallet) {
     return (
@@ -68,7 +69,7 @@ export const TONConnectPage: FC = () => {
                 subtitle={wallet.appName}
                 onClick={(e) => {
                   e.preventDefault();
-                  openLink(wallet.aboutUrl);
+                  utils.openLink(wallet.aboutUrl);
                 }}
               >
                 <Title level="3">{wallet.name}</Title>

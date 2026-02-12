@@ -18,6 +18,9 @@ export function App() {
     init();
   }, []);
 
+  // Store Telegram user ID as playerId
+  const playerId = user?.id?.toString() || "local_" + Math.random().toString(36).slice(2);
+
   return (
     <AppRoot
       appearance={isDark ? 'dark' : 'light'}
@@ -26,8 +29,8 @@ export function App() {
       <HashRouter>
         <Routes>
           {routes.map((route) => <Route key={route.path} {...route} />)}
-          <Route path="/lobby/:duelId/:playerId" element={<LobbyScreen />} />
-          <Route path="/duel/:duelId/:playerId" element={<DuelScreen />} />
+          <Route path="/lobby/:duelId" element={<LobbyScreen playerId={playerId} />} />
+          <Route path="/duel/:duelId" element={<DuelScreen playerId={playerId} />} />
           <Route path="*" element={<Navigate to="/"/>}/>
         </Routes>
       </HashRouter>

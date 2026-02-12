@@ -320,8 +320,19 @@ function finishDuel(duelId) {
       return;
     }
 
-    if (!duel.stakeTon || duel.stakeTon <= 0) {
-      console.error("Invalid stake amount for duel:", duel.id);
+    // Stake safety checks
+    if (!duel.stakeTon || typeof duel.stakeTon !== "number" || isNaN(duel.stakeTon)) {
+      console.error("Invalid stakeTon value for duel:", duel.id, duel.stakeTon);
+      return;
+    }
+
+    if (duel.stakeTon <= 0) {
+      console.error("Stake must be greater than zero for duel:", duel.id);
+      return;
+    }
+
+    if (duel.stakeTon > 1000) {
+      console.error("Stake exceeds maximum allowed limit for duel:", duel.id);
       return;
     }
 

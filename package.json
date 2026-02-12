@@ -5,17 +5,9 @@
   "type": "module",
   "homepage": "https://tap-duel-game.railway.app",
   "scripts": {
-    "deploy": "gh-pages -d dist",
     "dev": "vite",
-    "dev:https": "cross-env HTTPS=true vite",
-    "build": "tsc --noEmit && vite build",
-    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "lint:fix": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0 --fix",
-    "preview": "vite preview",
-    "predeploy": "npm run build",
-    "start": "node server.js",
-    "server:dev": "node server.js",
-    "railway:start": "npm run build && npm run start"
+    "build": "vite build",
+    "start": "node server.js"
   },
   "dependencies": {
     "@supabase/realtime-js": "^2.95.3",

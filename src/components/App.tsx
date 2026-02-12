@@ -3,6 +3,8 @@ import { useLaunchParams, useMiniApp } from '@tma.js/sdk-react';
 import { AppRoot } from '@telegram-apps/telegram-ui';
 
 import { routes } from '@/navigation/routes.tsx';
+import LobbyScreen from '../screens/LobbyScreen';
+import DuelScreen from '../screens/DuelScreen';
 
 export function App() {
   const lp = useLaunchParams();
@@ -17,6 +19,8 @@ export function App() {
       <HashRouter>
         <Routes>
           {routes.map((route) => <Route key={route.path} {...route} />)}
+          <Route path="/lobby/:duelId/:playerId" element={<LobbyScreen />} />
+          <Route path="/duel/:duelId/:playerId" element={<DuelScreen />} />
           <Route path="*" element={<Navigate to="/"/>}/>
         </Routes>
       </HashRouter>

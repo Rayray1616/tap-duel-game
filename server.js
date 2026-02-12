@@ -57,6 +57,33 @@ app.post('/webhook', (req, res) => {
     console.log('📲 /start received from', message.from?.id);
   }
 
+  // Handle plain /start (no duel link)
+  if (message && message.text === "/start") {
+    const chatId = message.chat.id;
+
+    // Note: You'll need to implement sendMessage function or use a Telegram bot library
+    // This is a placeholder for the actual bot API call
+    console.log('🎮 Plain /start received:', { chatId, from: message.from });
+    
+    // TODO: Implement actual Telegram bot API call
+    // await sendMessage(chatId, "Welcome to Tap Duel! Ready to battle?", {
+    //   reply_markup: {
+    //     inline_keyboard: [
+    //       [
+    //         {
+    //           text: "Play",
+    //           web_app: {
+    //             url: `https://YOUR_DOMAIN/lobby/new` 
+    //           }
+    //         }
+    //       ]
+    //     ]
+    //   }
+    // });
+
+    return res.status(200).send('OK');
+  }
+
   // Handle deep link duel start
   if (message && message.text.startsWith("/start duel_")) {
     const duelId = message.text.replace("/start duel_", "");

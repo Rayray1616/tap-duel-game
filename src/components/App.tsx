@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { routes } from '@/navigation/routes.tsx';
 import LobbyScreen from '../screens/LobbyScreen';
 import DuelScreen from '../screens/DuelScreen';
+import NewLobbyRedirect from '../screens/NewLobbyRedirect';
 import { useTelegram } from './telegram/useTelegram';
 
 export function App() {
@@ -43,6 +44,7 @@ export function App() {
           {routes.map((route) => <Route key={route.path} {...route} />)}
           <Route path="/lobby/:duelId" element={<LobbyScreen playerId={playerId} />} />
           <Route path="/duel/:duelId" element={<DuelScreen playerId={playerId} />} />
+          <Route path="/lobby/new" element={<NewLobbyRedirect />} />
           <Route path="*" element={<Navigate to="/"/>}/>
         </Routes>
       </HashRouter>

@@ -4,6 +4,17 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import http from 'http';
 import { WebSocketServer } from 'ws';
+import TelegramBot from "node-telegram-bot-api";
+
+const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: false });
+
+async function sendMessage(chatId, text, options = {}) {
+  try {
+    return await bot.sendMessage(chatId, text, options);
+  } catch (err) {
+    console.error("Telegram sendMessage error:", err);
+  }
+}
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -66,20 +77,20 @@ app.post('/webhook', (req, res) => {
     console.log('🎮 Plain /start received:', { chatId, from: message.from });
     
     // TODO: Implement actual Telegram bot API call
-    // await sendMessage(chatId, "Welcome to Tap Duel! Ready to battle?", {
-    //   reply_markup: {
-    //     inline_keyboard: [
-    //       [
-    //         {
-    //           text: "Play",
-    //           web_app: {
-    //             url: `https://YOUR_DOMAIN/lobby/new` 
-    //           }
-    //         }
-    //       ]
-    //     ]
-    //   }
-    // });
+    await sendMessage(chatId, "Welcome to Tap Duel! Ready to battle?", {
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: "Play",
+              web_app: {
+                url: `https://tap-duel-game.railway.app/lobby/new` 
+              }
+            }
+          ]
+        ]
+      }
+    });
 
     return res.status(200).send('OK');
   }
@@ -94,20 +105,20 @@ app.post('/webhook', (req, res) => {
     console.log('🎯 Duel challenge received:', { duelId, chatId, from: message.from });
     
     // TODO: Implement actual Telegram bot API call
-    // await sendMessage(chatId, "A friend challenged you to a duel!", {
-    //   reply_markup: {
-    //     inline_keyboard: [
-    //       [
-    //         {
-    //           text: "Join Duel",
-    //           web_app: {
-    //             url: `https://YOUR_DOMAIN/lobby/${duelId}` 
-    //           }
-    //         }
-    //       ]
-    //     ]
-    //   }
-    // });
+    await sendMessage(chatId, "A friend challenged you to a duel!", {
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: "Join Duel",
+              web_app: {
+                url: `https://tap-duel-game.railway.app/lobby/${duelId}` 
+              }
+            }
+          ]
+        ]
+      }
+    });
 
     return res.status(200).send('OK');
   }

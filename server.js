@@ -302,6 +302,11 @@ function finishDuel(duelId) {
 
   // TON payout execution
   if (duel.payoutNano > 0 && duel.feeNano >= 0) {
+    if (duel.paid) {
+      console.log("Payout already completed for duel:", duel.id);
+      return;
+    }
+
     const winnerWallet = duel[winner + "Wallet"]; // e.g. duel.player1Wallet
     const houseWallet = "UQAmfGJTJlgcQKrUn6t2dPjGpVCX-6OsoTqdMPz7GNB9DnNU";
 
@@ -317,6 +322,8 @@ function finishDuel(duelId) {
       // Send the fee to the house wallet
       await sendTon(houseWallet, duel.feeNano);
       console.log("House fee transfer successful");
+
+      duel.paid = true;
 
     } catch (err) {
       console.error("TON payout error:", err);

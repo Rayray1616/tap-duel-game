@@ -13,7 +13,8 @@
     "lint:fix": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0 --fix",
     "preview": "vite preview",
     "predeploy": "npm run build",
-    "start": "npx serve -s dist -l $PORT --cors",
+    "start": "node server.js",
+    "server:dev": "node server.js",
     "railway:start": "npm run build && npm run start"
   },
   "dependencies": {
@@ -22,7 +23,10 @@
     "@telegram-apps/telegram-ui": "^2.1.9",
     "@tma.js/sdk-react": "^1.2.2",
     "@tonconnect/ui-react": "^2.4.1",
+    "cors": "^2.8.6",
+    "dotenv": "^17.2.4",
     "eruda": "^3.4.3",
+    "express": "^5.2.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.30.1",

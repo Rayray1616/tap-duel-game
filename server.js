@@ -160,6 +160,31 @@ app.get('/health', (req, res) => {
   });
 });
 
+// TON stake validation endpoint
+app.get("/api/ton/validate-stake", async (req, res) => {
+  const { address, stake } = req.query;
+
+  if (!address || !stake) {
+    return res.status(400).json({ valid: false, reason: "Missing parameters" });
+  }
+
+  const stakeNano = Math.floor(parseFloat(stake) * 1e9);
+  if (stakeNano <= 0) {
+    return res.json({ valid: false, reason: "Stake must be greater than zero" });
+  }
+
+  const balance = await getTonBalance(address);
+  if (!balance) {
+    return res.json({ valid: false, reason: "Unable to fetch balance" });
+  }
+
+  if (balance < stakeNano) {
+    return res.json({ valid: false, reason: "Insufficient TON balance" });
+  }
+
+  return res.json({ valid: true });
+});
+
 // Serve static files (React app)
 app.use(express.static(path.join(__dirname, 'dist')));
 

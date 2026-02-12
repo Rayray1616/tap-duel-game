@@ -2,6 +2,7 @@ import { Navigate, Route, Routes, HashRouter } from 'react-router-dom';
 import { useLaunchParams, useMiniApp } from '@tma.js/sdk-react';
 import { AppRoot } from '@telegram-apps/telegram-ui';
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { routes } from '@/navigation/routes.tsx';
 import LobbyScreen from '../screens/LobbyScreen';
@@ -13,6 +14,7 @@ export function App() {
   const miniApp = useMiniApp();
   const isDark = miniApp.isDark;
   const { tg, user, init } = useTelegram();
+  const navigate = useNavigate();
 
   useEffect(() => {
     init();
@@ -20,6 +22,16 @@ export function App() {
 
   // Store Telegram user ID as playerId
   const playerId = user?.id?.toString() || "local_" + Math.random().toString(36).slice(2);
+
+  // Detect Telegram deep link start_param
+  const startParam = tg?.initDataUnsafe?.start_param;
+
+  useEffect(() => {
+    if (startParam && startParam.startsWith("duel_")) {
+      const duelId = startParam.replace("duel_", "");
+      navigate(`/lobby/${duelId}`);
+    }
+  }, [startParam, navigate]);
 
   return (
     <AppRoot

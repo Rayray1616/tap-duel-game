@@ -3,6 +3,7 @@ import { useLaunchParams, useMiniApp } from '@tma.js/sdk-react';
 import { AppRoot } from '@telegram-apps/telegram-ui';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { TonConnectUIProvider, TonConnectButton, useTonConnectUI, useTonAddress } from "@tonconnect/ui-react";
 
 import { routes } from '@/navigation/routes.tsx';
 import LobbyScreen from '../screens/LobbyScreen';
@@ -16,13 +17,15 @@ export function App() {
   const isDark = miniApp.isDark;
   const { tg, user, init } = useTelegram();
   const navigate = useNavigate();
+  const walletAddress = useTonAddress();
 
   useEffect(() => {
     init();
   }, []);
 
-  // Store Telegram user ID as playerId
-  const playerId = user?.id?.toString() || "local_" + Math.random().toString(36).slice(2);
+  // Store Telegram user ID as playerId, fallback to wallet address
+  const basePlayerId = user?.id?.toString() || "local_" + Math.random().toString(36).slice(2);
+  const playerId = walletAddress || basePlayerId;
 
   // Detect Telegram deep link start_param
   const startParam = tg?.initDataUnsafe?.start_param;
@@ -35,19 +38,24 @@ export function App() {
   }, [startParam, navigate]);
 
   return (
-    <AppRoot
-      appearance={isDark ? 'dark' : 'light'}
-      platform={['macos', 'ios'].includes(lp.platform) ? 'ios' : 'base'}
-    >
-      <HashRouter>
-        <Routes>
-          {routes.map((route) => <Route key={route.path} {...route} />)}
-          <Route path="/lobby/:duelId" element={<LobbyScreen playerId={playerId} />} />
-          <Route path="/duel/:duelId" element={<DuelScreen playerId={playerId} />} />
-          <Route path="/lobby/new" element={<NewLobbyRedirect />} />
-          <Route path="*" element={<Navigate to="/"/>}/>
-        </Routes>
-      </HashRouter>
-    </AppRoot>
+    <TonConnectUIProvider manifestUrl="https://tap-duel-game.railway.app/tonconnect-manifest.json">
+      <AppRoot
+        appearance={isDark ? 'dark' : 'light'}
+        platform={['macos', 'ios'].includes(lp.platform) ? 'ios' : 'base'}
+      >
+        <div style={{ padding: 12, display: "flex", justifyContent: "flex-end" }}>
+          <TonConnectButton />
+        </div>
+        <HashRouter>
+          <Routes>
+            {routes.map((route) => <Route key={route.path} {...route} />)}
+            <Route path="/lobby/:duelId" element={<LobbyScreen playerId={playerId} walletAddress={walletAddress} />} />
+            <Route path="/duel/:duelId" element={<DuelScreen playerId={playerId} walletAddress={walletAddress} />} />
+            <Route path="/lobby/new" element={<NewLobbyRedirect />} />
+            <Route path="*" element={<Navigate to="/"/>}/>
+          </Routes>
+        </HashRouter>
+      </AppRoot>
+    </TonConnectUIProvider>
   );
 }

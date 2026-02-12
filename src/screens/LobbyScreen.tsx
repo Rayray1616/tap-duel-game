@@ -5,15 +5,20 @@ import { useDuelClient } from '../realtime/DuelClient';
 interface Props {
   duelId: string;
   playerId: string;
+  walletAddress?: string;
 }
 
-export default function LobbyScreen({ duelId, playerId }: Props) {
+export default function LobbyScreen({ duelId, playerId, walletAddress }: Props) {
   const navigate = useNavigate();
   const {
     state,
     countdown,
     players,
   } = useDuelClient(duelId, playerId);
+
+  const shortWallet = walletAddress
+    ? walletAddress.slice(0, 4) + "..." + walletAddress.slice(-4)
+    : null;
 
   useEffect(() => {
     if (state === 'active') {
@@ -23,6 +28,11 @@ export default function LobbyScreen({ duelId, playerId }: Props) {
 
   return (
     <div style={{ padding: 20, textAlign: 'center' }}>
+      {shortWallet && (
+        <div style={{ marginBottom: 12, fontSize: 14, opacity: 0.8 }}>
+          Wallet: {shortWallet}
+        </div>
+      )}
       <h2>Waiting for Opponent…</h2>
 
       <p>Duel ID: {duelId}</p>

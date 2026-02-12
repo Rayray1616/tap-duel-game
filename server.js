@@ -343,18 +343,39 @@ function finishDuel(duelId) {
     console.log("House:", houseWallet, "Fee:", duel.feeNano);
 
     try {
-      // Pay the winner
-      await sendTon(winnerWallet, duel.payoutNano);
-      console.log("Winner payout successful");
+      console.log("Payout starting for duel:", duel.id);
 
-      // Send the fee to the house wallet
+      // Winner payout
+      await sendTon(winnerWallet, duel.payoutNano);
+      console.log("Winner payout successful:", {
+        duelId: duel.id,
+        wallet: winnerWallet,
+        amount: duel.payoutNano,
+        timestamp: Date.now()
+      });
+
+      // House fee payout (only after winner payout succeeds)
       await sendTon(houseWallet, duel.feeNano);
-      console.log("House fee transfer successful");
+      console.log("House fee transfer successful:", {
+        duelId: duel.id,
+        wallet: houseWallet,
+        amount: duel.feeNano,
+        timestamp: Date.now()
+      });
 
       duel.paid = true;
 
     } catch (err) {
-      console.error("TON payout error:", err);
+      console.error("TON payout error:", {
+        duelId: duel.id,
+        winnerWallet,
+        payout: duel.payoutNano,
+        fee: duel.feeNano,
+        error: err.message,
+        timestamp: Date.now()
+      });
+
+      return; // Do NOT mark duel as paid
     }
   }
 

@@ -40,6 +40,16 @@ async function updatePlayerStats(winnerWallet, loserWallet, amountNanoTon) {
   }
 }
 
+// Environment variable validation
+const requiredEnvVars = ['BOT_TOKEN', 'SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY'];
+const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
+
+if (missingVars.length > 0) {
+  console.error('❌ Missing required environment variables:', missingVars);
+  console.error('Please set these variables in Railway environment settings');
+  process.exit(1);
+}
+
 const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: false });
 
 async function sendMessage(chatId, text, options = {}) {
@@ -528,7 +538,7 @@ wss.on('connection', (ws) => {
 });
 
 // Start server
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📡 Telegram webhook: POST /webhook`);
   console.log(`🏥 Health check: GET /health`);

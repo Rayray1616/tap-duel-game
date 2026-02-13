@@ -16,6 +16,7 @@
     "@tma.js/sdk-react": "^1.2.2",
     "@ton/crypto": "^3.3.0",
     "@tonconnect/ui-react": "^2.4.1",
+    "@twa-dev/sdk": "^8.0.2",
     "cors": "^2.8.6",
     "dotenv": "^17.2.4",
     "eruda": "^3.4.3",

@@ -20,10 +20,6 @@ try {
   // Read Telegram WebApp if available
   const tg = (window as any).Telegram?.WebApp;
 
-  // Initialize TMA SDK
-  const { miniApp } = await import('@tma.js/sdk-react');
-  await miniApp.ready();
-
   // Determine platform and debug mode
   const platform = tg?.platform || 'unknown';
   const debug = import.meta.env.DEV;

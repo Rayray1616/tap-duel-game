@@ -9,7 +9,7 @@ import { routes } from '@/navigation/routes.tsx';
 import LobbyScreen from '../screens/LobbyScreen';
 import DuelScreen from '../screens/DuelScreen';
 import NewLobbyRedirect from '../screens/NewLobbyRedirect';
-import { useTelegram } from './telegram/useTelegram';
+import { useTelegram } from '../telegram/useTelegram';
 
 export function App() {
   const lp = useLaunchParams();

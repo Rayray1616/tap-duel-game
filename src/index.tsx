@@ -1,3 +1,7 @@
+// Initialize Telegram WebApp - FIRST executable code
+import WebApp from '@twa-dev/sdk';
+WebApp.ready();
+
 // Include Telegram UI styles first to allow our code override the package CSS.
 import '@telegram-apps/telegram-ui/dist/styles.css';
 
@@ -10,36 +14,39 @@ import { init } from '@/init.ts';
 
 import './index.css';
 
-// Mock the environment in case, we are outside Telegram.
-// Note: TMA SDK mocking removed for compatibility
-
 const root = ReactDOM.createRoot(document.getElementById('root')!);
 
 try {
-  // Fallback launch params for development
-  const launchParams = {
-    tgWebAppPlatform: 'tdesktop',
-    tgWebAppVersion: '8.4',
-    tgWebAppStartParam: '',
-  };
-  
-  const { tgWebAppPlatform: platform } = launchParams;
-  const debug = (launchParams.tgWebAppStartParam || '').includes('debug')
-    || import.meta.env.DEV;
+  // Read Telegram WebApp if available
+  const tg = (window as any).Telegram?.WebApp;
 
-  // Configure all application dependencies.
+  // Initialize TMA SDK
+  const { miniApp } = await import('@tma.js/sdk-react');
+  await miniApp.ready();
+
+  // Determine platform and debug mode
+  const platform = tg?.platform || 'unknown';
+  const debug = import.meta.env.DEV;
+
+  // Initialize Telegram WebApp if present
+  if (tg) {
+    tg.ready();
+  }
+
+  // Configure all application dependencies
   await init({
     debug,
     eruda: debug && ['ios', 'android'].includes(platform),
     mockForMacOS: platform === 'macos',
-  })
-    .then(() => {
-      root.render(
-        <StrictMode>
-          <Root/>
-        </StrictMode>,
-      );
-    });
+  });
+
+  // Render the app
+  root.render(
+    <StrictMode>
+      <Root />
+    </StrictMode>,
+  );
+
 } catch (e) {
-  root.render(<EnvUnsupported/>);
+  root.render(<EnvUnsupported />);
 }

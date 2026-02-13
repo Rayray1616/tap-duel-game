@@ -139,7 +139,7 @@ app.use((req, res, next) => {
 });
 
 // Telegram Webhook Route
-app.post('/webhook', (req, res) => {
+app.post('/webhook', async (req, res) => {
   console.log('🤖 Telegram Webhook Received:', {
     update_id: req.body.update_id,
     message: req.body.message ? {
@@ -169,14 +169,14 @@ app.post('/webhook', (req, res) => {
     console.log('🎮 Plain /start received:', { chatId, from: message.from });
     
     // TODO: Implement actual Telegram bot API call
-    await sendMessage(chatId, "Welcome to Tap Duel! Ready to battle?", {
+    await sendMessage(chatId, "Welcome to Tap Duel! Challenge your friends to epic tapping battles!", {
       reply_markup: {
         inline_keyboard: [
           [
             {
-              text: "Play",
+              text: "Play Tap Duel",
               web_app: {
-                url: `https://tap-duel-game.railway.app/lobby/new` 
+                url: "https://tap-duel-game-production.up.railway.app/?v=2"
               }
             }
           ]
@@ -204,7 +204,7 @@ app.post('/webhook', (req, res) => {
             {
               text: "Join Duel",
               web_app: {
-                url: `https://tap-duel-game.railway.app/lobby/${duelId}` 
+                url: `https://tap-duel-game-production.up.railway.app/lobby/${duelId}?v=2`
               }
             }
           ]

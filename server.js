@@ -153,22 +153,12 @@ app.post('/webhook', async (req, res) => {
     } : null,
   });
 
-  // Basic /start handler for now
+  // Handle /start command
   const message = req.body.message;
   if (message && message.text === '/start') {
-    // Later: send deep link / mini app URL here
-    console.log('📲 /start received from', message.from?.id);
-  }
-
-  // Handle plain /start (no duel link)
-  if (message && message.text === "/start") {
     const chatId = message.chat.id;
-
-    // Note: You'll need to implement sendMessage function or use a Telegram bot library
-    // This is a placeholder for the actual bot API call
-    console.log('🎮 Plain /start received:', { chatId, from: message.from });
+    console.log('📲 /start received from', message.from?.id);
     
-    // TODO: Implement actual Telegram bot API call
     await sendMessage(chatId, "Welcome to Tap Duel! Challenge your friends to epic tapping battles!", {
       reply_markup: {
         inline_keyboard: [

@@ -1,0 +1,1 @@
+{"buildSteps": [{"name": "install", "command": "npm install"}, {"name": "build", "command": "npm run build"}], "deploySteps": [{"name": "start", "command": "npm run preview"}]}

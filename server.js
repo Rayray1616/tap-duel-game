@@ -9,6 +9,36 @@ import { TonClient, HttpApi } from "ton";
 import { Address } from "ton-core";
 import { mnemonicToPrivateKey } from "@ton/crypto";
 import { WalletContractV4, internal } from "ton";
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);
+
+async function updatePlayerStats(winnerWallet, loserWallet, amountNanoTon) {
+  try {
+    await supabase
+      .from('player_stats')
+      .upsert({
+        wallet_address: winnerWallet,
+        wins: 1,
+        ton_won: amountNanoTon
+      }, { onConflict: 'wallet_address' });
+
+    await supabase
+      .from('player_stats')
+      .upsert({
+        wallet_address: loserWallet,
+        losses: 1,
+        ton_lost: amountNanoTon
+      }, { onConflict: 'wallet_address' });
+
+    console.log("📊 Stats updated:", { winnerWallet, loserWallet });
+  } catch (err) {
+    console.error("❌ Supabase stats update error:", err);
+  }
+}
 
 const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: false });
 
@@ -364,6 +394,19 @@ function finishDuel(duelId) {
       });
 
       duel.paid = true;
+// --- Supabase stats update ---
+try {
+  const winnerWallet = duel[winner + "Wallet"];
+  const loserWallet = duel[second + "Wallet"];
+
+  if (winnerWallet && loserWallet) {
+    await updatePlayerStats(winnerWallet, loserWallet, duel.payoutNano);
+  } else {
+    console.error("Missing winner or loser wallet for stats update");
+  }
+} catch (err) {
+  console.error("Stats update failed:", err);
+}
 
     } catch (err) {
       console.error("TON payout error:", {

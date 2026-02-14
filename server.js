@@ -11,14 +11,23 @@ import { mnemonicToPrivateKey } from "@ton/crypto";
 import { WalletContractV4, internal } from "ton";
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
+// Supabase client will be initialized after environment variables are available
+let supabase = null;
+
+function initializeSupabase() {
+  if (!supabase) {
+    supabase = createClient(
+      process.env.SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY
+    );
+  }
+  return supabase;
+}
 
 async function updatePlayerStats(winnerWallet, loserWallet, amountNanoTon) {
   try {
-    await supabase
+    const client = initializeSupabase();
+    await client
       .from('player_stats')
       .upsert({
         wallet_address: winnerWallet,
@@ -26,7 +35,7 @@ async function updatePlayerStats(winnerWallet, loserWallet, amountNanoTon) {
         ton_won: amountNanoTon
       }, { onConflict: 'wallet_address' });
 
-    await supabase
+    await client
       .from('player_stats')
       .upsert({
         wallet_address: loserWallet,
@@ -49,6 +58,9 @@ if (missingVars.length > 0) {
   console.error('Please set these variables in Railway environment settings');
   process.exit(1);
 }
+
+// Initialize Supabase client now that environment variables are available
+initializeSupabase();
 
 const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: false });
 

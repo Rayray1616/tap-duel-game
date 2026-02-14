@@ -304,7 +304,7 @@ function startCountdown(duelId) {
   }, 1000);
 }
 
-function finishDuel(duelId) {
+async function finishDuel(duelId) {
   const duel = duels.get(duelId);
   if (!duel || duel.state !== DUEL_STATES.ACTIVE) return;
 

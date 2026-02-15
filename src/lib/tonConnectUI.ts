@@ -1,5 +1,5 @@
-import { TonConnect } from "@tonconnect/sdk";
+import { TonConnectUI } from "@tonconnect/ui";
 
-export const tonConnect = new TonConnect({
+export const tonConnectUI = new TonConnectUI({
   manifestUrl: "https://tap-duel-game-production.up.railway.app/tonconnect-manifest.json"
 });

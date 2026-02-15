@@ -1,14 +1,14 @@
 import React from 'react';
-import { useTonConnect } from './TonConnectContext';
+import { useTonConnectUI } from './TonConnectUIContext';
 
 export function TonConnectButton({ className }: { className?: string }) {
-  const tonConnect = useTonConnect();
+  const tonConnectUI = useTonConnectUI();
 
   const handleConnect = () => {
-    if (tonConnect.connected) {
-      tonConnect.disconnect();
+    if (tonConnectUI.connected) {
+      tonConnectUI.disconnect();
     } else {
-      tonConnect.connect([]);
+      tonConnectUI.openModal();
     }
   };
 
@@ -19,14 +19,14 @@ export function TonConnectButton({ className }: { className?: string }) {
       style={{
         padding: '8px 16px',
         borderRadius: '8px',
-        backgroundColor: tonConnect.connected ? '#ff4444' : '#0088cc',
+        backgroundColor: tonConnectUI.connected ? '#ff4444' : '#0088cc',
         color: 'white',
         border: 'none',
         cursor: 'pointer',
         fontSize: '14px'
       }}
     >
-      {tonConnect.connected ? 'Disconnect' : 'Connect Wallet'}
+      {tonConnectUI.connected ? 'Disconnect' : 'Connect Wallet'}
     </button>
   );
 }

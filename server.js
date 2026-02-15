@@ -4,7 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import http from 'http';
 import { WebSocketServer } from 'ws';
-import TelegramBot from "node-telegram-bot-api";
+import { Telegraf } from 'telegraf';
 import { TonClient, HttpApi } from "ton";
 import { Address } from "ton-core";
 import { mnemonicToPrivateKey } from "@ton/crypto";
@@ -62,15 +62,26 @@ if (missingVars.length > 0) {
 // Initialize Supabase client now that environment variables are available
 initializeSupabase();
 
-const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: false });
+// Initialize Telegraf bot
+const bot = new Telegraf(process.env.BOT_TOKEN);
 
-async function sendMessage(chatId, text, options = {}) {
-  try {
-    return await bot.sendMessage(chatId, text, options);
-  } catch (err) {
-    console.error("Telegram sendMessage error:", err);
-  }
-}
+// Handle /start command
+bot.command("start", async (ctx) => {
+  await ctx.reply("Tap Duel Arena", {
+    reply_markup: {
+      inline_keyboard: [
+        [
+          {
+            text: "Play",
+            web_app: {
+              url: "https://tap-duel-game-production.up.railway.app"
+            }
+          }
+        ]
+      ]
+    }
+  });
+});
 
 // TON client (mainnet)
 const tonClient = new TonClient({
@@ -160,75 +171,8 @@ app.use((req, res, next) => {
   next();
 });
 
-// Telegram Webhook Route
-app.post('/webhook', async (req, res) => {
-  console.log('🤖 Telegram Webhook Received:', {
-    update_id: req.body.update_id,
-    message: req.body.message ? {
-      from: req.body.message.from,
-      chat: req.body.message.chat,
-      text: req.body.message.text,
-    } : null,
-    callback_query: req.body.callback_query ? {
-      from: req.body.callback_query.from,
-      data: req.body.callback_query.data,
-    } : null,
-  });
-
-  // Handle /start command
-  const message = req.body.message;
-  if (message && message.text === '/start') {
-    const chatId = message.chat.id;
-    console.log('📲 /start received from', message.from?.id);
-    
-    await sendMessage(chatId, "Tap Duel Arena", {
-      reply_markup: {
-        inline_keyboard: [
-          [
-            {
-              text: "Play",
-              web_app: {
-                url: "https://tap-duel-game-production.up.railway.app"
-              }
-            }
-          ]
-        ]
-      }
-    });
-
-    return res.status(200).send('OK');
-  }
-
-  // Handle deep link duel start
-  if (message && message.text.startsWith("/start duel_")) {
-    const duelId = message.text.replace("/start duel_", "");
-    const chatId = message.chat.id;
-
-    // Note: You'll need to implement sendMessage function or use a Telegram bot library
-    // This is a placeholder for the actual bot API call
-    console.log('🎯 Duel challenge received:', { duelId, chatId, from: message.from });
-    
-    // TODO: Implement actual Telegram bot API call
-    await sendMessage(chatId, "A friend challenged you to a duel!", {
-      reply_markup: {
-        inline_keyboard: [
-          [
-            {
-              text: "Join Duel",
-              web_app: {
-                url: `https://tap-duel-game-production.up.railway.app/lobby/${duelId}?v=2`
-              }
-            }
-          ]
-        ]
-      }
-    });
-
-    return res.status(200).send('OK');
-  }
-
-  res.status(200).send('OK');
-});
+// Telegraf webhook endpoint
+app.use(bot.webhook('/webhook'));
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -548,6 +492,9 @@ wss.on('connection', (ws) => {
     }
   });
 });
+
+// Launch bot
+bot.launch();
 
 // Start server
 server.listen(PORT, '0.0.0.0', () => {

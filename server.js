@@ -179,9 +179,8 @@ app.get("/webhook", (req, res) => res.status(200).send("OK"));
 
 // Telegraf webhook endpoint
 async function setupWebhook() {
-  await bot.telegram.setWebhook(
-    process.env.WEBHOOK_DOMAIN + "/webhook"
-  );
+  const webhookUrl = `${process.env.WEBHOOK_DOMAIN.replace(/\s+/g, "")}/webhook`;
+  await bot.telegram.setWebhook(webhookUrl);
 }
 setupWebhook();
 

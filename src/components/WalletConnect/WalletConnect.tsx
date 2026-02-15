@@ -1,22 +1,22 @@
 import { Button, Cell, Section } from '@telegram-apps/telegram-ui';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { useTonConnectUI } from '../TonConnectUIContext';
+import { useTonMiniApp } from '../TonMiniAppContext';
 
 export function WalletConnect() {
-  const tonConnectUI = useTonConnectUI();
+  const tonConnect = useTonMiniApp();
   const [balance, setBalance] = useState<string | null>(null);
 
   useEffect(() => {
-    if (tonConnectUI.wallet?.account.address) {
+    if (tonConnect.account?.address) {
       fetchBalance();
-      saveWalletAddress(tonConnectUI.wallet.account.address);
+      saveWalletAddress(tonConnect.account.address);
     }
-  }, [tonConnectUI.wallet]);
+  }, [tonConnect.account]);
 
   const fetchBalance = async () => {
     try {
-      const response = await fetch(`https://toncenter.com/api/v3/account?address=${tonConnectUI.wallet.account.address}`);
+      const response = await fetch(`https://toncenter.com/api/v3/account?address=${tonConnect.account.address}`);
       const data = await response.json();
       setBalance(data.balance ? (parseInt(data.balance) / 1e9).toFixed(2) : null);
     } catch (error) {
@@ -39,11 +39,11 @@ export function WalletConnect() {
   };
 
   const handleConnect = () => {
-    tonConnectUI.openModal();
+    tonConnect.connect();
   };
 
   const handleDisconnect = () => {
-    tonConnectUI.disconnect();
+    tonConnect.disconnect();
     setBalance(null);
   };
 
@@ -54,11 +54,11 @@ export function WalletConnect() {
   return (
     <Section>
       <Cell>
-        {tonConnectUI.connected ? (
+        {tonConnect.connected ? (
           <div className="flex justify-between items-center">
             <div>
               <div className="text-cyan-400 font-semibold">
-                Wallet: {formatAddress(tonConnectUI.wallet.account.address)}
+                Wallet: {formatAddress(tonConnect.account.address)}
               </div>
               {balance && (
                 <div className="text-cyan-300 text-sm">

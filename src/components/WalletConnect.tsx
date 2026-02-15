@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useTonConnectUI } from './TonConnectUIContext';
+import { useTonMiniApp } from './TonMiniAppContext';
 import { supabase } from '../lib/supabase';
 
 export function WalletConnect() {
-  const tonConnectUI = useTonConnectUI();
+  const tonConnect = useTonMiniApp();
   const [telegramUser, setTelegramUser] = useState<any>(null);
 
   useEffect(() => {
@@ -19,7 +19,7 @@ export function WalletConnect() {
 
   useEffect(() => {
     // Save wallet address to Supabase when connected
-    if (tonConnectUI.wallet?.account.address && telegramUser) {
+    if (tonConnect.account?.address && telegramUser) {
       const saveWalletAddress = async () => {
         try {
           // Find user by telegram_id
@@ -33,7 +33,7 @@ export function WalletConnect() {
             // Update ton_address
             await supabase
               .from('users')
-              .update({ ton_address: tonConnectUI.wallet.account.address })
+              .update({ ton_address: tonConnect.account.address })
               .eq('id', user.id);
           }
         } catch (error) {
@@ -42,7 +42,7 @@ export function WalletConnect() {
       };
       saveWalletAddress();
     }
-  }, [tonConnectUI.wallet, telegramUser]);
+  }, [tonConnect.account, telegramUser]);
 
   const formatAddress = (address: string) => {
     return `${address.slice(0, 4)}...${address.slice(-4)}`;
@@ -50,13 +50,13 @@ export function WalletConnect() {
 
   return (
     <div className="wallet-connect">
-      {tonConnectUI.connected ? (
+      {tonConnect.connected ? (
         <div className="neon-text">
           <div className="text-sm mb-2">🔗 Wallet Connected</div>
-          <div className="font-bold">{formatAddress(tonConnectUI.wallet.account.address)}</div>
+          <div className="font-bold">{formatAddress(tonConnect.account.address)}</div>
           <button 
             className="neon-button pulse mt-2"
-            onClick={() => tonConnectUI.disconnect()}
+            onClick={() => tonConnect.disconnect()}
           >
             Disconnect
           </button>
@@ -64,7 +64,7 @@ export function WalletConnect() {
       ) : (
         <button 
           className="neon-button pulse"
-          onClick={() => tonConnectUI.openModal()}
+          onClick={() => tonConnect.connect()}
         >
           Connect Wallet
         </button>

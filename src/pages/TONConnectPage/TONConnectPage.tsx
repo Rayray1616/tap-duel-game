@@ -1,5 +1,5 @@
 import { useUtils } from '@tma.js/sdk-react';
-import { useTonConnectUI } from '@/components/TonConnectUIContext';
+import { useTonMiniApp } from '@/components/TonMiniAppContext';
 import {
   Cell,
   List,
@@ -18,66 +18,62 @@ import './TONConnectPage.css';
 const [, e] = bem('ton-connect-page');
 
 export const TONConnectPage: FC = () => {
-  const tonConnectUI = useTonConnectUI();
+  const tonConnect = useTonMiniApp();
   const utils = useUtils();
 
   return (
     <Page>
       <List>
         <Placeholder
-          className={e('placeholder')}
           header="TON Connect"
           description={
-            tonConnectUI.connected
+            tonConnect.connected
               ? 'You are already connected'
               : 'To display the data related to the TON Connect, it is required to connect your wallet'
           }
           action={
-            tonConnectUI.connected ? (
+            tonConnect.connected ? (
               <button 
                 className={e('button-connected')}
-                onClick={() => tonConnectUI.disconnect()}
+                onClick={() => tonConnect.disconnect()}
               >
                 Disconnect
               </button>
             ) : (
               <button 
                 className={e('button')}
-                onClick={() => tonConnectUI.openModal()}
+                onClick={() => tonConnect.connect()}
               >
                 Connect Wallet
               </button>
             )
           }
         >
-          <Avatar
-            size={96}
-            src={
-              tonConnectUI.connected
-                ? tonConnectUI.wallet.imageUrl
-                : 'https://avatars.githubusercontent.com/u'
-            }
-          />
+          <div
+            style={{
+              width: 96,
+              height: 96,
+              borderRadius: '50%',
+              backgroundColor: tonConnect.connected ? '#0088cc' : '#ccc',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white',
+              fontSize: '24px'
+            }}
+          >
+            {tonConnect.connected ? '✓' : '?'}
+          </div>
         </Placeholder>
       </List>
 
-      {tonConnectUI.connected && (
+      {tonConnect.connected && (
         <Section header="Wallet">
-          <Cell
-            subtitle={tonConnectUI.wallet.name}
-            after={<Navigation>About wallet</Navigation>}
-            onClick={(e) => {
-              e.preventDefault();
-              utils.openLink(tonConnectUI.wallet.aboutUrl);
-            }}
-          >
-            <Title level="3">{tonConnectUI.wallet.name}</Title>
-          </Cell>
           <Cell subtitle="Connection status">
             Connected
           </Cell>
           <Cell subtitle="Wallet address">
-            {tonConnectUI.wallet.account.address}
+            {tonConnect.account.address}
           </Cell>
         </Section>
       )}

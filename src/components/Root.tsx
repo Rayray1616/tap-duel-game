@@ -1,4 +1,4 @@
-import { TonConnectUIProvider } from './TonConnectUIContext';
+import { TonMiniAppProvider } from './TonMiniAppContext';
 
 import { App } from '@/components/App.tsx';
 import { ErrorBoundary } from '@/components/ErrorBoundary.tsx';
@@ -23,9 +23,9 @@ function ErrorBoundaryError({ error }: { error: unknown }) {
 export function Root() {
   return (
     <ErrorBoundary fallback={ErrorBoundaryError}>
-      <TonConnectUIProvider>
+      <TonMiniAppProvider>
         <App/>
-      </TonConnectUIProvider>
+      </TonMiniAppProvider>
     </ErrorBoundary>
   );
 }

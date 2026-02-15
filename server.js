@@ -221,6 +221,9 @@ app.get("/api/ton/validate-stake", async (req, res) => {
 // Serve static files (React app)
 app.use(express.static(path.join(__dirname, 'dist')));
 
+// Explicit static serving for assets folder
+app.use('/assets', express.static(path.join(__dirname, 'dist/assets')));
+
 // Handle React routing
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));

@@ -20,7 +20,6 @@ import { StrictMode } from 'react';
 import { Root } from '@/components/Root.tsx';
 import { EnvUnsupported } from '@/components/EnvUnsupported.tsx';
 import { init } from '@/init.ts';
-import { ensureTonConnectInitialized } from '@/lib/tonConnect';
 
 import './index.css';
 
@@ -56,19 +55,15 @@ document.addEventListener("DOMContentLoaded", async () => {
       mockForMacOS: platform === 'macos',
     });
 
-    console.log("Step 5: Initializing TON Connect");
-    // Initialize TON Connect after Telegram WebApp is ready
-    await ensureTonConnectInitialized();
-
-    console.log("Step 6: Rendering React app");
-    // Render the app - TON Connect UI will use the initialized instance
+    console.log("Step 5: Rendering React app");
+    // Render the app - TON Connect is already initialized via direct export
     root.render(
       <StrictMode>
         <Root />
       </StrictMode>,
     );
 
-    console.log("Step 7: App initialization complete");
+    console.log("Step 6: App initialization complete");
 
   } catch (e) {
     console.error("App initialization failed:", e);

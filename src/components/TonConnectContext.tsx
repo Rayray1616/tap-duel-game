@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { tonConnect } from '@/lib/tonConnect';
 import { TonConnect } from '@tonconnect/sdk';
-import { getTonConnect } from '@/lib/tonConnect';
 
 interface TonConnectContextType {
-  tonConnect: TonConnect | null;
+  tonConnect: TonConnect;
   isConnected: boolean;
   wallet: any;
   connect: () => Promise<void>;
@@ -13,37 +13,28 @@ interface TonConnectContextType {
 const TonConnectContext = createContext<TonConnectContextType | null>(null);
 
 export function TonConnectProvider({ children }: { children: React.ReactNode }) {
-  const [tonConnect, setTonConnect] = useState<TonConnect | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [wallet, setWallet] = useState<any>(null);
 
   useEffect(() => {
-    const tc = getTonConnect();
-    if (tc) {
-      setTonConnect(tc);
-      setIsConnected(tc.connected);
-      setWallet(tc.wallet);
-      
-      // Listen for connection changes
-      const unsubscribe = tc.onStatusChange((wallet: any) => {
-        setIsConnected(!!wallet);
-        setWallet(wallet);
-      });
-      
-      return unsubscribe;
-    }
+    setIsConnected(tonConnect.connected);
+    setWallet(tonConnect.wallet);
+    
+    // Listen for connection changes
+    const unsubscribe = tonConnect.onStatusChange((wallet: any) => {
+      setIsConnected(!!wallet);
+      setWallet(wallet);
+    });
+    
+    return unsubscribe;
   }, []);
 
   const connect = async () => {
-    if (tonConnect) {
-      await tonConnect.connect();
-    }
+    await tonConnect.connect([]);
   };
 
   const disconnect = async () => {
-    if (tonConnect) {
-      await tonConnect.disconnect();
-    }
+    await tonConnect.disconnect();
   };
 
   return (

@@ -38,24 +38,22 @@ export function App() {
   }, [startParam, navigate]);
 
   return (
-    <TonConnectUIProvider manifestUrl="https://tap-duel-game.railway.app/tonconnect-manifest.json">
-      <AppRoot
-        appearance={isDark ? 'dark' : 'light'}
-        platform={['macos', 'ios'].includes(lp.platform) ? 'ios' : 'base'}
-      >
-        <div style={{ padding: 12, display: "flex", justifyContent: "flex-end" }}>
-          <TonConnectButton />
-        </div>
-        <HashRouter>
-          <Routes>
-            {routes.map((route) => <Route key={route.path} {...route} />)}
-            <Route path="/lobby/:duelId" element={<LobbyScreen playerId={playerId} walletAddress={walletAddress} />} />
-            <Route path="/duel/:duelId" element={<DuelScreen playerId={playerId} walletAddress={walletAddress} />} />
-            <Route path="/lobby/new" element={<NewLobbyRedirect />} />
-            <Route path="*" element={<Navigate to="/"/>}/>
-          </Routes>
-        </HashRouter>
-      </AppRoot>
-    </TonConnectUIProvider>
+    <AppRoot
+      appearance={isDark ? 'dark' : 'light'}
+      platform={['macos', 'ios'].includes(lp.platform) ? 'ios' : 'base'}
+    >
+      <div style={{ padding: 12, display: "flex", justifyContent: "flex-end" }}>
+        <TonConnectButton />
+      </div>
+      <HashRouter>
+        <Routes>
+          {routes.map((route) => <Route key={route.path} {...route} />)}
+          <Route path="/lobby/:duelId" element={<LobbyScreen playerId={playerId} walletAddress={walletAddress} />} />
+          <Route path="/duel/:duelId" element={<DuelScreen playerId={playerId} walletAddress={walletAddress} />} />
+          <Route path="/lobby/new" element={<NewLobbyRedirect />} />
+          <Route path="*" element={<Navigate to="/"/>}/>
+        </Routes>
+      </HashRouter>
+    </AppRoot>
   );
 }

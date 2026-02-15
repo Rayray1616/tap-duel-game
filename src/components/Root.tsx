@@ -1,4 +1,4 @@
-import { TonConnectUIProvider } from '@tonconnect/ui-react';
+import { TonConnectProvider } from './TonConnectProvider';
 
 import { App } from '@/components/App.tsx';
 import { ErrorBoundary } from '@/components/ErrorBoundary.tsx';
@@ -23,14 +23,9 @@ function ErrorBoundaryError({ error }: { error: unknown }) {
 export function Root() {
   return (
     <ErrorBoundary fallback={ErrorBoundaryError}>
-      <TonConnectUIProvider
-        manifestUrl="https://tap-duel-game-production.up.railway.app/tonconnect-manifest.json"
-        actionsConfiguration={{
-          twaReturnUrl: 'https://t.me/tap_duel_bot'
-        }}
-      >
+      <TonConnectProvider>
         <App/>
-      </TonConnectUIProvider>
+      </TonConnectProvider>
     </ErrorBoundary>
   );
 }

@@ -181,14 +181,14 @@ app.post('/webhook', async (req, res) => {
     const chatId = message.chat.id;
     console.log('📲 /start received from', message.from?.id);
     
-    await sendMessage(chatId, "Welcome to Tap Duel! Challenge your friends to epic tapping battles!", {
+    await sendMessage(chatId, "Tap Duel Arena", {
       reply_markup: {
         inline_keyboard: [
           [
             {
-              text: "Play Tap Duel",
+              text: "Play",
               web_app: {
-                url: "https://tap-duel-game-production.up.railway.app/?v=2"
+                url: "https://tap-duel-game-production.up.railway.app"
               }
             }
           ]

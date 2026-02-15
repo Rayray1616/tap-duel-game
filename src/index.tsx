@@ -8,14 +8,6 @@ console.log("initDataUnsafe:", (window as any).Telegram?.WebApp?.initDataUnsafe)
 window.addEventListener("error", (e) => console.error("Global error:", e.error));
 window.addEventListener("unhandledrejection", (e) => console.error("Unhandled promise:", e.reason));
 
-// Telegram WebApp initialization - MUST be first
-if ((window as any).Telegram && (window as any).Telegram.WebApp) {
-  (window as any).Telegram.WebApp.ready();
-  console.log("Launch params:", (window as any).Telegram.WebApp.initData);
-} else {
-  console.log("Telegram WebApp not detected");
-}
-
 // Initialize Telegram WebApp - FIRST executable code
 import WebApp from '@twa-dev/sdk';
 
@@ -31,35 +23,50 @@ import { init } from '@/init.ts';
 
 import './index.css';
 
-const root = ReactDOM.createRoot(document.getElementById('root')!);
-
-try {
-  // Read Telegram WebApp if available
-  const tg = (window as any).Telegram?.WebApp;
-
-  // Determine platform and debug mode
-  const platform = tg?.platform || 'unknown';
-  const debug = import.meta.env.DEV;
-
-  // Initialize Telegram WebApp if present
-  if (tg) {
-    tg.ready();
+// TON Mini App initialization order
+document.addEventListener("DOMContentLoaded", async () => {
+  console.log("Step 1: DOMContentLoaded");
+  
+  // Wait for Telegram WebApp to be ready
+  if ((window as any).Telegram && (window as any).Telegram.WebApp) {
+    console.log("Step 2: Telegram WebApp detected, calling ready()");
+    (window as any).Telegram.WebApp.ready();
+    console.log("Step 3: Telegram WebApp ready completed");
+  } else {
+    console.log("Step 2: Telegram WebApp not detected");
   }
 
-  // Configure all application dependencies
-  await init({
-    debug,
-    eruda: debug && ['ios', 'android'].includes(platform),
-    mockForMacOS: platform === 'macos',
-  });
+  // Initialize React app after Telegram WebApp is ready
+  const root = ReactDOM.createRoot(document.getElementById('root')!);
 
-  // Render the app
-  root.render(
-    <StrictMode>
-      <Root />
-    </StrictMode>,
-  );
+  try {
+    // Read Telegram WebApp if available
+    const tg = (window as any).Telegram?.WebApp;
 
-} catch (e) {
-  root.render(<EnvUnsupported />);
-}
+    // Determine platform and debug mode
+    const platform = tg?.platform || 'unknown';
+    const debug = import.meta.env.DEV;
+
+    console.log("Step 4: Configuring application dependencies");
+    // Configure all application dependencies
+    await init({
+      debug,
+      eruda: debug && ['ios', 'android'].includes(platform),
+      mockForMacOS: platform === 'macos',
+    });
+
+    console.log("Step 5: Rendering React app (TON Connect UI will initialize here)");
+    // Render the app - TON Connect UI Provider will initialize here
+    root.render(
+      <StrictMode>
+        <Root />
+      </StrictMode>,
+    );
+
+    console.log("Step 6: App initialization complete");
+
+  } catch (e) {
+    console.error("App initialization failed:", e);
+    root.render(<EnvUnsupported />);
+  }
+});

@@ -158,6 +158,9 @@ const DUEL_STATES = {
 };
 
 // --- Express middleware ---
+// IMPORTANT: Webhook callback must be FIRST middleware
+app.use(bot.webhookCallback("/webhook"));
+
 app.use(cors());
 app.use(express.json());
 
@@ -171,6 +174,9 @@ app.use((req, res, next) => {
   next();
 });
 
+// Webhook GET route for testing
+app.get("/webhook", (req, res) => res.status(200).send("OK"));
+
 // Telegraf webhook endpoint
 async function setupWebhook() {
   await bot.telegram.setWebhook(
@@ -178,8 +184,6 @@ async function setupWebhook() {
   );
 }
 setupWebhook();
-
-app.use(bot.webhookCallback("/webhook"));
 
 // Health check endpoint
 app.get('/health', (req, res) => {

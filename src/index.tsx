@@ -1,3 +1,12 @@
+// Debug Telegram Mini App - VERY FIRST CODE
+console.log("TG:", (window as any).Telegram?.WebApp);
+console.log("initData:", (window as any).Telegram?.WebApp?.initData);
+console.log("initDataUnsafe:", (window as any).Telegram?.WebApp?.initDataUnsafe);
+
+// Global error handlers to catch silent crashes
+window.addEventListener("error", (e) => console.error("Global error:", e.error));
+window.addEventListener("unhandledrejection", (e) => console.error("Unhandled promise:", e.reason));
+
 // Telegram WebApp initialization - MUST be first
 if ((window as any).Telegram && (window as any).Telegram.WebApp) {
   (window as any).Telegram.WebApp.ready();

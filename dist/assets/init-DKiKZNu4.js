@@ -1,2 +1,0 @@
-const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/eruda-ESs43C2T.js","assets/_commonjsHelpers-Dvrxj_Zk.js"])))=>i.map(i=>d[i]);
-import{_ as t}from"./index-DZovMLXT.js";async function n(n){n.eruda&&t(async()=>{const{default:t}=await import("./eruda-ESs43C2T.js").then(t=>t.e);return{default:t}},__vite__mapDeps([0,1])).then(({default:t})=>{t.init(),t.position({x:window.innerWidth-50,y:0})})}export{n as init};

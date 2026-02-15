@@ -10,8 +10,8 @@ export function WalletConnect() {
     // Get Telegram user from launch params
     const getTelegramUser = () => {
       const tg = (window as any).Telegram?.WebApp;
-      if (tg?.initDataUnsafe?.user) {
-        setTelegramUser(tg.initDataUnsafe.user);
+      if (tg?.initData?.user) {
+        setTelegramUser(tg.initData.user);
       }
     };
     getTelegramUser();

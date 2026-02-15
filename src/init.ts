@@ -4,7 +4,6 @@
 export async function init(options: {
   debug: boolean;
   eruda: boolean;
-  mockForMacOS: boolean;
 }): Promise<void> {
   // Add Eruda if needed.
   options.eruda && void import('eruda').then(({ default: eruda }) => {

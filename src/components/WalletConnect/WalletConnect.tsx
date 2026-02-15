@@ -27,11 +27,11 @@ export function WalletConnect() {
   const saveWalletAddress = async (address: string) => {
     try {
       const tg = (window as any).Telegram?.WebApp;
-      if (tg?.initDataUnsafe?.user) {
+      if (tg?.initData?.user) {
         await supabase
           .from('users')
           .update({ ton_address: address })
-          .eq('telegram_id', tg.initDataUnsafe.user.id.toString());
+          .eq('telegram_id', tg.initData.user.id.toString());
       }
     } catch (error) {
       console.error('Error saving wallet address:', error);

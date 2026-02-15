@@ -2,7 +2,6 @@
 console.log("Frontend loaded");
 console.log("TG:", (window as any).Telegram?.WebApp);
 console.log("initData:", (window as any).Telegram?.WebApp?.initData);
-console.log("initDataUnsafe:", (window as any).Telegram?.WebApp?.initDataUnsafe);
 
 // Global error handlers to catch silent crashes
 window.addEventListener("error", (e) => console.error("Global error:", e.error));
@@ -12,7 +11,7 @@ window.addEventListener("unhandledrejection", (e) => console.error("Unhandled pr
 document.addEventListener("DOMContentLoaded", async () => {
   console.log("Step 1: DOMContentLoaded");
   
-  // Initialize Telegram Mini App SDK BEFORE any TonConnect usage
+  // Initialize Telegram Mini App SDK
   try {
     // Import WebApp only after DOM is ready
     const WebApp = (await import('@twa-dev/sdk')).default;
@@ -20,7 +19,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     WebApp.ready();
     WebApp.expand();
     console.log("Step 2: Telegram Mini App SDK initialized");
-    console.log("Mini App data:", WebApp.initDataUnsafe);
   } catch (e) {
     console.error("Telegram Mini App SDK failed:", e);
   }
@@ -52,7 +50,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     await init({
       debug,
       eruda: debug && ['ios', 'android'].includes(platform),
-      mockForMacOS: platform === 'macos',
     });
 
     console.log("Step 4: Rendering React app");

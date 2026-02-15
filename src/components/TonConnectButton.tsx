@@ -1,24 +1,32 @@
 import React from 'react';
-import { useTonConnectContext } from './TonConnectContext';
+import { useTonConnect } from './TonConnectContext';
 
 export function TonConnectButton({ className }: { className?: string }) {
-  const { isConnected, connect, disconnect } = useTonConnectContext();
+  const tonConnect = useTonConnect();
+
+  const handleConnect = () => {
+    if (tonConnect.connected) {
+      tonConnect.disconnect();
+    } else {
+      tonConnect.connect([]);
+    }
+  };
 
   return (
     <button 
       className={className}
-      onClick={isConnected ? disconnect : connect}
+      onClick={handleConnect}
       style={{
         padding: '8px 16px',
         borderRadius: '8px',
-        backgroundColor: isConnected ? '#ff4444' : '#0088cc',
+        backgroundColor: tonConnect.connected ? '#ff4444' : '#0088cc',
         color: 'white',
         border: 'none',
         cursor: 'pointer',
         fontSize: '14px'
       }}
     >
-      {isConnected ? 'Disconnect' : 'Connect Wallet'}
+      {tonConnect.connected ? 'Disconnect' : 'Connect Wallet'}
     </button>
   );
 }

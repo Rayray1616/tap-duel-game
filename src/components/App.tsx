@@ -4,7 +4,7 @@ import { AppRoot } from '@telegram-apps/telegram-ui';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TonConnectButton } from './TonConnectButton';
-import { useTonConnectContext } from './TonConnectContext';
+import { useTonConnect } from './TonConnectContext';
 
 import { routes } from '@/navigation/routes.tsx';
 import LobbyScreen from '../screens/LobbyScreen';
@@ -17,11 +17,11 @@ export function App() {
   const miniApp = useMiniApp();
   const isDark = miniApp.isDark;
   const { tg, user, init } = useTelegram();
-  const { wallet } = useTonConnectContext();
+  const tonConnect = useTonConnect();
   const navigate = useNavigate();
   
-  // Get wallet address from new context
-  const walletAddress = wallet?.account?.address || null;
+  // Get wallet address from tonConnect instance
+  const walletAddress = tonConnect.wallet?.account?.address || null;
 
   useEffect(() => {
     init();

@@ -1,9 +1,9 @@
-import { TonConnectButton, useTonWallet } from '@tonconnect/ui-react';
 import { useEffect, useState } from 'react';
+import { useTonConnectUI } from './TonConnectUIContext';
 import { supabase } from '../lib/supabase';
 
 export function WalletConnect() {
-  const wallet = useTonWallet();
+  const tonConnectUI = useTonConnectUI();
   const [telegramUser, setTelegramUser] = useState<any>(null);
 
   useEffect(() => {
@@ -19,7 +19,7 @@ export function WalletConnect() {
 
   useEffect(() => {
     // Save wallet address to Supabase when connected
-    if (wallet?.account?.address && telegramUser) {
+    if (tonConnectUI.wallet?.account.address && telegramUser) {
       const saveWalletAddress = async () => {
         try {
           // Find user by telegram_id
@@ -33,7 +33,7 @@ export function WalletConnect() {
             // Update ton_address
             await supabase
               .from('users')
-              .update({ ton_address: wallet.account.address })
+              .update({ ton_address: tonConnectUI.wallet.account.address })
               .eq('id', user.id);
           }
         } catch (error) {
@@ -42,22 +42,32 @@ export function WalletConnect() {
       };
       saveWalletAddress();
     }
-  }, [wallet, telegramUser]);
+  }, [tonConnectUI.wallet, telegramUser]);
 
   const formatAddress = (address: string) => {
     return `${address.slice(0, 4)}...${address.slice(-4)}`;
   };
 
   return (
-    <div className="mb-4 text-center">
-      {wallet ? (
+    <div className="wallet-connect">
+      {tonConnectUI.connected ? (
         <div className="neon-text">
           <div className="text-sm mb-2">🔗 Wallet Connected</div>
-          <div className="font-bold">{formatAddress(wallet.account.address)}</div>
-          <TonConnectButton className="neon-button pulse mt-2" />
+          <div className="font-bold">{formatAddress(tonConnectUI.wallet.account.address)}</div>
+          <button 
+            className="neon-button pulse mt-2"
+            onClick={() => tonConnectUI.disconnect()}
+          >
+            Disconnect
+          </button>
         </div>
       ) : (
-        <TonConnectButton className="neon-button pulse" />
+        <button 
+          className="neon-button pulse"
+          onClick={() => tonConnectUI.openModal()}
+        >
+          Connect Wallet
+        </button>
       )}
     </div>
   );

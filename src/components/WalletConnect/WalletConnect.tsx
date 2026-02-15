@@ -1,47 +1,38 @@
-import { useTonWallet, useTonConnectUI } from '@tonconnect/ui-react';
 import { Button, Cell, Section } from '@telegram-apps/telegram-ui';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
+import { useTonConnectUI } from '../TonConnectUIContext';
 
 export function WalletConnect() {
-  const wallet = useTonWallet();
-  const [tonConnectUI] = useTonConnectUI();
+  const tonConnectUI = useTonConnectUI();
   const [balance, setBalance] = useState<string | null>(null);
 
   useEffect(() => {
-    if (wallet?.account.address) {
+    if (tonConnectUI.wallet?.account.address) {
       fetchBalance();
-      saveWalletAddress(wallet.account.address);
+      saveWalletAddress(tonConnectUI.wallet.account.address);
     }
-  }, [wallet]);
+  }, [tonConnectUI.wallet]);
 
   const fetchBalance = async () => {
-    if (!wallet?.account.address) return;
-    
     try {
-      // For now, we'll show a placeholder balance
-      // In a real implementation, you'd fetch from TON API
-      setBalance('0.00 TON');
+      const response = await fetch(`https://toncenter.com/api/v3/account?address=${tonConnectUI.wallet.account.address}`);
+      const data = await response.json();
+      setBalance(data.balance ? (parseInt(data.balance) / 1e9).toFixed(2) : null);
     } catch (error) {
       console.error('Error fetching balance:', error);
-      setBalance('Error');
     }
   };
 
   const saveWalletAddress = async (address: string) => {
     try {
-      // Get current user from Telegram launch params
-      const telegramUser = (window as any).Telegram?.WebApp?.initDataUnsafe?.user;
-      if (!telegramUser?.id) return;
-
-      // Upsert user with TON address
-      await supabase
-        .from('users')
-        .upsert({
-          telegram_id: telegramUser.id.toString(),
-          ton_address: address,
-          updated_at: new Date().toISOString()
-        });
+      const tg = (window as any).Telegram?.WebApp;
+      if (tg?.initDataUnsafe?.user) {
+        await supabase
+          .from('users')
+          .update({ ton_address: address })
+          .eq('telegram_id', tg.initDataUnsafe.user.id.toString());
+      }
     } catch (error) {
       console.error('Error saving wallet address:', error);
     }
@@ -57,53 +48,33 @@ export function WalletConnect() {
   };
 
   const formatAddress = (address: string) => {
-    if (!address) return '';
     return `${address.slice(0, 4)}...${address.slice(-4)}`;
   };
 
-  if (wallet) {
-    return (
-      <Section className="mb-4">
-        <Cell>
+  return (
+    <Section>
+      <Cell>
+        {tonConnectUI.connected ? (
           <div className="flex justify-between items-center">
             <div>
               <div className="text-cyan-400 font-semibold">
-                Wallet: {formatAddress(wallet.account.address)}
+                Wallet: {formatAddress(tonConnectUI.wallet.account.address)}
               </div>
               {balance && (
                 <div className="text-cyan-300 text-sm">
-                  Balance: {balance}
+                  Balance: {balance} TON
                 </div>
               )}
             </div>
-            <Button
-              onClick={handleDisconnect}
-              size="s"
-              className="bg-red-600 hover:bg-red-500 text-white"
-              style={{
-                boxShadow: '0 0 10px rgba(239, 68, 68, 0.5)',
-              }}
-            >
+            <Button onClick={handleDisconnect} size="s">
               Disconnect
             </Button>
           </div>
-        </Cell>
-      </Section>
-    );
-  }
-
-  return (
-    <Section className="mb-4">
-      <Cell>
-        <Button
-          onClick={handleConnect}
-          className="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 px-6 rounded-lg shadow-lg shadow-cyan-500/50 transition-all duration-200 transform hover:scale-105"
-          style={{
-            boxShadow: '0 0 20px rgba(6, 182, 212, 0.5), inset 0 0 20px rgba(6, 182, 212, 0.2)',
-          }}
-        >
-          🔗 Connect TON Wallet
-        </Button>
+        ) : (
+          <Button onClick={handleConnect}>
+            Connect Wallet
+          </Button>
+        )}
       </Cell>
     </Section>
   );

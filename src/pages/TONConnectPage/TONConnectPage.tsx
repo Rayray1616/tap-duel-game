@@ -1,18 +1,15 @@
 import { useUtils } from '@tma.js/sdk-react';
-import { TonConnectButton, useTonWallet } from '@tonconnect/ui-react';
+import { useTonConnectUI } from '@/components/TonConnectUIContext';
 import {
-  Avatar,
   Cell,
   List,
   Navigation,
   Placeholder,
   Section,
-  Text,
   Title,
 } from '@telegram-apps/telegram-ui';
-import type { FC } from 'react';
 
-import { DisplayData } from '@/components/DisplayData/DisplayData.tsx';
+import { FC } from 'react';
 import { Page } from '@/components/Page.tsx';
 import { bem } from '@/css/bem.ts';
 
@@ -21,88 +18,69 @@ import './TONConnectPage.css';
 const [, e] = bem('ton-connect-page');
 
 export const TONConnectPage: FC = () => {
-  const wallet = useTonWallet();
+  const tonConnectUI = useTonConnectUI();
   const utils = useUtils();
-
-  if (!wallet) {
-    return (
-      <Page>
-        <Placeholder
-          className={e('placeholder')}
-          header="TON Connect"
-          description={
-            <>
-              <Text>
-                To display the data related to the TON Connect, it is required to connect your
-                wallet
-              </Text>
-              <TonConnectButton className={e('button')}/>
-            </>
-          }
-        />
-      </Page>
-    );
-  }
-
-  const {
-    account: { chain, publicKey, address },
-    device: {
-      appName,
-      appVersion,
-      maxProtocolVersion,
-      platform,
-      features,
-    },
-  } = wallet;
 
   return (
     <Page>
       <List>
-        {'imageUrl' in wallet && (
-          <>
-            <Section>
-              <Cell
-                before={
-                  <Avatar src={wallet.imageUrl} alt="Provider logo" width={60} height={60}/>
-                }
-                after={<Navigation>About wallet</Navigation>}
-                subtitle={wallet.appName}
-                onClick={(e) => {
-                  e.preventDefault();
-                  utils.openLink(wallet.aboutUrl);
-                }}
+        <Placeholder
+          className={e('placeholder')}
+          header="TON Connect"
+          description={
+            tonConnectUI.connected
+              ? 'You are already connected'
+              : 'To display the data related to the TON Connect, it is required to connect your wallet'
+          }
+          action={
+            tonConnectUI.connected ? (
+              <button 
+                className={e('button-connected')}
+                onClick={() => tonConnectUI.disconnect()}
               >
-                <Title level="3">{wallet.name}</Title>
-              </Cell>
-            </Section>
-            <TonConnectButton className={e('button-connected')}/>
-          </>
-        )}
-        <DisplayData
-          header="Account"
-          rows={[
-            { title: 'Address', value: address },
-            { title: 'Chain', value: chain },
-            { title: 'Public Key', value: publicKey },
-          ]}
-        />
-        <DisplayData
-          header="Device"
-          rows={[
-            { title: 'App Name', value: appName },
-            { title: 'App Version', value: appVersion },
-            { title: 'Max Protocol Version', value: maxProtocolVersion },
-            { title: 'Platform', value: platform },
-            {
-              title: 'Features',
-              value: features
-                .map(f => typeof f === 'object' ? f.name : undefined)
-                .filter(v => v)
-                .join(', '),
-            },
-          ]}
-        />
+                Disconnect
+              </button>
+            ) : (
+              <button 
+                className={e('button')}
+                onClick={() => tonConnectUI.openModal()}
+              >
+                Connect Wallet
+              </button>
+            )
+          }
+        >
+          <Avatar
+            size={96}
+            src={
+              tonConnectUI.connected
+                ? tonConnectUI.wallet.imageUrl
+                : 'https://avatars.githubusercontent.com/u'
+            }
+          />
+        </Placeholder>
       </List>
+
+      {tonConnectUI.connected && (
+        <Section header="Wallet">
+          <Cell
+            subtitle={tonConnectUI.wallet.name}
+            after={<Navigation>About wallet</Navigation>}
+            onClick={(e) => {
+              e.preventDefault();
+              utils.openLink(tonConnectUI.wallet.aboutUrl);
+            }}
+          >
+            <Title level="3">{tonConnectUI.wallet.name}</Title>
+          </Cell>
+          <Cell subtitle="Connection status">
+            Connected
+          </Cell>
+          <Cell subtitle="Wallet address">
+            {tonConnectUI.wallet.account.address}
+          </Cell>
+        </Section>
+      )}
     </Page>
   );
 };

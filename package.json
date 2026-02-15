@@ -9,6 +9,9 @@
     "build": "vite build",
     "start": "node server.js"
   },
+  "engines": {
+    "node": "20"
+  },
   "dependencies": {
     "@supabase/realtime-js": "^2.95.3",
     "@supabase/supabase-js": "^2.95.3",

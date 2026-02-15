@@ -1,8 +1,8 @@
 import { TonConnect } from "@tonconnect/sdk";
 
-let tonConnectInstance: TonConnect | null = null;
+let tonConnectInstance = null;
 
-export function getTonConnect(): TonConnect {
+export function getTonConnect() {
   if (!tonConnectInstance) {
     tonConnectInstance = new TonConnect({
       manifestUrl: "https://tap-duel-game-production.up.railway.app/tonconnect-manifest.json"
@@ -10,5 +10,3 @@ export function getTonConnect(): TonConnect {
   }
   return tonConnectInstance;
 }
-
-export const tonConnect = getTonConnect();

@@ -1,13 +1,13 @@
+// Telegram WebApp initialization - MUST be first
+if ((window as any).Telegram && (window as any).Telegram.WebApp) {
+  (window as any).Telegram.WebApp.ready();
+  console.log("Launch params:", (window as any).Telegram.WebApp.initData);
+} else {
+  console.log("Telegram WebApp not detected");
+}
+
 // Initialize Telegram WebApp - FIRST executable code
 import WebApp from '@twa-dev/sdk';
-
-// Ensure the script runs only inside Telegram WebApp context
-if ((window as any).Telegram?.WebApp) {
-  WebApp.ready();
-  console.log("Launch params:", WebApp.initData);
-} else {
-  console.log("Not running in Telegram WebApp context");
-}
 
 // Include Telegram UI styles first to allow our code override the package CSS.
 import '@telegram-apps/telegram-ui/dist/styles.css';

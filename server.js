@@ -50,7 +50,7 @@ async function updatePlayerStats(winnerWallet, loserWallet, amountNanoTon) {
 }
 
 // Environment variable validation
-const requiredEnvVars = ['BOT_TOKEN', 'SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY'];
+const requiredEnvVars = ['BOT_TOKEN', 'SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'WEBHOOK_DOMAIN'];
 const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
 
 if (missingVars.length > 0) {
@@ -172,7 +172,10 @@ app.use((req, res, next) => {
 });
 
 // Telegraf webhook endpoint
-app.use(bot.webhook('/webhook'));
+async function setupWebhook() {
+  app.use(await bot.createWebhook({ domain: process.env.WEBHOOK_DOMAIN }));
+}
+setupWebhook();
 
 // Health check endpoint
 app.get('/health', (req, res) => {

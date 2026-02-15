@@ -224,6 +224,9 @@ app.use(express.static(path.join(__dirname, 'dist')));
 // Explicit static serving for assets folder
 app.use('/assets', express.static(path.join(__dirname, 'dist/assets')));
 
+// Explicit serving for TON Connect manifest
+app.use('/tonconnect-manifest.json', express.static(path.join(__dirname, 'dist/tonconnect-manifest.json')));
+
 // Handle React routing
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));

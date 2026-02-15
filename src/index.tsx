@@ -1,4 +1,5 @@
 // Debug Telegram Mini App - VERY FIRST CODE
+console.log("Frontend loaded");
 console.log("TG:", (window as any).Telegram?.WebApp);
 console.log("initData:", (window as any).Telegram?.WebApp?.initData);
 console.log("initDataUnsafe:", (window as any).Telegram?.WebApp?.initDataUnsafe);

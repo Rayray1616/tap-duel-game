@@ -67,7 +67,7 @@ const bot = new Telegraf(process.env.BOT_TOKEN);
 
 // Handle /start command
 bot.command("start", async (ctx) => {
-  await ctx.reply("Tap Duel Arena", {
+  return ctx.reply("Tap Duel Arena", {
     reply_markup: {
       inline_keyboard: [
         [

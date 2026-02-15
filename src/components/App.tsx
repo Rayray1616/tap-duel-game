@@ -3,7 +3,8 @@ import { useLaunchParams, useMiniApp } from '@tma.js/sdk-react';
 import { AppRoot } from '@telegram-apps/telegram-ui';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { TonConnectUIProvider, TonConnectButton, useTonConnectUI, useTonAddress } from "@tonconnect/ui-react";
+import { TonConnectButton } from './TonConnectButton';
+import { useTonConnectContext } from './TonConnectContext';
 
 import { routes } from '@/navigation/routes.tsx';
 import LobbyScreen from '../screens/LobbyScreen';
@@ -16,8 +17,11 @@ export function App() {
   const miniApp = useMiniApp();
   const isDark = miniApp.isDark;
   const { tg, user, init } = useTelegram();
+  const { wallet } = useTonConnectContext();
   const navigate = useNavigate();
-  const walletAddress = useTonAddress();
+  
+  // Get wallet address from new context
+  const walletAddress = wallet?.account?.address || null;
 
   useEffect(() => {
     init();

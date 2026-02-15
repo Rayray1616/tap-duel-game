@@ -1,5 +1,4 @@
-import { TonConnectUIProvider } from '@tonconnect/ui-react';
-import { getTonConnectUI } from '@/lib/tonConnect';
+import { TonConnectProvider } from './TonConnectContext';
 
 import { App } from '@/components/App.tsx';
 import { ErrorBoundary } from '@/components/ErrorBoundary.tsx';
@@ -22,17 +21,11 @@ function ErrorBoundaryError({ error }: { error: unknown }) {
 }
 
 export function Root() {
-  const tonConnectUI = getTonConnectUI();
-  
   return (
     <ErrorBoundary fallback={ErrorBoundaryError}>
-      {tonConnectUI ? (
-        <TonConnectUIProvider tonConnectUI={tonConnectUI}>
-          <App/>
-        </TonConnectUIProvider>
-      ) : (
+      <TonConnectProvider>
         <App/>
-      )}
+      </TonConnectProvider>
     </ErrorBoundary>
   );
 }

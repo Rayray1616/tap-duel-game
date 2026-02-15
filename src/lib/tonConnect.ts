@@ -1,44 +1,44 @@
-import { TonConnectUI } from "@tonconnect/ui";
+import { TonConnect } from "@tonconnect/sdk";
 
-let tonConnectUI: TonConnectUI | null = null;
+let tonConnect: TonConnect | null = null;
 
 export function initializeTonConnect() {
-  if (tonConnectUI) {
-    return tonConnectUI;
+  if (tonConnect) {
+    return tonConnect;
   }
 
   console.log("Initializing TON Connect for Mini App");
   
-  tonConnectUI = new TonConnectUI({
+  tonConnect = new TonConnect({
     manifestUrl: "https://tap-duel-game-production.up.railway.app/tonconnect-manifest.json",
   });
 
-  return tonConnectUI;
+  return tonConnect;
 }
 
 export async function ensureTonConnectInitialized() {
-  if (!tonConnectUI) {
-    tonConnectUI = initializeTonConnect();
+  if (!tonConnect) {
+    tonConnect = initializeTonConnect();
   }
   
   console.log("Ensuring TON Connect is initialized");
   
   // Wait for TON Connect to be ready
-  return new Promise<TonConnectUI>((resolve) => {
-    if (tonConnectUI!.connected) {
+  return new Promise<TonConnect>((resolve) => {
+    if (tonConnect!.connected) {
       console.log("TON Connect already initialized");
-      resolve(tonConnectUI!);
+      resolve(tonConnect!);
       return;
     }
     
     // Wait a bit for initialization
     setTimeout(() => {
       console.log("TON Connect initialization complete");
-      resolve(tonConnectUI!);
+      resolve(tonConnect!);
     }, 100);
   });
 }
 
-export function getTonConnectUI() {
-  return tonConnectUI;
+export function getTonConnect() {
+  return tonConnect;
 }

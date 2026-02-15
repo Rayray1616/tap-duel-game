@@ -173,9 +173,13 @@ app.use((req, res, next) => {
 
 // Telegraf webhook endpoint
 async function setupWebhook() {
-  app.use(await bot.createWebhook({ domain: process.env.WEBHOOK_DOMAIN }));
+  await bot.telegram.setWebhook(
+    process.env.WEBHOOK_DOMAIN + "/webhook"
+  );
 }
 setupWebhook();
+
+app.use(bot.webhookCallback("/webhook"));
 
 // Health check endpoint
 app.get('/health', (req, res) => {

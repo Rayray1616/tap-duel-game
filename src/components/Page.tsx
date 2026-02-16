@@ -1,5 +1,4 @@
 import { useNavigate } from 'react-router-dom';
-import { useBackButton } from '@tma.js/sdk-react';
 import { type PropsWithChildren, useEffect } from 'react';
 
 export function Page({ children, back = true }: PropsWithChildren<{
@@ -9,17 +8,25 @@ export function Page({ children, back = true }: PropsWithChildren<{
   back?: boolean
 }>) {
   const navigate = useNavigate();
-  const backButton = useBackButton();
 
   useEffect(() => {
+    const tg = (window as any).Telegram?.WebApp;
+    if (!tg) return;
+
     if (back) {
-      backButton.show();
-      return backButton.onClick(() => {
+      tg.BackButton.show();
+      const handleBackButton = () => {
         navigate(-1);
-      });
+      };
+      tg.BackButton.onClick(handleBackButton);
+      
+      return () => {
+        tg.BackButton.offClick(handleBackButton);
+      };
+    } else {
+      tg.BackButton.hide();
     }
-    backButton.hide();
-  }, [back, backButton]);
+  }, [back, navigate]);
 
   return <>{children}</>;
 }

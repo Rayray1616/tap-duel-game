@@ -1,7 +1,4 @@
 import { type FC, useMemo } from 'react';
-import {
-  useInitData,
-} from '@tma.js/sdk-react';
 import { List, Placeholder } from '@telegram-apps/telegram-ui';
 
 import { DisplayData, type DisplayDataRow } from '@/components/DisplayData/DisplayData.tsx';
@@ -12,7 +9,9 @@ function getUserRows(user: any): DisplayDataRow[] {
 }
 
 export const InitDataPage: FC = () => {
-  const initData = useInitData();
+  const tg = (window as any).Telegram?.WebApp;
+  const initData = tg?.initData || '';
+  const initDataUnsafe = tg?.initDataUnsafe || {};
 
   if (!initData) {
     return (

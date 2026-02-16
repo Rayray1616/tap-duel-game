@@ -16,7 +16,6 @@
     "@supabase/realtime-js": "^2.95.3",
     "@supabase/supabase-js": "^2.95.3",
     "@telegram-apps/telegram-ui": "^2.1.9",
-    "@tma.js/sdk-react": "^1.2.2",
     "@ton/crypto": "^3.3.0",
     "@tonconnect/sdk": "^3.4.1",
     "@twa-dev/sdk": "^8.0.2",

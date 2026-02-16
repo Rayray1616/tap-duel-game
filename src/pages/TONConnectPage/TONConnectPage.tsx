@@ -1,4 +1,3 @@
-import { useUtils } from '@tma.js/sdk-react';
 import { useTonMiniApp } from '@/components/TonMiniAppContext';
 import {
   Cell,
@@ -19,7 +18,6 @@ const [, e] = bem('ton-connect-page');
 
 export const TONConnectPage: FC = () => {
   const tonConnect = useTonMiniApp();
-  const utils = useUtils();
 
   return (
     <Page>

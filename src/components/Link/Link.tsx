@@ -1,4 +1,3 @@
-import { useUtils } from '@tma.js/sdk-react';
 import { type FC, type MouseEventHandler, useCallback } from 'react';
 import { Link as RouterLink, type LinkProps } from 'react-router-dom';
 
@@ -12,7 +11,6 @@ export const Link: FC<LinkProps> = ({
   to,
   ...rest
 }) => {
-  const utils = useUtils();
   const onClick = useCallback<MouseEventHandler<HTMLAnchorElement>>((e) => {
     propsOnClick?.(e);
 
@@ -33,9 +31,16 @@ export const Link: FC<LinkProps> = ({
 
     if (isExternal) {
       e.preventDefault();
-      utils.openLink(targetUrl.toString());
+      // Use direct Telegram WebApp API
+      const tg = (window as any).Telegram?.WebApp;
+      if (tg?.openLink) {
+        tg.openLink(targetUrl.toString());
+      } else {
+        // Fallback to regular link opening
+        window.open(targetUrl.toString(), '_blank');
+      }
     }
-  }, [to, propsOnClick, utils]);
+  }, [to, propsOnClick]);
 
   return (
     <RouterLink

@@ -1,5 +1,4 @@
 import { Navigate, Route, Routes, HashRouter } from 'react-router-dom';
-import { useLaunchParams, useMiniApp } from '@tma.js/sdk-react';
 import { AppRoot } from '@telegram-apps/telegram-ui';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -13,9 +12,6 @@ import NewLobbyRedirect from '../screens/NewLobbyRedirect';
 import { useTelegram } from '../telegram/useTelegram';
 
 export function App() {
-  const lp = useLaunchParams();
-  const miniApp = useMiniApp();
-  const isDark = miniApp.isDark;
   const { tg, user, init } = useTelegram();
   const tonConnect = useTonMiniApp();
   const navigate = useNavigate();
@@ -43,8 +39,8 @@ export function App() {
 
   return (
     <AppRoot
-      appearance={isDark ? 'dark' : 'light'}
-      platform={['macos', 'ios'].includes(lp.platform) ? 'ios' : 'base'}
+      appearance="light"
+      platform="base"
     >
       <div style={{ padding: 12, display: "flex", justifyContent: "flex-end" }}>
         <TonConnectButton />

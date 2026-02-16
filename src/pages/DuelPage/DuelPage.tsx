@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useLaunchParams } from '@tma.js/sdk-react';
 import { Button, Cell, Section, Title } from '@telegram-apps/telegram-ui';
 import { supabase } from '@/lib/supabase';
 import type { Database } from '@/lib/supabase';
@@ -8,7 +7,8 @@ type User = Database['public']['Tables']['users']['Row'];
 type Duel = Database['public']['Tables']['duels']['Row'];
 
 export function DuelPage() {
-  const { initData } = useLaunchParams();
+  const tg = (window as any).Telegram?.WebApp;
+  const initData = tg?.initData || '';
   const [user, setUser] = useState<User | null>(null);
   const [currentDuel, setCurrentDuel] = useState<Duel | null>(null);
   const [loading, setLoading] = useState(true);

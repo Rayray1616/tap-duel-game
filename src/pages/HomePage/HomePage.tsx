@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useLaunchParams } from '@tma.js/sdk-react';
 import { Title } from '@telegram-apps/telegram-ui';
 import { supabase } from '@/lib/supabase';
 import { useEnergyRegeneration } from '@/hooks/useEnergyRegeneration';
@@ -9,7 +8,8 @@ import type { Database } from '@/lib/supabase';
 type User = Database['public']['Tables']['users']['Row'];
 
 export function HomePage() {
-  const { initData } = useLaunchParams();
+  const tg = (window as any).Telegram?.WebApp;
+  const initData = tg?.initData || '';
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [gameActive, setGameActive] = useState(false);

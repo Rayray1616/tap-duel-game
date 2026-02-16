@@ -1,27 +1,16 @@
-// Debug Telegram Mini App - VERY FIRST CODE
+// Debug - Frontend loading
 console.log("Frontend loaded");
-console.log("TG:", (window as any).Telegram?.WebApp);
-console.log("initData:", (window as any).Telegram?.WebApp?.initData);
 
 // Global error handlers to catch silent crashes
 window.addEventListener("error", (e) => console.error("Global error:", e.error));
 window.addEventListener("unhandledrejection", (e) => console.error("Unhandled promise:", e.reason));
 
-// Telegram Mini App initialization - BEFORE any imports
+// App initialization - BEFORE any imports
 document.addEventListener("DOMContentLoaded", async () => {
   console.log("Step 1: DOMContentLoaded");
   
-  // Initialize Telegram Mini App SDK
-  try {
-    // Import WebApp only after DOM is ready
-    const WebApp = (await import('@twa-dev/sdk')).default;
-    
-    WebApp.ready();
-    WebApp.expand();
-    console.log("Step 2: Telegram Mini App SDK initialized");
-  } catch (e) {
-    console.error("Telegram Mini App SDK failed:", e);
-  }
+  // Telegram Mini App SDK completely removed
+  console.log("Step 2: Telegram Mini App SDK removed - no initialization needed");
 
   // Now safe to import other modules
   const ReactDOM = (await import('react-dom/client')).default;
@@ -34,26 +23,22 @@ document.addEventListener("DOMContentLoaded", async () => {
   await import('@telegram-apps/telegram-ui/dist/styles.css');
   await import('./index.css');
 
-  // Initialize React app after Telegram WebApp is ready
+  // Initialize React app
   const root = ReactDOM.createRoot(document.getElementById('root')!);
 
   try {
-    // Read Telegram WebApp if available
-    const tg = (window as any).Telegram?.WebApp;
-
-    // Determine platform and debug mode
-    const platform = tg?.platform || 'unknown';
+    // Determine debug mode
     const debug = import.meta.env.DEV;
 
     console.log("Step 3: Configuring application dependencies");
     // Configure all application dependencies
     await init({
       debug,
-      eruda: debug && ['ios', 'android'].includes(platform),
+      eruda: debug, // Enable eruda in debug mode regardless of platform
     });
 
     console.log("Step 4: Rendering React app");
-    // Render the app - TON Connect is already initialized via direct export
+    // Render the app
     root.render(
       <StrictMode>
         <Root />

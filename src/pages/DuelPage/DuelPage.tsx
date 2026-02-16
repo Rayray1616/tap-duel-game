@@ -7,8 +7,8 @@ type User = Database['public']['Tables']['users']['Row'];
 type Duel = Database['public']['Tables']['duels']['Row'];
 
 export function DuelPage() {
-  const tg = (window as any).Telegram?.WebApp;
-  const initData = tg?.initData || '';
+  // Telegram WebApp functionality removed
+  const initData = '';
   const [user, setUser] = useState<User | null>(null);
   const [currentDuel, setCurrentDuel] = useState<Duel | null>(null);
   const [loading, setLoading] = useState(true);

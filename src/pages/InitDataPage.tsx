@@ -9,9 +9,9 @@ function getUserRows(user: any): DisplayDataRow[] {
 }
 
 export const InitDataPage: FC = () => {
-  const tg = (window as any).Telegram?.WebApp;
-  const initData = tg?.initData || '';
-  const initDataUnsafe = tg?.initDataUnsafe || {};
+  // Telegram WebApp functionality removed
+  const initData = '';
+  const initDataUnsafe = {};
 
   if (!initData) {
     return (

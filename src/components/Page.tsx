@@ -10,22 +10,8 @@ export function Page({ children, back = true }: PropsWithChildren<{
   const navigate = useNavigate();
 
   useEffect(() => {
-    const tg = (window as any).Telegram?.WebApp;
-    if (!tg) return;
-
-    if (back) {
-      tg.BackButton.show();
-      const handleBackButton = () => {
-        navigate(-1);
-      };
-      tg.BackButton.onClick(handleBackButton);
-      
-      return () => {
-        tg.BackButton.offClick(handleBackButton);
-      };
-    } else {
-      tg.BackButton.hide();
-    }
+    // Telegram WebApp BackButton functionality removed
+    console.log('Telegram WebApp BackButton functionality has been removed');
   }, [back, navigate]);
 
   return <>{children}</>;

@@ -5,8 +5,8 @@ import { DisplayData } from '@/components/DisplayData/DisplayData.tsx';
 import { Page } from '@/components/Page.tsx';
 
 export const ThemeParamsPage: FC = () => {
-  const tg = (window as any).Telegram?.WebApp;
-  const themeParams = tg?.themeParams || {};
+  // Telegram WebApp functionality removed
+  const themeParams = {};
 
   return (
     <Page>

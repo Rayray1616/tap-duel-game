@@ -5,16 +5,15 @@ import { DisplayData } from '@/components/DisplayData/DisplayData.tsx';
 import { Page } from '@/components/Page.tsx';
 
 export const LaunchParamsPage: FC = () => {
-  const tg = (window as any).Telegram?.WebApp;
-
+  // Telegram WebApp functionality removed
   return (
     <Page>
       <List>
         <DisplayData
           rows={[
-            { title: 'tgWebAppPlatform', value: tg?.platform || '' },
-            { title: 'tgWebAppVersion', value: tg?.version || '' },
-            { title: 'tgWebAppStartParam', value: tg?.initData?.start_param || '' },
+            { title: 'tgWebAppPlatform', value: 'N/A - WebApp Disabled' },
+            { title: 'tgWebAppVersion', value: 'N/A - WebApp Disabled' },
+            { title: 'tgWebAppStartParam', value: 'N/A - WebApp Disabled' },
             { title: 'tgWebAppData', type: 'link', value: '/init-data' },
             { title: 'tgWebAppThemeParams', type: 'link', value: '/theme-params' },
           ]}

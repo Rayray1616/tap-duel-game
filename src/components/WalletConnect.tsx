@@ -5,14 +5,8 @@ export function WalletConnect() {
   const [telegramUser, setTelegramUser] = useState<any>(null);
 
   useEffect(() => {
-    // Get Telegram user from launch params
-    const getTelegramUser = () => {
-      const tg = (window as any).Telegram?.WebApp;
-      if (tg?.initData?.user) {
-        setTelegramUser(tg.initData.user);
-      }
-    };
-    getTelegramUser();
+    // Telegram WebApp functionality removed - no user data available
+    console.log('Telegram WebApp user data retrieval disabled');
   }, []);
 
   useEffect(() => {

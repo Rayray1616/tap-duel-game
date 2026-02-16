@@ -8,8 +8,8 @@ import type { Database } from '@/lib/supabase';
 type User = Database['public']['Tables']['users']['Row'];
 
 export function HomePage() {
-  const tg = (window as any).Telegram?.WebApp;
-  const initData = tg?.initData || '';
+  // Telegram WebApp functionality removed
+  const initData = '';
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [gameActive, setGameActive] = useState(false);

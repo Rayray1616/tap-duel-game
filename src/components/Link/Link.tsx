@@ -31,14 +31,8 @@ export const Link: FC<LinkProps> = ({
 
     if (isExternal) {
       e.preventDefault();
-      // Use direct Telegram WebApp API
-      const tg = (window as any).Telegram?.WebApp;
-      if (tg?.openLink) {
-        tg.openLink(targetUrl.toString());
-      } else {
-        // Fallback to regular link opening
-        window.open(targetUrl.toString(), '_blank');
-      }
+      // Use regular link opening - Telegram WebApp functionality removed
+      window.open(targetUrl.toString(), '_blank');
     }
   }, [to, propsOnClick]);
 

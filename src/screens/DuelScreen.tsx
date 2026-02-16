@@ -39,7 +39,8 @@ export default function DuelScreen({ duelId, playerId }: Props) {
           onClick={() => {
             const duelId = "duel_" + Math.random().toString(36).slice(2, 10);
             const link = `https://t.me/tapduelbot?start=${duelId}`;
-            window.Telegram?.WebApp?.openTelegramLink(link);
+            // Use regular link opening - Telegram WebApp functionality removed
+            window.open(link, '_blank');
           }}
           style={{
             marginTop: 20,

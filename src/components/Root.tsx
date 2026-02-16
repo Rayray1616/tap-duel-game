@@ -1,4 +1,4 @@
-import { TonMiniAppProvider } from './TonMiniAppContext';
+import { BrowserRouter } from "react-router-dom";
 
 import { App } from '@/components/App.tsx';
 import { ErrorBoundary } from '@/components/ErrorBoundary.tsx';
@@ -22,10 +22,10 @@ function ErrorBoundaryError({ error }: { error: unknown }) {
 
 export function Root() {
   return (
-    <ErrorBoundary fallback={ErrorBoundaryError}>
-      <TonMiniAppProvider>
-        <App/>
-      </TonMiniAppProvider>
-    </ErrorBoundary>
+    <BrowserRouter>
+      <ErrorBoundary fallback={ErrorBoundaryError}>
+        <App />
+      </ErrorBoundary>
+    </BrowserRouter>
   );
 }

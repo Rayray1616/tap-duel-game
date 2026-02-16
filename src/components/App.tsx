@@ -3,7 +3,6 @@ import { AppRoot } from '@telegram-apps/telegram-ui';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TonConnectButton } from './TonConnectButton';
-import { useTonMiniApp } from './TonMiniAppContext';
 
 import { routes } from '@/navigation/routes.tsx';
 import LobbyScreen from '../screens/LobbyScreen';
@@ -13,19 +12,17 @@ import { useTelegram } from '../telegram/useTelegram';
 
 export function App() {
   const { tg, user, init } = useTelegram();
-  const tonConnect = useTonMiniApp();
   const navigate = useNavigate();
   
-  // Get wallet address from tonConnect instance
-  const walletAddress = tonConnect.account?.address || null;
+  // TON Connect functionality removed - walletAddress will be null
+  const walletAddress = null;
 
   useEffect(() => {
     init();
   }, []);
 
-  // Store Telegram user ID as playerId, fallback to wallet address
-  const basePlayerId = user?.id?.toString() || "local_" + Math.random().toString(36).slice(2);
-  const playerId = walletAddress || basePlayerId;
+  // Store Telegram user ID as playerId
+  const playerId = user?.id?.toString() || "local_" + Math.random().toString(36).slice(2);
 
   // Detect Telegram deep link start_param
   const startParam = tg?.initData?.start_param;

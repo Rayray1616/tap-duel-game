@@ -1,4 +1,3 @@
-import { useTonMiniApp } from '@/components/TonMiniAppContext';
 import {
   Cell,
   List,
@@ -17,34 +16,22 @@ import './TONConnectPage.css';
 const [, e] = bem('ton-connect-page');
 
 export const TONConnectPage: FC = () => {
-  const tonConnect = useTonMiniApp();
+  // TON Connect functionality removed
 
   return (
     <Page>
       <List>
         <Placeholder
           header="TON Connect"
-          description={
-            tonConnect.connected
-              ? 'You are already connected'
-              : 'To display the data related to the TON Connect, it is required to connect your wallet'
-          }
+          description="TON Connect functionality has been removed from this application"
           action={
-            tonConnect.connected ? (
-              <button 
-                className={e('button-connected')}
-                onClick={() => tonConnect.disconnect()}
-              >
-                Disconnect
-              </button>
-            ) : (
-              <button 
-                className={e('button')}
-                onClick={() => tonConnect.connect()}
-              >
-                Connect Wallet
-              </button>
-            )
+            <button 
+              className={e('button')}
+              disabled
+              style={{ opacity: 0.5, cursor: 'not-allowed' }}
+            >
+              Connect Unavailable
+            </button>
           }
         >
           <div
@@ -52,29 +39,27 @@ export const TONConnectPage: FC = () => {
               width: 96,
               height: 96,
               borderRadius: '50%',
-              backgroundColor: tonConnect.connected ? '#0088cc' : '#ccc',
+              backgroundColor: '#ccc',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: 'white',
+              color: '#666',
               fontSize: '24px'
             }}
           >
-            {tonConnect.connected ? '✓' : '?'}
+            🚫
           </div>
         </Placeholder>
       </List>
 
-      {tonConnect.connected && (
-        <Section header="Wallet">
-          <Cell subtitle="Connection status">
-            Connected
-          </Cell>
-          <Cell subtitle="Wallet address">
-            {tonConnect.account.address}
-          </Cell>
-        </Section>
-      )}
+      <Section header="Wallet Status">
+        <Cell subtitle="Connection status">
+          Not Connected
+        </Cell>
+        <Cell subtitle="Wallet address">
+          No wallet available
+        </Cell>
+      </Section>
     </Page>
   );
 };

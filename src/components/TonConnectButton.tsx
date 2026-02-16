@@ -1,32 +1,27 @@
 import React from 'react';
-import { useTonMiniApp } from './TonMiniAppContext';
 
 export function TonConnectButton({ className }: { className?: string }) {
-  const tonConnect = useTonMiniApp();
-
   const handleConnect = () => {
-    if (tonConnect.connected) {
-      tonConnect.disconnect();
-    } else {
-      tonConnect.connect();
-    }
+    // TON Connect functionality removed
+    console.log('TON Connect functionality has been removed');
   };
 
   return (
     <button 
       className={className}
       onClick={handleConnect}
+      disabled
       style={{
         padding: '8px 16px',
         borderRadius: '8px',
-        backgroundColor: tonConnect.connected ? '#ff4444' : '#0088cc',
-        color: 'white',
+        backgroundColor: '#ccc',
+        color: '#666',
         border: 'none',
-        cursor: 'pointer',
+        cursor: 'not-allowed',
         fontSize: '14px'
       }}
     >
-      {tonConnect.connected ? 'Disconnect' : 'Connect Wallet'}
+      Wallet Connect Disabled
     </button>
   );
 }

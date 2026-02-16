@@ -3,7 +3,7 @@ export function useTelegram() {
 
   return {
     tg,
-    user: tg?.initDataUnsafe?.user,
+    user: tg?.initData?.user,
     init: () => {
       tg?.expand();
       tg?.disableVerticalSwipe();

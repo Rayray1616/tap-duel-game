@@ -32,7 +32,7 @@ export function App() {
   const playerId = walletAddress || basePlayerId;
 
   // Detect Telegram deep link start_param
-  const startParam = tg?.initDataUnsafe?.start_param;
+  const startParam = tg?.initData?.start_param;
 
   useEffect(() => {
     if (startParam && startParam.startsWith("duel_")) {

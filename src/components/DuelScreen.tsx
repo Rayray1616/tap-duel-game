@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useDuelClient } from '@/realtime/DuelClient';
 import { useTelegram } from '@/telegram/useTelegram';
+import { usePlayerProgression } from '@/hooks/usePlayerProgression';
 import { supabase } from '@/lib/supabase';
 import type { Database } from '@/lib/supabase';
 
@@ -28,7 +29,11 @@ export function DuelScreen({ duelId: propDuelId, playerId: propPlayerId }: DuelS
   const [winner, setWinner] = useState<'player' | 'opponent' | null>(null);
   const [showHitFlash, setShowHitFlash] = useState(false);
   const [showParticleBurst, setShowParticleBurst] = useState(false);
+  const [xpAwarded, setXpAwarded] = useState<{ amount: number; leveledUp: boolean; newLevel?: number } | null>(null);
   const tapAreaRef = useRef<HTMLDivElement>(null);
+
+  // XP and progression
+  const { awardXP } = usePlayerProgression(telegramUser?.id?.toString());
 
   // WebSocket duel client
   const {
@@ -48,6 +53,10 @@ export function DuelScreen({ duelId: propDuelId, playerId: propPlayerId }: DuelS
     if (result) {
       setDuelEnded(true);
       setWinner(result.winner_id === playerId ? 'player' : 'opponent');
+      
+      // Award XP based on duel result
+      const xpAmount = result.winner_id === playerId ? 50 : 20;
+      awardXpAfterDuel(xpAmount);
     }
   }, [result, playerId]);
 
@@ -94,6 +103,21 @@ export function DuelScreen({ duelId: propDuelId, playerId: propPlayerId }: DuelS
 
   const handleBackToHome = () => {
     navigate('/');
+  };
+
+  const awardXpAfterDuel = async (amount: number) => {
+    try {
+      const result = await awardXP(amount);
+      if (result) {
+        setXpAwarded({
+          amount,
+          leveledUp: result.leveled_up,
+          newLevel: result.leveled_up ? result.level : undefined
+        });
+      }
+    } catch (error) {
+      console.error('Error awarding XP:', error);
+    }
   };
 
   if (loading) {
@@ -249,6 +273,20 @@ export function DuelScreen({ duelId: propDuelId, playerId: propPlayerId }: DuelS
               <div className="text-xl mb-6">
                 {playerTaps} vs {opponentTaps} taps
               </div>
+              
+              {/* XP Gained Display */}
+              {xpAwarded && (
+                <div className="mb-6 space-y-2">
+                  <div className="text-lg text-purple-400 font-bold">
+                    +{xpAwarded.amount} XP
+                  </div>
+                  {xpAwarded.leveledUp && (
+                    <div className="text-xl text-yellow-400 font-bold animate-pulse">
+                      🎉 LEVEL UP! Level {xpAwarded.newLevel} 🎉
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
             
             {/* Action Buttons */}

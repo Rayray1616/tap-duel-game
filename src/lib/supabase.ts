@@ -121,6 +121,26 @@ export type Database = {
           created_at?: string;
         };
       };
+      player_progression: {
+        Row: {
+          user_id: string;
+          xp: number;
+          level: number;
+          updated_at: string;
+        };
+        Insert: {
+          user_id: string;
+          xp?: number;
+          level?: number;
+          updated_at?: string;
+        };
+        Update: {
+          user_id?: string;
+          xp?: number;
+          level?: number;
+          updated_at?: string;
+        };
+      };
     };
   };
 };

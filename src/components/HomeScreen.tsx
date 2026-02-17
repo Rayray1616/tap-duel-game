@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { useTelegram } from '@/telegram/useTelegram';
+import { usePlayerProgression } from '@/hooks/usePlayerProgression';
 import type { Database } from '@/lib/supabase';
 
 type User = Database['public']['Tables']['users']['Row'];
@@ -12,6 +13,9 @@ export function HomeScreen() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [energy, setEnergy] = useState(100);
+  
+  // XP and progression
+  const { progression, loading: progressionLoading } = usePlayerProgression(telegramUser?.id?.toString());
 
   useEffect(() => {
     initializeUser();
@@ -194,13 +198,36 @@ export function HomeScreen() {
             </div>
             <div className="text-cyan-400 text-right">
               <div className="text-xs text-cyan-600 uppercase tracking-wider">Level</div>
-              <div className="text-lg font-bold">{user?.level || 1}</div>
+              <div className="text-lg font-bold">{progression?.level || user?.level || 1}</div>
             </div>
             <div className="text-cyan-400 text-right">
               <div className="text-xs text-cyan-600 uppercase tracking-wider">Score</div>
               <div className="text-lg font-bold">{user?.score || 0}</div>
             </div>
           </div>
+
+          {/* XP Bar */}
+          {!progressionLoading && progression && (
+            <div className="space-y-2 mb-4">
+              <div className="flex justify-between items-center">
+                <span className="text-xs text-purple-600 uppercase tracking-wider">XP</span>
+                <span className="text-xs text-purple-400">{progression.xp} XP</span>
+              </div>
+              <div className="relative h-4 bg-gray-900 rounded-full overflow-hidden">
+                <div 
+                  className="absolute inset-y-0 left-0 bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-500 rounded-full"
+                  style={{ width: `${progression.xp_progress}%` }}
+                >
+                  <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
+                </div>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-xs font-bold text-white drop-shadow-lg">
+                    {progression.xp_to_next_level} to Level {progression.level + 1}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Energy Bar */}
           <div className="space-y-2">

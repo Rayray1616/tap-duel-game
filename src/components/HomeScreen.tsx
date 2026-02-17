@@ -63,11 +63,11 @@ export function HomeScreen() {
   };
 
   const handlePlay = () => {
-    navigate('/duel');
+    navigate('/matchmaking');
   };
 
   const handleFindOpponent = () => {
-    navigate('/duel');
+    navigate('/matchmaking');
   };
 
   const handleLeaderboard = () => {

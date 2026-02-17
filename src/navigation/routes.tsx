@@ -9,6 +9,7 @@ import { InitDataPage } from '@/pages/InitDataPage.tsx';
 import { LaunchParamsPage } from '@/pages/LaunchParamsPage.tsx';
 import { ThemeParamsPage } from '@/pages/ThemeParamsPage.tsx';
 import { TONConnectPage } from '@/pages/TONConnectPage/TONConnectPage';
+import { MatchmakingScreen } from '@/components/MatchmakingScreen';
 
 interface Route {
   path: string;
@@ -19,6 +20,7 @@ interface Route {
 
 export const routes: Route[] = [
   { path: '/', Component: HomePage },
+  { path: '/matchmaking', Component: MatchmakingScreen },
   { path: '/duel', Component: DuelPage },
   { path: '/leaderboard', Component: LeaderboardPage },
   { path: '/rewards', Component: RewardsPage },

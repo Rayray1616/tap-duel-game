@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Button, Cell, Section, Title } from '@telegram-apps/telegram-ui';
 import { supabase } from '@/lib/supabase';
+import { useTelegram } from '@/telegram/useTelegram';
 import type { Database } from '@/lib/supabase';
 
 type User = Database['public']['Tables']['users']['Row'];
 type Duel = Database['public']['Tables']['duels']['Row'];
 
 export function DuelPage() {
-  // Telegram WebApp functionality removed
-  const initData = '';
+  const { user: telegramUser } = useTelegram();
   const [user, setUser] = useState<User | null>(null);
   const [currentDuel, setCurrentDuel] = useState<Duel | null>(null);
   const [loading, setLoading] = useState(true);
@@ -20,7 +20,7 @@ export function DuelPage() {
 
   useEffect(() => {
     initializeUser();
-  }, []);
+  }, [telegramUser]);
 
   useEffect(() => {
     if (gameActive && timeLeft > 0) {
@@ -65,8 +65,10 @@ export function DuelPage() {
   }, [currentDuel, user]);
 
   const initializeUser = async () => {
-    const telegramUser = (initData as any)?.user;
-    if (!telegramUser?.id) return;
+    if (!telegramUser?.id) {
+      setLoading(false);
+      return;
+    }
 
     try {
       const { data } = await supabase

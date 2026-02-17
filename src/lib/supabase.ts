@@ -213,6 +213,23 @@ export type Database = {
           updated_at?: string;
         };
       };
+      player_gems: {
+        Row: {
+          user_id: string;
+          gems: number;
+          updated_at: string;
+        };
+        Insert: {
+          user_id: string;
+          gems?: number;
+          updated_at?: string;
+        };
+        Update: {
+          user_id?: string;
+          gems?: number;
+          updated_at?: string;
+        };
+      };
     };
   };
 };

@@ -5,7 +5,7 @@ import { DuelScreen } from '@/components/DuelScreen';
 import { LeaderboardScreen } from '@/components/LeaderboardScreen';
 import { RewardsScreen } from '@/components/RewardsScreen';
 import { WalletScreen } from '@/components/WalletScreen';
-import { ShopPage } from '@/pages/ShopPage/ShopPage';
+import { ShopScreen } from '@/components/ShopScreen';
 import { InitDataPage } from '@/pages/InitDataPage.tsx';
 import { LaunchParamsPage } from '@/pages/LaunchParamsPage.tsx';
 import { ThemeParamsPage } from '@/pages/ThemeParamsPage.tsx';
@@ -26,7 +26,7 @@ export const routes: Route[] = [
   { path: '/leaderboard', Component: LeaderboardScreen },
   { path: '/rewards', Component: RewardsScreen },
   { path: '/wallet', Component: WalletScreen },
-  { path: '/shop', Component: ShopPage },
+  { path: '/shop', Component: ShopScreen },
   { path: '/init-data', Component: InitDataPage, title: 'Init Data' },
   { path: '/theme-params', Component: ThemeParamsPage, title: 'Theme Params' },
   { path: '/launch-params', Component: LaunchParamsPage, title: 'Launch Params' },

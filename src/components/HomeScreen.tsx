@@ -5,6 +5,7 @@ import { useTelegram } from '@/telegram/useTelegram';
 import { usePlayerProgression } from '@/hooks/usePlayerProgression';
 import { useRewards } from '@/hooks/useRewards';
 import { useTonWallet } from '@/hooks/useTonWallet';
+import { useGems } from '@/hooks/useGems';
 import type { Database } from '@/lib/supabase';
 
 type User = Database['public']['Tables']['users']['Row'];
@@ -24,6 +25,9 @@ export function HomeScreen() {
   
   // TON wallet
   const { walletInfo, balance, loading: walletLoading } = useTonWallet(telegramUser?.id?.toString());
+  
+  // Gems
+  const { gemsInfo, loading: gemsLoading } = useGems(telegramUser?.id?.toString());
 
   useEffect(() => {
     initializeUser();
@@ -281,6 +285,29 @@ export function HomeScreen() {
             </div>
           )}
 
+          {/* Gems Balance */}
+          {!gemsLoading && (
+            <div className="mb-4">
+              <button
+                onClick={() => navigate('/shop')}
+                className="w-full neon-gems-badge"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-green-400 text-lg">💎</span>
+                    <span className="text-xs text-green-600 uppercase tracking-wider">Gems</span>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm font-bold text-green-400">
+                      {gemsInfo?.gems?.toLocaleString() || '0'}
+                    </div>
+                    <div className="text-xs text-green-600">Tap to Shop</div>
+                  </div>
+                </div>
+              </button>
+            </div>
+          )}
+
           {/* XP Bar */}
           {!progressionLoading && progression && (
             <div className="space-y-2 mb-4">
@@ -507,6 +534,46 @@ export function HomeScreen() {
             box-shadow: 
               0 0 30px rgba(0, 136, 255, 0.6),
               inset 0 0 30px rgba(0, 136, 255, 0.2);
+          }
+        }
+
+        .neon-gems-badge {
+          background: linear-gradient(135deg, rgba(0, 255, 0, 0.2) 0%, rgba(0, 255, 0, 0.1) 100%);
+          border: 2px solid rgba(0, 255, 0, 0.6);
+          border-radius: 12px;
+          padding: 12px 16px;
+          font-family: 'Orbitron', monospace;
+          font-weight: 700;
+          color: #00ff00;
+          cursor: pointer;
+          position: relative;
+          overflow: hidden;
+          transition: all 0.3s ease;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          animation: gems-pulse 2s ease-in-out infinite;
+        }
+
+        .neon-gems-badge:hover {
+          transform: scale(1.05);
+          border-color: rgba(0, 255, 0, 0.8);
+          box-shadow: 
+            0 0 30px rgba(0, 255, 0, 0.6),
+            inset 0 0 30px rgba(0, 255, 0, 0.2);
+        }
+
+        @keyframes gems-pulse {
+          0%, 100% { 
+            transform: scale(1);
+            box-shadow: 
+              0 0 20px rgba(0, 255, 0, 0.4),
+              inset 0 0 20px rgba(0, 255, 0, 0.1);
+          }
+          50% { 
+            transform: scale(1.02);
+            box-shadow: 
+              0 0 30px rgba(0, 255, 0, 0.6),
+              inset 0 0 30px rgba(0, 255, 0, 0.2);
           }
         }
 

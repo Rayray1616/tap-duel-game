@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTelegram } from '@/telegram/useTelegram';
 import { useRewards } from '@/hooks/useRewards';
+import { useGems } from '@/hooks/useGems';
 
 interface ClaimResult {
   success: boolean;
@@ -15,6 +16,7 @@ export function RewardsScreen() {
   const navigate = useNavigate();
   const { user: telegramUser } = useTelegram();
   const { rewardStatus, loading, claiming, claimReward } = useRewards(telegramUser?.id?.toString());
+  const { addGems } = useGems(telegramUser?.id?.toString());
   const [claimedReward, setClaimedReward] = useState<ClaimResult | null>(null);
   const [showRewardAnimation, setShowRewardAnimation] = useState(false);
 
@@ -23,6 +25,10 @@ export function RewardsScreen() {
     if (result && result.success) {
       setClaimedReward(result);
       setShowRewardAnimation(true);
+      
+      // Award gems: 5 + (streak * 2)
+      const gemsAwarded = 5 + (result.streak * 2);
+      await addGems(gemsAwarded);
       
       // Hide animation after 3 seconds
       setTimeout(() => {
@@ -183,6 +189,9 @@ export function RewardsScreen() {
             </div>
             <div className="text-2xl text-orange-400 mb-2">
               +{claimedReward.reward_amount} XP
+            </div>
+            <div className="text-2xl text-green-400 mb-2">
+              +{5 + (claimedReward.streak * 2)} 💎 Gems
             </div>
             <div className="text-lg text-cyan-400">
               Streak: {claimedReward.streak} 🔥

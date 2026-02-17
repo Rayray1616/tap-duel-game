@@ -4,6 +4,7 @@ import { useDuelClient } from '@/realtime/DuelClient';
 import { useTelegram } from '@/telegram/useTelegram';
 import { usePlayerProgression } from '@/hooks/usePlayerProgression';
 import { useLeaderboard } from '@/hooks/useLeaderboard';
+import { useGems } from '@/hooks/useGems';
 import { supabase } from '@/lib/supabase';
 import type { Database } from '@/lib/supabase';
 
@@ -38,6 +39,9 @@ export function DuelScreen({ duelId: propDuelId, playerId: propPlayerId }: DuelS
   
   // Leaderboard
   const { updateLeaderboard } = useLeaderboard(telegramUser?.id?.toString());
+  
+  // Gems
+  const { addGems } = useGems(telegramUser?.id?.toString());
 
   // WebSocket duel client
   const {
@@ -62,8 +66,12 @@ export function DuelScreen({ duelId: propDuelId, playerId: propPlayerId }: DuelS
       const xpAmount = result.winner_id === playerId ? 50 : 20;
       const duelResult = result.winner_id === playerId ? 'win' : 'lose';
       
+      // Award gems based on duel result
+      const gemsAmount = result.winner_id === playerId ? 3 : 1;
+      
       awardXpAfterDuel(xpAmount);
       updateLeaderboardAfterDuel(duelResult);
+      awardGemsAfterDuel(gemsAmount);
     }
   }, [result, playerId]);
 
@@ -132,6 +140,14 @@ export function DuelScreen({ duelId: propDuelId, playerId: propPlayerId }: DuelS
       await updateLeaderboard(result);
     } catch (error) {
       console.error('Error updating leaderboard:', error);
+    }
+  };
+
+  const awardGemsAfterDuel = async (amount: number) => {
+    try {
+      await addGems(amount);
+    } catch (error) {
+      console.error('Error awarding gems:', error);
     }
   };
 

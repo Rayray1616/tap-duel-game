@@ -1,6 +1,22 @@
-/* Premium Cyberpunk UI Styles */
+/* Mobile CSS Reset and Global Styles */
 
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  touch-action: manipulation;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Premium Cyberpunk UI Styles */
 
 /* Base font */
 .font-orbitron {

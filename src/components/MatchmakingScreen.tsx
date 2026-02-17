@@ -24,7 +24,8 @@ export function MatchmakingScreen() {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen bg-black text-cyan-400 flex flex-col items-center justify-center relative overflow-hidden">
+    <div className="min-h-screen bg-black text-cyan-400 flex flex-col items-center justify-center relative overflow-hidden"
+         style={{ minHeight: '100vh', width: '100%', overflow: 'hidden', paddingBottom: 'env(safe-area-inset-bottom)' }}>
       
       {/* Animated background effects */}
       <div className="absolute inset-0">

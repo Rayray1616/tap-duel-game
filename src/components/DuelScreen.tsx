@@ -98,7 +98,8 @@ export function DuelScreen({ duelId: propDuelId, playerId: propPlayerId }: DuelS
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center"
+           style={{ minHeight: '100vh', width: '100%', overflow: 'hidden' }}>
         <div className="text-cyan-400 text-2xl font-bold animate-pulse">LOADING DUEL...</div>
       </div>
     );
@@ -106,7 +107,8 @@ export function DuelScreen({ duelId: propDuelId, playerId: propPlayerId }: DuelS
 
   if (!duelId || !playerId) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center"
+           style={{ minHeight: '100vh', width: '100%', overflow: 'hidden' }}>
         <div className="text-red-400 text-xl text-center">
           <div>Invalid duel parameters</div>
           <button 
@@ -129,7 +131,8 @@ export function DuelScreen({ duelId: propDuelId, playerId: propPlayerId }: DuelS
   const opponentProgress = Math.min((opponentTaps / maxTaps) * 100, 100);
 
   return (
-    <div className="min-h-screen bg-black text-cyan-400 flex flex-col relative overflow-hidden">
+    <div className="min-h-screen bg-black text-cyan-400 flex flex-col relative overflow-hidden"
+         style={{ minHeight: '100vh', width: '100%', overflow: 'hidden', paddingBottom: 'env(safe-area-inset-bottom)' }}>
       
       {/* Animated background effects */}
       <div className="absolute inset-0">

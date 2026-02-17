@@ -265,6 +265,38 @@ export type Database = {
           updated_at?: string;
         };
       };
+      ton_payouts: {
+        Row: {
+          id: string;
+          user_id: string;
+          ton_address: string;
+          amount_ton: number;
+          status: string;
+          tx_hash: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          ton_address: string;
+          amount_ton?: number;
+          status?: string;
+          tx_hash?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          ton_address?: string;
+          amount_ton?: number;
+          status?: string;
+          tx_hash?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
     };
   };
 };

@@ -7,6 +7,7 @@ import { useRewards } from '@/hooks/useRewards';
 import { useTonWallet } from '@/hooks/useTonWallet';
 import { useGems } from '@/hooks/useGems';
 import { useTonTopUp } from '@/hooks/useTonTopUp';
+import { usePayouts } from '@/hooks/usePayouts';
 import type { Database } from '@/lib/supabase';
 
 type User = Database['public']['Tables']['users']['Row'];
@@ -32,6 +33,9 @@ export function HomeScreen() {
   
   // TON Top-up
   const { isPending, hasDeposit } = useTonTopUp(telegramUser?.id?.toString());
+  
+  // Payouts
+  const { payouts } = usePayouts(telegramUser?.id?.toString());
 
   useEffect(() => {
     initializeUser();
@@ -323,6 +327,24 @@ export function HomeScreen() {
                   <span className="text-blue-400 text-lg">⏳</span>
                   <span className="text-sm font-bold text-blue-400">TON DEPOSIT PENDING</span>
                   <span className="text-lg animate-pulse">💎</span>
+                </div>
+              </button>
+            </div>
+          )}
+
+          {/* Withdraw Button */}
+          {gemsInfo && gemsInfo.gems >= 100 && (
+            <div className="mb-4">
+              <button
+                onClick={() => navigate('/payouts')}
+                className="w-full neon-withdraw-button"
+              >
+                <div className="flex items-center justify-center space-x-2">
+                  <span className="text-purple-400 text-lg">💸</span>
+                  <span className="text-sm font-bold text-purple-400">WITHDRAW</span>
+                  <span className="text-xs text-purple-600">
+                    ({(gemsInfo.gems / 100).toFixed(2)} TON)
+                  </span>
                 </div>
               </button>
             </div>
@@ -634,6 +656,46 @@ export function HomeScreen() {
             box-shadow: 
               0 0 30px rgba(0, 136, 255, 0.6),
               inset 0 0 30px rgba(0, 136, 255, 0.2);
+          }
+        }
+
+        .neon-withdraw-button {
+          background: linear-gradient(135deg, rgba(128, 0, 255, 0.2) 0%, rgba(255, 0, 128, 0.1) 100%);
+          border: 2px solid rgba(128, 0, 255, 0.6);
+          border-radius: 12px;
+          padding: 12px 16px;
+          font-family: 'Orbitron', monospace;
+          font-weight: 700;
+          color: #8000ff;
+          cursor: pointer;
+          position: relative;
+          overflow: hidden;
+          transition: all 0.3s ease;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          animation: withdraw-pulse 2s ease-in-out infinite;
+        }
+
+        .neon-withdraw-button:hover {
+          transform: scale(1.05);
+          border-color: rgba(128, 0, 255, 0.8);
+          box-shadow: 
+            0 0 30px rgba(128, 0, 255, 0.6),
+            inset 0 0 30px rgba(128, 0, 255, 0.2);
+        }
+
+        @keyframes withdraw-pulse {
+          0%, 100% { 
+            transform: scale(1);
+            box-shadow: 
+              0 0 20px rgba(128, 0, 255, 0.4),
+              inset 0 0 20px rgba(128, 0, 255, 0.1);
+          }
+          50% { 
+            transform: scale(1.02);
+            box-shadow: 
+              0 0 30px rgba(128, 0, 255, 0.6),
+              inset 0 0 30px rgba(128, 0, 255, 0.2);
           }
         }
 

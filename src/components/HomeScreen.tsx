@@ -11,6 +11,7 @@ import { usePayouts } from '@/hooks/usePayouts';
 import { useReferral } from '@/hooks/useReferral';
 import { useDailyMissions } from '@/hooks/useDailyMissions';
 import { useAchievements } from '@/hooks/useAchievements';
+import { useSeasons } from '@/hooks/useSeasons';
 import type { Database } from '@/lib/supabase';
 
 type User = Database['public']['Tables']['users']['Row'];
@@ -48,6 +49,9 @@ export function HomeScreen() {
   
   // Achievements
   const { getClaimableCount: getClaimableAchievements } = useAchievements(telegramUser?.id?.toString());
+  
+  // Seasons
+  const { getClaimableRewards: getClaimableBattlePassRewards } = useSeasons(telegramUser?.id?.toString());
 
   useEffect(() => {
     initializeUser();
@@ -405,6 +409,22 @@ export function HomeScreen() {
                 <span className="text-sm font-bold text-purple-400">ACHIEVEMENTS</span>
                 <span className="text-xs text-purple-600">
                   {getClaimableAchievements()} claimable
+                </span>
+              </div>
+            </button>
+          </div>
+
+          {/* Battle Pass Button */}
+          <div className="mb-4">
+            <button
+              onClick={() => navigate('/battlepass')}
+              className="w-full neon-battlepass-button"
+            >
+              <div className="flex items-center justify-center space-x-2">
+                <span className="text-pink-400 text-lg">⚔️</span>
+                <span className="text-sm font-bold text-pink-400">BATTLE PASS</span>
+                <span className="text-xs text-pink-600">
+                  {getClaimableBattlePassRewards()} claimable
                 </span>
               </div>
             </button>
@@ -876,6 +896,46 @@ export function HomeScreen() {
             box-shadow: 
               0 0 30px rgba(128, 0, 255, 0.6),
               inset 0 0 30px rgba(128, 0, 255, 0.2);
+          }
+        }
+
+        .neon-battlepass-button {
+          background: linear-gradient(135deg, rgba(255, 0, 255, 0.2) 0%, rgba(255, 105, 180, 0.1) 100%);
+          border: 2px solid rgba(255, 0, 255, 0.6);
+          border-radius: 12px;
+          padding: 12px 16px;
+          font-family: 'Orbitron', monospace;
+          font-weight: 700;
+          color: #ff00ff;
+          cursor: pointer;
+          position: relative;
+          overflow: hidden;
+          transition: all 0.3s ease;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          animation: battlepass-pulse 2s ease-in-out infinite;
+        }
+
+        .neon-battlepass-button:hover {
+          transform: scale(1.05);
+          border-color: rgba(255, 0, 255, 0.8);
+          box-shadow: 
+            0 0 30px rgba(255, 0, 255, 0.6),
+            inset 0 0 30px rgba(255, 0, 255, 0.2);
+        }
+
+        @keyframes battlepass-pulse {
+          0%, 100% { 
+            transform: scale(1);
+            box-shadow: 
+              0 0 20px rgba(255, 0, 255, 0.4),
+              inset 0 0 20px rgba(255, 0, 255, 0.1);
+          }
+          50% { 
+            transform: scale(1.02);
+            box-shadow: 
+              0 0 30px rgba(255, 0, 255, 0.6),
+              inset 0 0 30px rgba(255, 0, 255, 0.2);
           }
         }
 

@@ -8,6 +8,7 @@ import { useGems } from '@/hooks/useGems';
 import { useReferral } from '@/hooks/useReferral';
 import { useDailyMissions } from '@/hooks/useDailyMissions';
 import { useAchievements } from '@/hooks/useAchievements';
+import { useSeasons } from '@/hooks/useSeasons';
 import { supabase } from '@/lib/supabase';
 import type { Database } from '@/lib/supabase';
 
@@ -54,6 +55,9 @@ export function DuelScreen({ duelId: propDuelId, playerId: propPlayerId }: DuelS
   
   // Achievements
   const { updateAchievementProgress } = useAchievements(telegramUser?.id?.toString());
+  
+  // Seasons
+  const { addBattlePassXP } = useSeasons(telegramUser?.id?.toString());
 
   // WebSocket duel client
   const {
@@ -91,11 +95,14 @@ export function DuelScreen({ duelId: propDuelId, playerId: propPlayerId }: DuelS
       updateMissionProgress('xp_gain', xpAmount);
       updateAchievementProgress('xp_gain', xpAmount);
       
+      // Add Battle Pass XP
+      addBattlePassXP(xpAmount);
+      
       awardXpAfterDuel(xpAmount);
       updateLeaderboardAfterDuel(duelResult);
       awardGemsAfterDuel(gemsAmount);
     }
-  }, [result, playerId, updateMissionProgress, updateAchievementProgress]);
+  }, [result, playerId, updateMissionProgress, updateAchievementProgress, addBattlePassXP]);
 
   const initializeUser = async () => {
     if (!telegramUser?.id) {

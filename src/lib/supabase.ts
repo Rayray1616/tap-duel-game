@@ -395,6 +395,116 @@ export type Database = {
           updated_at?: string;
         };
       };
+      seasons: {
+        Row: {
+          id: string;
+          season_key: string;
+          name: string;
+          starts_at: string;
+          ends_at: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          season_key: string;
+          name: string;
+          starts_at: string;
+          ends_at: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          season_key?: string;
+          name?: string;
+          starts_at?: string;
+          ends_at?: string;
+          created_at?: string;
+        };
+      };
+      battle_pass_tracks: {
+        Row: {
+          id: string;
+          season_id: string;
+          tier: number;
+          track_type: 'free' | 'premium';
+          required_xp: number;
+          reward_type: 'gems' | 'cosmetic' | 'title' | 'emoji';
+          reward_value: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          season_id: string;
+          tier: number;
+          track_type: 'free' | 'premium';
+          required_xp: number;
+          reward_type: 'gems' | 'cosmetic' | 'title' | 'emoji';
+          reward_value: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          season_id?: string;
+          tier?: number;
+          track_type?: 'free' | 'premium';
+          required_xp?: number;
+          reward_type?: 'gems' | 'cosmetic' | 'title' | 'emoji';
+          reward_value?: string;
+          created_at?: string;
+        };
+      };
+      battle_pass_progress: {
+        Row: {
+          user_id: string;
+          season_id: string;
+          season_xp: number;
+          current_tier: number;
+          premium_unlocked: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          user_id: string;
+          season_id: string;
+          season_xp?: number;
+          current_tier?: number;
+          premium_unlocked?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          user_id?: string;
+          season_id?: string;
+          season_xp?: number;
+          current_tier?: number;
+          premium_unlocked?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      battle_pass_claims: {
+        Row: {
+          user_id: string;
+          season_id: string;
+          tier: number;
+          track_type: 'free' | 'premium';
+          claimed_at: string;
+        };
+        Insert: {
+          user_id: string;
+          season_id: string;
+          tier: number;
+          track_type: 'free' | 'premium';
+          claimed_at?: string;
+        };
+        Update: {
+          user_id?: string;
+          season_id?: string;
+          tier?: number;
+          track_type?: 'free' | 'premium';
+          claimed_at?: string;
+        };
+      };
     };
   };
 };

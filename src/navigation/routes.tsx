@@ -6,6 +6,7 @@ import { LeaderboardScreen } from '@/components/LeaderboardScreen';
 import { RewardsScreen } from '@/components/RewardsScreen';
 import { WalletScreen } from '@/components/WalletScreen';
 import { ShopScreen } from '@/components/ShopScreen';
+import { TopUpScreen } from '@/components/TopUpScreen';
 import { InitDataPage } from '@/pages/InitDataPage.tsx';
 import { LaunchParamsPage } from '@/pages/LaunchParamsPage.tsx';
 import { ThemeParamsPage } from '@/pages/ThemeParamsPage.tsx';
@@ -27,6 +28,7 @@ export const routes: Route[] = [
   { path: '/rewards', Component: RewardsScreen },
   { path: '/wallet', Component: WalletScreen },
   { path: '/shop', Component: ShopScreen },
+  { path: '/topup', Component: TopUpScreen },
   { path: '/init-data', Component: InitDataPage, title: 'Init Data' },
   { path: '/theme-params', Component: ThemeParamsPage, title: 'Theme Params' },
   { path: '/launch-params', Component: LaunchParamsPage, title: 'Launch Params' },

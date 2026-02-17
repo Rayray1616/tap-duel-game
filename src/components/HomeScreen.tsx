@@ -6,6 +6,7 @@ import { usePlayerProgression } from '@/hooks/usePlayerProgression';
 import { useRewards } from '@/hooks/useRewards';
 import { useTonWallet } from '@/hooks/useTonWallet';
 import { useGems } from '@/hooks/useGems';
+import { useTonTopUp } from '@/hooks/useTonTopUp';
 import type { Database } from '@/lib/supabase';
 
 type User = Database['public']['Tables']['users']['Row'];
@@ -28,6 +29,9 @@ export function HomeScreen() {
   
   // Gems
   const { gemsInfo, loading: gemsLoading } = useGems(telegramUser?.id?.toString());
+  
+  // TON Top-up
+  const { isPending, hasDeposit } = useTonTopUp(telegramUser?.id?.toString());
 
   useEffect(() => {
     initializeUser();
@@ -308,6 +312,22 @@ export function HomeScreen() {
             </div>
           )}
 
+          {/* TON Deposit Status */}
+          {isPending && (
+            <div className="mb-4">
+              <button
+                onClick={() => navigate('/topup')}
+                className="w-full neon-ton-deposit-badge"
+              >
+                <div className="flex items-center justify-center space-x-2">
+                  <span className="text-blue-400 text-lg">⏳</span>
+                  <span className="text-sm font-bold text-blue-400">TON DEPOSIT PENDING</span>
+                  <span className="text-lg animate-pulse">💎</span>
+                </div>
+              </button>
+            </div>
+          )}
+
           {/* XP Bar */}
           {!progressionLoading && progression && (
             <div className="space-y-2 mb-4">
@@ -574,6 +594,46 @@ export function HomeScreen() {
             box-shadow: 
               0 0 30px rgba(0, 255, 0, 0.6),
               inset 0 0 30px rgba(0, 255, 0, 0.2);
+          }
+        }
+
+        .neon-ton-deposit-badge {
+          background: linear-gradient(135deg, rgba(0, 136, 255, 0.2) 0%, rgba(128, 0, 255, 0.1) 100%);
+          border: 2px solid rgba(0, 136, 255, 0.6);
+          border-radius: 12px;
+          padding: 12px 16px;
+          font-family: 'Orbitron', monospace;
+          font-weight: 700;
+          color: #0088ff;
+          cursor: pointer;
+          position: relative;
+          overflow: hidden;
+          transition: all 0.3s ease;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          animation: ton-deposit-pulse 2s ease-in-out infinite;
+        }
+
+        .neon-ton-deposit-badge:hover {
+          transform: scale(1.05);
+          border-color: rgba(0, 136, 255, 0.8);
+          box-shadow: 
+            0 0 30px rgba(0, 136, 255, 0.6),
+            inset 0 0 30px rgba(0, 136, 255, 0.2);
+        }
+
+        @keyframes ton-deposit-pulse {
+          0%, 100% { 
+            transform: scale(1);
+            box-shadow: 
+              0 0 20px rgba(0, 136, 255, 0.4),
+              inset 0 0 20px rgba(0, 136, 255, 0.1);
+          }
+          50% { 
+            transform: scale(1.02);
+            box-shadow: 
+              0 0 30px rgba(0, 136, 255, 0.6),
+              inset 0 0 30px rgba(0, 136, 255, 0.2);
           }
         }
 

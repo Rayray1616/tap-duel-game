@@ -230,6 +230,41 @@ export type Database = {
           updated_at?: string;
         };
       };
+      ton_deposits: {
+        Row: {
+          id: string;
+          user_id: string;
+          deposit_address: string;
+          tx_hash: string | null;
+          amount_ton: number;
+          gems_credited: number;
+          status: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          deposit_address: string;
+          tx_hash?: string | null;
+          amount_ton?: number;
+          gems_credited?: number;
+          status?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          deposit_address?: string;
+          tx_hash?: string | null;
+          amount_ton?: number;
+          gems_credited?: number;
+          status?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
     };
   };
 };

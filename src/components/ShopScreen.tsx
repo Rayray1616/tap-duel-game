@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTelegram } from '@/telegram/useTelegram';
 import { useGems } from '@/hooks/useGems';
+import { useTonTopUp } from '@/hooks/useTonTopUp';
 
 interface GemBundle {
   id: string;
@@ -15,6 +16,7 @@ export function ShopScreen() {
   const navigate = useNavigate();
   const { user: telegramUser } = useTelegram();
   const { gemsInfo, loading, addGems } = useGems(telegramUser?.id?.toString());
+  const { isPending, hasDeposit } = useTonTopUp(telegramUser?.id?.toString());
   const [purchasing, setPurchasing] = useState<string | null>(null);
 
   const gemBundles: GemBundle[] = [
@@ -119,6 +121,33 @@ export function ShopScreen() {
       {/* Main Content */}
       <div className="relative z-10 flex-1 px-4 pb-4">
         <div className="max-w-md mx-auto space-y-4">
+          {/* TON Top-Up Section */}
+          <div className="neon-ton-topup">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center space-x-3">
+                <span className="text-3xl">💎</span>
+                <div>
+                  <div className="text-lg font-bold text-blue-400">Buy Gems with TON</div>
+                  <div className="text-sm text-blue-600">1 TON = 100 Gems</div>
+                </div>
+              </div>
+              <button
+                onClick={() => navigate('/topup')}
+                className="neon-topup-button"
+              >
+                {isPending ? 'PENDING' : 'TOP-UP'}
+              </button>
+            </div>
+            
+            {isPending && (
+              <div className="text-center">
+                <div className="text-xs text-yellow-400 animate-pulse">
+                  ⏳ TON deposit pending - check status
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* Gem Bundles */}
           {gemBundles.map((bundle) => (
             <div key={bundle.id} className="neon-gem-bundle">
@@ -346,6 +375,51 @@ export function ShopScreen() {
           border-radius: 16px;
           padding: 1.5rem;
           backdrop-filter: blur(10px);
+        }
+
+        .neon-ton-topup {
+          background: rgba(0, 0, 0, 0.9);
+          border: 2px solid rgba(0, 136, 255, 0.3);
+          border-radius: 16px;
+          padding: 1.5rem;
+          backdrop-filter: blur(10px);
+          position: relative;
+          overflow: hidden;
+        }
+
+        .neon-ton-topup::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(135deg, rgba(0, 136, 255, 0.1) 0%, rgba(128, 0, 255, 0.1) 100%);
+          pointer-events: none;
+        }
+
+        .neon-topup-button {
+          background: linear-gradient(135deg, #0088ff 0%, #8000ff 50%, #0088ff 100%);
+          border: none;
+          padding: 8px 16px;
+          font-family: 'Orbitron', monospace;
+          font-weight: 700;
+          color: #fff;
+          border-radius: 8px;
+          cursor: pointer;
+          position: relative;
+          overflow: hidden;
+          transition: all 0.3s ease;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          font-size: 0.8rem;
+          box-shadow: 
+            0 0 20px #0088ff,
+            inset 0 0 20px rgba(0, 136, 255, 0.3);
+        }
+
+        .neon-topup-button:hover {
+          transform: scale(1.05);
+          box-shadow: 
+            0 0 30px #0088ff,
+            inset 0 0 30px rgba(0, 136, 255, 0.4);
         }
 
         .neon-placeholder-card {

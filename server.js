@@ -223,8 +223,9 @@ app.use(express.json());
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`, {
     headers: req.headers,
-    body: req.body,
     query: req.query,
+    url: req.url,
+    host: req.get('host')
   });
   next();
 });
@@ -245,6 +246,22 @@ app.get('/health', (req, res) => {
     status: 'healthy',
     timestamp: new Date().toISOString(),
     webhook: '/webhook',
+    deployment: 'Tap Duel Game - Production',
+    version: '1.0.0',
+    host: req.get('host'),
+    url: req.url
+  });
+});
+
+// Deployment identification endpoint
+app.get('/identify', (req, res) => {
+  res.status(200).json({
+    message: 'This is the Tap Duel Game production server',
+    timestamp: new Date().toISOString(),
+    host: req.get('host'),
+    userAgent: req.get('User-Agent'),
+    cwd: process.cwd(),
+    dirname: __dirname
   });
 });
 
@@ -299,7 +316,7 @@ app.use('/assets', express.static(path.join(__dirname, 'dist/assets')));
 // Explicit serving for TON Connect manifest
 app.use('/tonconnect-manifest.json', express.static(path.join(__dirname, 'dist/tonconnect-manifest.json')));
 
-// Handle React routing
+// Handle React routing - MUST BE LAST
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });

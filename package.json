@@ -6,8 +6,10 @@
   "homepage": "https://tap-duel-game.railway.app",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "start": "node server.js"
+    "build": "vite build && node -e \"const fs=require('fs'); const path=require('path'); const distPath=path.join(process.cwd(),'dist'); if(!fs.existsSync(distPath)) { console.error('❌ dist folder not found after build'); process.exit(1); } else { console.log('✅ Build successful - dist folder exists'); console.log('📁 Files:', fs.readdirSync(distPath)); }\"",
+    "build:verify": "npm run build && node -e \"const fs=require('fs'); const path=require('path'); const distPath=path.join(process.cwd(),'dist'); if(!fs.existsSync(distPath)) { console.error('❌ dist folder not found'); process.exit(1); } console.log('✅ Build verified');\"",
+    "start": "node server.js",
+    "railway:start": "npm run build && node server.js"
   },
   "engines": {
     "node": "20"

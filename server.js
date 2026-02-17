@@ -10,6 +10,7 @@ import { Address } from "ton-core";
 import { mnemonicToPrivateKey } from "@ton/crypto";
 import { WalletContractV4, internal } from "ton";
 import { createClient } from '@supabase/supabase-js';
+import { existsSync, readdirSync } from 'fs';
 
 // Supabase client will be initialized after environment variables are available
 let supabase = null;
@@ -219,7 +220,24 @@ app.get("/api/ton/validate-stake", async (req, res) => {
 });
 
 // Serve static files (React app)
-app.use(express.static(path.join(__dirname, 'dist')));
+const distPath = path.join(__dirname, 'dist');
+console.log('🔍 Dist path:', distPath);
+
+// Check if dist folder exists
+if (!existsSync(distPath)) {
+  console.error('❌ ERROR: dist folder does not exist at:', distPath);
+  console.error('📁 Available files in current directory:', readdirSync(__dirname));
+} else {
+  console.log('✅ dist folder exists');
+  console.log('📁 Files in dist:', readdirSync(distPath));
+  
+  const assetsPath = path.join(distPath, 'assets');
+  if (existsSync(assetsPath)) {
+    console.log('📁 Files in dist/assets:', readdirSync(assetsPath));
+  }
+}
+
+app.use(express.static(distPath));
 
 // Explicit static serving for assets folder
 app.use('/assets', express.static(path.join(__dirname, 'dist/assets')));

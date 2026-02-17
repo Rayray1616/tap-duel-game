@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { useTelegram } from '@/telegram/useTelegram';
 import { usePlayerProgression } from '@/hooks/usePlayerProgression';
+import { useRewards } from '@/hooks/useRewards';
 import type { Database } from '@/lib/supabase';
 
 type User = Database['public']['Tables']['users']['Row'];
@@ -16,6 +17,9 @@ export function HomeScreen() {
   
   // XP and progression
   const { progression, loading: progressionLoading } = usePlayerProgression(telegramUser?.id?.toString());
+  
+  // Daily rewards
+  const { rewardStatus, loading: rewardsLoading } = useRewards(telegramUser?.id?.toString());
 
   useEffect(() => {
     initializeUser();
@@ -206,6 +210,40 @@ export function HomeScreen() {
             </div>
           </div>
 
+          {/* Daily Reward Badge */}
+          {!rewardsLoading && rewardStatus?.can_claim && (
+            <div className="mb-4">
+              <button
+                onClick={() => navigate('/rewards')}
+                className="w-full neon-reward-badge"
+              >
+                <div className="flex items-center justify-center space-x-2">
+                  <span className="text-2xl">🎁</span>
+                  <span className="text-sm font-bold">Daily Reward Available!</span>
+                  <span className="text-2xl animate-pulse">✨</span>
+                </div>
+              </button>
+            </div>
+          )}
+
+          {/* Streak Indicator */}
+          {!rewardsLoading && rewardStatus && rewardStatus.streak > 0 && (
+            <div className="mb-4">
+              <div className="flex justify-between items-center">
+                <span className="text-xs text-orange-600 uppercase tracking-wider">Daily Streak</span>
+                <span className="text-xs text-orange-400">{rewardStatus.streak} days 🔥</span>
+              </div>
+              <div className="relative h-2 bg-gray-900 rounded-full overflow-hidden mt-1">
+                <div 
+                  className="absolute inset-y-0 left-0 bg-gradient-to-r from-orange-500 to-red-500 transition-all duration-500 rounded-full"
+                  style={{ width: `${Math.min((rewardStatus.streak % 10) * 10, 100)}%` }}
+                >
+                  <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* XP Bar */}
           {!progressionLoading && progression && (
             <div className="space-y-2 mb-4">
@@ -353,6 +391,46 @@ export function HomeScreen() {
           box-shadow: 
             0 0 20px rgba(255, 0, 255, 0.5),
             inset 0 0 20px rgba(255, 0, 255, 0.1);
+        }
+
+        .neon-reward-badge {
+          background: linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 165, 0, 0.2) 100%);
+          border: 2px solid rgba(255, 215, 0, 0.6);
+          border-radius: 12px;
+          padding: 12px 16px;
+          font-family: 'Orbitron', monospace;
+          font-weight: 700;
+          color: #ffd700;
+          cursor: pointer;
+          position: relative;
+          overflow: hidden;
+          transition: all 0.3s ease;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          animation: reward-pulse 2s ease-in-out infinite;
+        }
+
+        .neon-reward-badge:hover {
+          transform: scale(1.05);
+          border-color: rgba(255, 215, 0, 0.8);
+          box-shadow: 
+            0 0 30px rgba(255, 215, 0, 0.6),
+            inset 0 0 30px rgba(255, 215, 0, 0.2);
+        }
+
+        @keyframes reward-pulse {
+          0%, 100% { 
+            transform: scale(1);
+            box-shadow: 
+              0 0 20px rgba(255, 215, 0, 0.4),
+              inset 0 0 20px rgba(255, 215, 0, 0.1);
+          }
+          50% { 
+            transform: scale(1.02);
+            box-shadow: 
+              0 0 30px rgba(255, 215, 0, 0.6),
+              inset 0 0 30px rgba(255, 215, 0, 0.2);
+          }
         }
 
         .neon-text {

@@ -5,6 +5,7 @@ import { useTelegram } from '@/telegram/useTelegram';
 import { usePlayerProgression } from '@/hooks/usePlayerProgression';
 import { useLeaderboard } from '@/hooks/useLeaderboard';
 import { useGems } from '@/hooks/useGems';
+import { useReferral } from '@/hooks/useReferral';
 import { supabase } from '@/lib/supabase';
 import type { Database } from '@/lib/supabase';
 
@@ -42,6 +43,9 @@ export function DuelScreen({ duelId: propDuelId, playerId: propPlayerId }: DuelS
   
   // Gems
   const { addGems } = useGems(telegramUser?.id?.toString());
+  
+  // Referrals
+  const { hasUsedCode, confirmReferral } = useReferral(telegramUser?.id?.toString());
 
   // WebSocket duel client
   const {
@@ -146,6 +150,14 @@ export function DuelScreen({ duelId: propDuelId, playerId: propPlayerId }: DuelS
   const awardGemsAfterDuel = async (amount: number) => {
     try {
       await addGems(amount);
+      
+      // Check and confirm referral after first duel
+      if (hasUsedCode) {
+        const result = await confirmReferral();
+        if (result?.success) {
+          console.log('Referral confirmed! Rewards awarded:', result);
+        }
+      }
     } catch (error) {
       console.error('Error awarding gems:', error);
     }

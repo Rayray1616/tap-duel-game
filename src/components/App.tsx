@@ -9,6 +9,7 @@ import LobbyScreen from '../screens/LobbyScreen';
 import DuelScreen from '../screens/DuelScreen';
 import NewLobbyRedirect from '../screens/NewLobbyRedirect';
 import { useTelegram } from "@/telegram/useTelegram";
+import { useReferral } from '@/hooks/useReferral';
 
 // Wrapper components to extract route params
 function LobbyScreenWrapper() {
@@ -32,19 +33,31 @@ function DuelScreenWrapper() {
 export function App() {
   const { user } = useTelegram();
   const navigate = useNavigate();
+  const { hasUsedCode, registerReferral } = useReferral(user?.id?.toString());
 
   // Store Telegram user ID as playerId
   const playerId = user?.id?.toString() || "guest_" + Math.random().toString(36).slice(2);
 
   // Detect Telegram deep link start_param
   const startParam = (window as any).Telegram?.WebApp?.initData?.start_param;
+  
+  // Detect URL search params for referral code
+  const urlParams = new URLSearchParams(window.location.search);
+  const refCode = urlParams.get('ref');
 
   useEffect(() => {
+    // Handle duel deep links
     if (startParam && startParam.startsWith("duel_")) {
       const duelId = startParam.replace("duel_", "");
       navigate(`/lobby/${duelId}`);
+      return;
     }
-  }, [startParam, navigate]);
+    
+    // Handle referral registration
+    if (refCode && user?.id && !hasUsedCode) {
+      registerReferral(refCode);
+    }
+  }, [startParam, navigate, refCode, user?.id, hasUsedCode, registerReferral]);
 
   return (
     <AppRoot

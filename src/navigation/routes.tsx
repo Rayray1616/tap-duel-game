@@ -8,6 +8,7 @@ import { WalletScreen } from '@/components/WalletScreen';
 import { ShopScreen } from '@/components/ShopScreen';
 import { TopUpScreen } from '@/components/TopUpScreen';
 import { PayoutScreen } from '@/components/PayoutScreen';
+import { ReferralScreen } from '@/components/ReferralScreen';
 import { InitDataPage } from '@/pages/InitDataPage.tsx';
 import { LaunchParamsPage } from '@/pages/LaunchParamsPage.tsx';
 import { ThemeParamsPage } from '@/pages/ThemeParamsPage.tsx';
@@ -31,6 +32,7 @@ export const routes: Route[] = [
   { path: '/shop', Component: ShopScreen },
   { path: '/topup', Component: TopUpScreen },
   { path: '/payouts', Component: PayoutScreen },
+  { path: '/referrals', Component: ReferralScreen },
   { path: '/init-data', Component: InitDataPage, title: 'Init Data' },
   { path: '/theme-params', Component: ThemeParamsPage, title: 'Theme Params' },
   { path: '/launch-params', Component: LaunchParamsPage, title: 'Launch Params' },

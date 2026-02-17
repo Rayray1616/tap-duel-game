@@ -297,6 +297,52 @@ export type Database = {
           updated_at?: string;
         };
       };
+      referral_codes: {
+        Row: {
+          user_id: string;
+          code: string;
+          created_at: string;
+        };
+        Insert: {
+          user_id: string;
+          code: string;
+          created_at?: string;
+        };
+        Update: {
+          user_id?: string;
+          code?: string;
+          created_at?: string;
+        };
+      };
+      referrals: {
+        Row: {
+          id: string;
+          referrer_user_id: string;
+          referred_user_id: string;
+          referral_code: string;
+          status: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          referrer_user_id: string;
+          referred_user_id: string;
+          referral_code: string;
+          status?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          referrer_user_id?: string;
+          referred_user_id?: string;
+          referral_code?: string;
+          status?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
     };
   };
 };

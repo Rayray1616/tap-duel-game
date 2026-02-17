@@ -8,24 +8,20 @@ import { routes } from '@/navigation/routes.tsx';
 import LobbyScreen from '../screens/LobbyScreen';
 import DuelScreen from '../screens/DuelScreen';
 import NewLobbyRedirect from '../screens/NewLobbyRedirect';
-import { useTelegram } from '../telegram/useTelegram';
+import { useTelegram } from "@/telegram/useTelegram";
 
 export function App() {
-  const { tg, user, init } = useTelegram();
+  const { user, isTelegram } = useTelegram();
   const navigate = useNavigate();
   
   // TON Connect functionality removed - walletAddress will be null
   const walletAddress = null;
 
-  useEffect(() => {
-    init();
-  }, []);
-
   // Store Telegram user ID as playerId
-  const playerId = user?.id?.toString() || "local_" + Math.random().toString(36).slice(2);
+  const playerId = user?.id?.toString() || "guest_" + Math.random().toString(36).slice(2);
 
   // Detect Telegram deep link start_param
-  const startParam = tg?.initData?.start_param;
+  const startParam = (window as any).Telegram?.WebApp?.initData?.start_param;
 
   useEffect(() => {
     if (startParam && startParam.startsWith("duel_")) {

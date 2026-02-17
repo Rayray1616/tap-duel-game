@@ -1,11 +1,10 @@
 export function useTelegram() {
-  // Telegram WebApp functionality completely removed
+  const tg = (window as any).Telegram?.WebApp;
+
   return {
-    tg: null,
-    user: null,
-    init: () => {
-      console.warn('Telegram WebApp functionality has been removed');
-    },
-    isTelegramWebApp: false
+    tg,
+    user: tg?.initDataUnsafe?.user || null,
+    initData: tg?.initData || "",
+    isTelegram: Boolean(tg),
   };
 }

@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useDuelClient } from '@/realtime/DuelClient';
 import { useTelegram } from '@/telegram/useTelegram';
 import { usePlayerProgression } from '@/hooks/usePlayerProgression';
+import { useLeaderboard } from '@/hooks/useLeaderboard';
 import { supabase } from '@/lib/supabase';
 import type { Database } from '@/lib/supabase';
 
@@ -34,6 +35,9 @@ export function DuelScreen({ duelId: propDuelId, playerId: propPlayerId }: DuelS
 
   // XP and progression
   const { awardXP } = usePlayerProgression(telegramUser?.id?.toString());
+  
+  // Leaderboard
+  const { updateLeaderboard } = useLeaderboard(telegramUser?.id?.toString());
 
   // WebSocket duel client
   const {
@@ -56,7 +60,10 @@ export function DuelScreen({ duelId: propDuelId, playerId: propPlayerId }: DuelS
       
       // Award XP based on duel result
       const xpAmount = result.winner_id === playerId ? 50 : 20;
+      const duelResult = result.winner_id === playerId ? 'win' : 'lose';
+      
       awardXpAfterDuel(xpAmount);
+      updateLeaderboardAfterDuel(duelResult);
     }
   }, [result, playerId]);
 
@@ -117,6 +124,14 @@ export function DuelScreen({ duelId: propDuelId, playerId: propPlayerId }: DuelS
       }
     } catch (error) {
       console.error('Error awarding XP:', error);
+    }
+  };
+
+  const updateLeaderboardAfterDuel = async (result: 'win' | 'lose') => {
+    try {
+      await updateLeaderboard(result);
+    } catch (error) {
+      console.error('Error updating leaderboard:', error);
     }
   };
 

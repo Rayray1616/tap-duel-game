@@ -2,7 +2,7 @@ import type { ComponentType, JSX } from 'react';
 
 import { HomePage } from '@/pages/HomePage/HomePage';
 import { DuelScreen } from '@/components/DuelScreen';
-import { LeaderboardPage } from '@/pages/LeaderboardPage/LeaderboardPage';
+import { LeaderboardScreen } from '@/components/LeaderboardScreen';
 import { RewardsPage } from '@/pages/RewardsPage/RewardsPage';
 import { ShopPage } from '@/pages/ShopPage/ShopPage';
 import { InitDataPage } from '@/pages/InitDataPage.tsx';
@@ -22,7 +22,7 @@ export const routes: Route[] = [
   { path: '/', Component: HomePage },
   { path: '/matchmaking', Component: MatchmakingScreen },
   { path: '/duel', Component: DuelScreen },
-  { path: '/leaderboard', Component: LeaderboardPage },
+  { path: '/leaderboard', Component: LeaderboardScreen },
   { path: '/rewards', Component: RewardsPage },
   { path: '/shop', Component: ShopPage },
   { path: '/init-data', Component: InitDataPage, title: 'Init Data' },

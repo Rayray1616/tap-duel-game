@@ -141,6 +141,35 @@ export type Database = {
           updated_at?: string;
         };
       };
+      leaderboard: {
+        Row: {
+          user_id: string;
+          username: string;
+          level: number;
+          xp: number;
+          wins: number;
+          losses: number;
+          updated_at: string;
+        };
+        Insert: {
+          user_id: string;
+          username: string;
+          level?: number;
+          xp?: number;
+          wins?: number;
+          losses?: number;
+          updated_at?: string;
+        };
+        Update: {
+          user_id?: string;
+          username?: string;
+          level?: number;
+          xp?: number;
+          wins?: number;
+          losses?: number;
+          updated_at?: string;
+        };
+      };
     };
   };
 };

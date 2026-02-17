@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useTelegram } from '@/telegram/useTelegram';
 import { useRewards } from '@/hooks/useRewards';
 import { useGems } from '@/hooks/useGems';
+import { useDailyMissions } from '@/hooks/useDailyMissions';
+import { useAchievements } from '@/hooks/useAchievements';
 
 interface ClaimResult {
   success: boolean;
@@ -17,6 +19,8 @@ export function RewardsScreen() {
   const { user: telegramUser } = useTelegram();
   const { rewardStatus, loading, claiming, claimReward } = useRewards(telegramUser?.id?.toString());
   const { addGems } = useGems(telegramUser?.id?.toString());
+  const { updateMissionProgress } = useDailyMissions(telegramUser?.id?.toString());
+  const { updateAchievementProgress } = useAchievements(telegramUser?.id?.toString());
   const [claimedReward, setClaimedReward] = useState<ClaimResult | null>(null);
   const [showRewardAnimation, setShowRewardAnimation] = useState(false);
 
@@ -29,6 +33,10 @@ export function RewardsScreen() {
       // Award gems: 5 + (streak * 2)
       const gemsAwarded = 5 + (result.streak * 2);
       await addGems(gemsAwarded);
+      
+      // Update missions and achievements for daily claim
+      await updateMissionProgress('daily_claim', 1);
+      await updateAchievementProgress('daily_claim', 1);
       
       // Hide animation after 3 seconds
       setTimeout(() => {

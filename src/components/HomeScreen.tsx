@@ -9,6 +9,8 @@ import { useGems } from '@/hooks/useGems';
 import { useTonTopUp } from '@/hooks/useTonTopUp';
 import { usePayouts } from '@/hooks/usePayouts';
 import { useReferral } from '@/hooks/useReferral';
+import { useDailyMissions } from '@/hooks/useDailyMissions';
+import { useAchievements } from '@/hooks/useAchievements';
 import type { Database } from '@/lib/supabase';
 
 type User = Database['public']['Tables']['users']['Row'];
@@ -40,6 +42,12 @@ export function HomeScreen() {
   
   // Referrals
   const { myCode, referrals } = useReferral(telegramUser?.id?.toString());
+  
+  // Daily Missions
+  const { getClaimableCount: getClaimableMissions } = useDailyMissions(telegramUser?.id?.toString());
+  
+  // Achievements
+  const { getClaimableCount: getClaimableAchievements } = useAchievements(telegramUser?.id?.toString());
 
   useEffect(() => {
     initializeUser();
@@ -365,6 +373,38 @@ export function HomeScreen() {
                 <span className="text-sm font-bold text-green-400">INVITE & EARN</span>
                 <span className="text-xs text-green-600">
                   +50 💎 per friend
+                </span>
+              </div>
+            </button>
+          </div>
+
+          {/* Daily Missions Button */}
+          <div className="mb-4">
+            <button
+              onClick={() => navigate('/missions')}
+              className="w-full neon-missions-button"
+            >
+              <div className="flex items-center justify-center space-x-2">
+                <span className="text-yellow-400 text-lg">📋</span>
+                <span className="text-sm font-bold text-yellow-400">DAILY MISSIONS</span>
+                <span className="text-xs text-yellow-600">
+                  {getClaimableMissions()} claimable
+                </span>
+              </div>
+            </button>
+          </div>
+
+          {/* Achievements Button */}
+          <div className="mb-4">
+            <button
+              onClick={() => navigate('/achievements')}
+              className="w-full neon-achievements-button"
+            >
+              <div className="flex items-center justify-center space-x-2">
+                <span className="text-purple-400 text-lg">🏆</span>
+                <span className="text-sm font-bold text-purple-400">ACHIEVEMENTS</span>
+                <span className="text-xs text-purple-600">
+                  {getClaimableAchievements()} claimable
                 </span>
               </div>
             </button>
@@ -756,6 +796,86 @@ export function HomeScreen() {
             box-shadow: 
               0 0 30px rgba(0, 255, 0, 0.6),
               inset 0 0 30px rgba(0, 255, 0, 0.2);
+          }
+        }
+
+        .neon-missions-button {
+          background: linear-gradient(135deg, rgba(255, 255, 0, 0.2) 0%, rgba(255, 165, 0, 0.1) 100%);
+          border: 2px solid rgba(255, 255, 0, 0.6);
+          border-radius: 12px;
+          padding: 12px 16px;
+          font-family: 'Orbitron', monospace;
+          font-weight: 700;
+          color: #ffff00;
+          cursor: pointer;
+          position: relative;
+          overflow: hidden;
+          transition: all 0.3s ease;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          animation: missions-pulse 2s ease-in-out infinite;
+        }
+
+        .neon-missions-button:hover {
+          transform: scale(1.05);
+          border-color: rgba(255, 255, 0, 0.8);
+          box-shadow: 
+            0 0 30px rgba(255, 255, 0, 0.6),
+            inset 0 0 30px rgba(255, 255, 0, 0.2);
+        }
+
+        @keyframes missions-pulse {
+          0%, 100% { 
+            transform: scale(1);
+            box-shadow: 
+              0 0 20px rgba(255, 255, 0, 0.4),
+              inset 0 0 20px rgba(255, 255, 0, 0.1);
+          }
+          50% { 
+            transform: scale(1.02);
+            box-shadow: 
+              0 0 30px rgba(255, 255, 0, 0.6),
+              inset 0 0 30px rgba(255, 255, 0, 0.2);
+          }
+        }
+
+        .neon-achievements-button {
+          background: linear-gradient(135deg, rgba(128, 0, 255, 0.2) 0%, rgba(255, 0, 255, 0.1) 100%);
+          border: 2px solid rgba(128, 0, 255, 0.6);
+          border-radius: 12px;
+          padding: 12px 16px;
+          font-family: 'Orbitron', monospace;
+          font-weight: 700;
+          color: #8000ff;
+          cursor: pointer;
+          position: relative;
+          overflow: hidden;
+          transition: all 0.3s ease;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          animation: achievements-pulse 2s ease-in-out infinite;
+        }
+
+        .neon-achievements-button:hover {
+          transform: scale(1.05);
+          border-color: rgba(128, 0, 255, 0.8);
+          box-shadow: 
+            0 0 30px rgba(128, 0, 255, 0.6),
+            inset 0 0 30px rgba(128, 0, 255, 0.2);
+        }
+
+        @keyframes achievements-pulse {
+          0%, 100% { 
+            transform: scale(1);
+            box-shadow: 
+              0 0 20px rgba(128, 0, 255, 0.4),
+              inset 0 0 20px rgba(128, 0, 255, 0.1);
+          }
+          50% { 
+            transform: scale(1.02);
+            box-shadow: 
+              0 0 30px rgba(128, 0, 255, 0.6),
+              inset 0 0 30px rgba(128, 0, 255, 0.2);
           }
         }
 

@@ -343,6 +343,58 @@ export type Database = {
           updated_at?: string;
         };
       };
+      daily_missions_progress: {
+        Row: {
+          user_id: string;
+          mission_id: string;
+          progress: number;
+          completed: boolean;
+          claimed: boolean;
+          updated_at: string;
+        };
+        Insert: {
+          user_id: string;
+          mission_id: string;
+          progress?: number;
+          completed?: boolean;
+          claimed?: boolean;
+          updated_at?: string;
+        };
+        Update: {
+          user_id?: string;
+          mission_id?: string;
+          progress?: number;
+          completed?: boolean;
+          claimed?: boolean;
+          updated_at?: string;
+        };
+      };
+      achievements_progress: {
+        Row: {
+          user_id: string;
+          achievement_id: string;
+          progress: number;
+          completed: boolean;
+          claimed: boolean;
+          updated_at: string;
+        };
+        Insert: {
+          user_id: string;
+          achievement_id: string;
+          progress?: number;
+          completed?: boolean;
+          claimed?: boolean;
+          updated_at?: string;
+        };
+        Update: {
+          user_id?: string;
+          achievement_id?: string;
+          progress?: number;
+          completed?: boolean;
+          claimed?: boolean;
+          updated_at?: string;
+        };
+      };
     };
   };
 };

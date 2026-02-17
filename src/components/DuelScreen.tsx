@@ -6,6 +6,8 @@ import { usePlayerProgression } from '@/hooks/usePlayerProgression';
 import { useLeaderboard } from '@/hooks/useLeaderboard';
 import { useGems } from '@/hooks/useGems';
 import { useReferral } from '@/hooks/useReferral';
+import { useDailyMissions } from '@/hooks/useDailyMissions';
+import { useAchievements } from '@/hooks/useAchievements';
 import { supabase } from '@/lib/supabase';
 import type { Database } from '@/lib/supabase';
 
@@ -46,6 +48,12 @@ export function DuelScreen({ duelId: propDuelId, playerId: propPlayerId }: DuelS
   
   // Referrals
   const { hasUsedCode, confirmReferral } = useReferral(telegramUser?.id?.toString());
+  
+  // Daily Missions
+  const { updateMissionProgress } = useDailyMissions(telegramUser?.id?.toString());
+  
+  // Achievements
+  const { updateAchievementProgress } = useAchievements(telegramUser?.id?.toString());
 
   // WebSocket duel client
   const {
@@ -73,11 +81,21 @@ export function DuelScreen({ duelId: propDuelId, playerId: propPlayerId }: DuelS
       // Award gems based on duel result
       const gemsAmount = result.winner_id === playerId ? 3 : 1;
       
+      // Update missions and achievements for win
+      if (result.winner_id === playerId) {
+        updateMissionProgress('duel_won', 1);
+        updateAchievementProgress('duel_won', 1);
+      }
+      
+      // Update missions and achievements for XP gain
+      updateMissionProgress('xp_gain', xpAmount);
+      updateAchievementProgress('xp_gain', xpAmount);
+      
       awardXpAfterDuel(xpAmount);
       updateLeaderboardAfterDuel(duelResult);
       awardGemsAfterDuel(gemsAmount);
     }
-  }, [result, playerId]);
+  }, [result, playerId, updateMissionProgress, updateAchievementProgress]);
 
   const initializeUser = async () => {
     if (!telegramUser?.id) {
@@ -111,6 +129,10 @@ export function DuelScreen({ duelId: propDuelId, playerId: propPlayerId }: DuelS
     // Send tap to server
     sendTap();
     
+    // Update missions and achievements for taps reached
+    updateMissionProgress('taps_reached', 1);
+    updateAchievementProgress('taps_reached', 1);
+    
     // Clear visual effects
     setTimeout(() => setShowHitFlash(false), 100);
     setTimeout(() => setShowParticleBurst(false), 800);
@@ -133,6 +155,12 @@ export function DuelScreen({ duelId: propDuelId, playerId: propPlayerId }: DuelS
           leveledUp: result.leveled_up,
           newLevel: result.leveled_up ? result.level : undefined
         });
+        
+        // Update missions and achievements for level up
+        if (result.leveled_up) {
+          updateMissionProgress('level_up', 1);
+          updateAchievementProgress('level_up', 1);
+        }
       }
     } catch (error) {
       console.error('Error awarding XP:', error);
@@ -151,11 +179,22 @@ export function DuelScreen({ duelId: propDuelId, playerId: propPlayerId }: DuelS
     try {
       await addGems(amount);
       
+      // Update missions and achievements for duel played
+      await updateMissionProgress('duel_played', 1);
+      await updateAchievementProgress('duel_played', 1);
+      
+      // Update missions and achievements for gems earned
+      await updateMissionProgress('gem_earned', amount);
+      await updateAchievementProgress('gem_earned', amount);
+      
       // Check and confirm referral after first duel
       if (hasUsedCode) {
         const result = await confirmReferral();
         if (result?.success) {
           console.log('Referral confirmed! Rewards awarded:', result);
+          // Update missions and achievements for referral confirmed
+          await updateMissionProgress('referral_confirmed', 1);
+          await updateAchievementProgress('referral_confirmed', 1);
         }
       }
     } catch (error) {

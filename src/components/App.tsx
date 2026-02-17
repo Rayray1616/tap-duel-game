@@ -10,6 +10,8 @@ import DuelScreen from '../screens/DuelScreen';
 import NewLobbyRedirect from '../screens/NewLobbyRedirect';
 import { useTelegram } from "@/telegram/useTelegram";
 import { useReferral } from '@/hooks/useReferral';
+import { useDailyMissions } from '@/hooks/useDailyMissions';
+import { useAchievements } from '@/hooks/useAchievements';
 
 // Wrapper components to extract route params
 function LobbyScreenWrapper() {

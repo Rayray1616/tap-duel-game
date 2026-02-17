@@ -11,13 +11,17 @@ export function useEnergyRegeneration(user: User | null, setUser: (user: User | 
     if (!user) return;
 
     const regenInterval = setInterval(async () => {
+      // Get fresh user data to avoid stale closure
+      const currentUser = user;
+      if (!currentUser) return;
+
       const now = new Date();
-      const lastRegenTime = new Date(user.last_energy_regen);
+      const lastRegenTime = new Date(currentUser.last_energy_regen);
       const minutesSinceRegen = Math.floor((now.getTime() - lastRegenTime.getTime()) / (1000 * 60));
 
-      if (minutesSinceRegen >= 1 && user.energy < 100) {
-        const energyToRegen = Math.min(minutesSinceRegen * 2, 100 - user.energy);
-        const newEnergy = user.energy + energyToRegen;
+      if (minutesSinceRegen >= 1 && currentUser.energy < 100) {
+        const energyToRegen = Math.min(minutesSinceRegen * 2, 100 - currentUser.energy);
+        const newEnergy = currentUser.energy + energyToRegen;
         
         try {
           const { data: updatedUser } = await supabase
@@ -26,7 +30,7 @@ export function useEnergyRegeneration(user: User | null, setUser: (user: User | 
               energy: newEnergy,
               last_energy_regen: now.toISOString(),
             })
-            .eq('id', user.id)
+            .eq('id', currentUser.id)
             .select()
             .single();
 

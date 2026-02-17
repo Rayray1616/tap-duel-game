@@ -9,10 +9,17 @@ export function useDuelClient(duelId: string, playerId: string) {
   const [result, setResult] = useState<any>(null);
 
   useEffect(() => {
-    const ws = new WebSocket(`wss://${window.location.host}`);
+    // Determine WebSocket protocol based on current protocol
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const wsUrl = `${protocol}//${window.location.host}`;
+    
+    console.log('Connecting to WebSocket:', wsUrl);
+    
+    const ws = new WebSocket(wsUrl);
     wsRef.current = ws;
 
     ws.onopen = () => {
+      console.log('WebSocket connected');
       ws.send(JSON.stringify({
         type: 'join',
         duelId,
@@ -21,34 +28,47 @@ export function useDuelClient(duelId: string, playerId: string) {
     };
 
     ws.onmessage = (event) => {
-      const msg = JSON.parse(event.data);
+      try {
+        const msg = JSON.parse(event.data);
+        console.log('WebSocket message:', msg);
 
-      if (msg.type === 'players') {
-        setPlayers(msg.players);
-        setState(msg.state);
-      }
+        if (msg.type === 'players') {
+          setPlayers(msg.players);
+          setState(msg.state);
+        }
 
-      if (msg.type === 'countdown') {
-        setCountdown(msg.value);
-        setState('countdown');
-      }
+        if (msg.type === 'countdown') {
+          setCountdown(msg.value);
+          setState('countdown');
+        }
 
-      if (msg.type === 'start') {
-        setCountdown(null);
-        setState('active');
-      }
+        if (msg.type === 'start') {
+          setCountdown(null);
+          setState('active');
+        }
 
-      if (msg.type === 'tap_update') {
-        setTaps((prev) => ({
-          ...prev,
-          [msg.playerId]: msg.taps,
-        }));
-      }
+        if (msg.type === 'tap_update') {
+          setTaps((prev) => ({
+            ...prev,
+            [msg.playerId]: msg.taps,
+          }));
+        }
 
-      if (msg.type === 'result') {
-        setState('finished');
-        setResult(msg);
+        if (msg.type === 'result') {
+          setState('finished');
+          setResult(msg);
+        }
+      } catch (error) {
+        console.error('Error parsing WebSocket message:', error);
       }
+    };
+
+    ws.onerror = (error) => {
+      console.error('WebSocket error:', error);
+    };
+
+    ws.onclose = () => {
+      console.log('WebSocket disconnected');
     };
 
     return () => {

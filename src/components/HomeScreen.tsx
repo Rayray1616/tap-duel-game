@@ -13,6 +13,7 @@ import { useDailyMissions } from '@/hooks/useDailyMissions';
 import { useAchievements } from '@/hooks/useAchievements';
 import { useSeasons } from '@/hooks/useSeasons';
 import { useSeasonalEvents } from '@/hooks/useSeasonalEvents';
+import { useProfile } from '@/hooks/useProfile';
 import type { Database } from '@/lib/supabase';
 
 type User = Database['public']['Tables']['users']['Row'];
@@ -56,6 +57,9 @@ export function HomeScreen() {
   
   // Seasonal Events
   const { getClaimableRewards: getClaimableEventRewards, getActiveEventCount, hasActiveMultipliers } = useSeasonalEvents(telegramUser?.id?.toString());
+  
+  // Profile
+  const { getProfileDisplay } = useProfile(telegramUser?.id?.toString());
 
   useEffect(() => {
     initializeUser();
@@ -445,6 +449,27 @@ export function HomeScreen() {
                 <span className="text-sm font-bold text-orange-400">EVENTS</span>
                 <span className="text-xs text-orange-600">
                   {getActiveEventCount()} active
+                </span>
+              </div>
+            </button>
+          </div>
+
+          {/* Profile Button */}
+          <div className="mb-4">
+            <button
+              onClick={() => navigate('/profile')}
+              className="w-full neon-profile-button"
+            >
+              <div className="flex items-center justify-center space-x-2">
+                <div className="relative">
+                  <div className="w-8 h-8 bg-gradient-to-br from-cyan-500 to-magenta-500 rounded-full flex items-center justify-center text-sm font-bold">
+                    {user?.username?.charAt(0).toUpperCase() || 'P'}
+                  </div>
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-cyan-400 rounded-full animate-pulse"></div>
+                </div>
+                <span className="text-sm font-bold text-cyan-400">PROFILE</span>
+                <span className="text-xs text-cyan-600">
+                  Customize
                 </span>
               </div>
             </button>
@@ -1011,6 +1036,46 @@ export function HomeScreen() {
             box-shadow: 
               0 0 30px rgba(255, 165, 0, 0.6),
               inset 0 0 30px rgba(255, 165, 0, 0.2);
+          }
+        }
+
+        .neon-profile-button {
+          background: linear-gradient(135deg, rgba(0, 255, 255, 0.2) 0%, rgba(255, 0, 255, 0.1) 100%);
+          border: 2px solid rgba(0, 255, 255, 0.6);
+          border-radius: 12px;
+          padding: 12px 16px;
+          font-family: 'Orbitron', monospace;
+          font-weight: 700;
+          color: #00ffff;
+          cursor: pointer;
+          position: relative;
+          overflow: hidden;
+          transition: all 0.3s ease;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          animation: profile-pulse 2s ease-in-out infinite;
+        }
+
+        .neon-profile-button:hover {
+          transform: scale(1.05);
+          border-color: rgba(0, 255, 255, 0.8);
+          box-shadow: 
+            0 0 30px rgba(0, 255, 255, 0.6),
+            inset 0 0 30px rgba(0, 255, 255, 0.2);
+        }
+
+        @keyframes profile-pulse {
+          0%, 100% { 
+            transform: scale(1);
+            box-shadow: 
+              0 0 20px rgba(0, 255, 255, 0.4),
+              inset 0 0 20px rgba(0, 255, 255, 0.1);
+          }
+          50% { 
+            transform: scale(1.02);
+            box-shadow: 
+              0 0 30px rgba(0, 255, 255, 0.6),
+              inset 0 0 30px rgba(0, 255, 255, 0.2);
           }
         }
 

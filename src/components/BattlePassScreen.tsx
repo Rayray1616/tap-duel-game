@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSeasons } from '@/hooks/useSeasons';
 import { useGems } from '@/hooks/useGems';
+import { useProfile } from '@/hooks/useProfile';
 import { useTelegram } from '@/telegram/useTelegram';
 import { getCosmeticDisplayName, getTitleDisplayName } from '@/data/seasons';
 

@@ -566,6 +566,78 @@ export type Database = {
           updated_at?: string;
         };
       };
+      cosmetics: {
+        Row: {
+          id: string;
+          cosmetic_key: string;
+          name: string;
+          type: 'aura' | 'frame' | 'emoji' | 'title';
+          rarity: 'common' | 'rare' | 'epic' | 'legendary';
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          cosmetic_key: string;
+          name: string;
+          type: 'aura' | 'frame' | 'emoji' | 'title';
+          rarity: 'common' | 'rare' | 'epic' | 'legendary';
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          cosmetic_key?: string;
+          name?: string;
+          type?: 'aura' | 'frame' | 'emoji' | 'title';
+          rarity?: 'common' | 'rare' | 'epic' | 'legendary';
+          created_at?: string;
+        };
+      };
+      user_cosmetics: {
+        Row: {
+          user_id: string;
+          cosmetic_key: string;
+          owned: boolean;
+          equipped: boolean;
+          acquired_at: string;
+        };
+        Insert: {
+          user_id: string;
+          cosmetic_key: string;
+          owned?: boolean;
+          equipped?: boolean;
+          acquired_at?: string;
+        };
+        Update: {
+          user_id?: string;
+          cosmetic_key?: string;
+          owned?: boolean;
+          equipped?: boolean;
+          acquired_at?: string;
+        };
+      };
+      user_titles: {
+        Row: {
+          user_id: string;
+          title_key: string;
+          owned: boolean;
+          equipped: boolean;
+          acquired_at: string;
+        };
+        Insert: {
+          user_id: string;
+          title_key: string;
+          owned?: boolean;
+          equipped?: boolean;
+          acquired_at?: string;
+        };
+        Update: {
+          user_id?: string;
+          title_key?: string;
+          owned?: boolean;
+          equipped?: boolean;
+          acquired_at?: string;
+        };
+      };
     };
   };
 };

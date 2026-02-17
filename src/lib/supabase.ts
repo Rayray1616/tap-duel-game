@@ -505,6 +505,67 @@ export type Database = {
           claimed_at?: string;
         };
       };
+      seasonal_events: {
+        Row: {
+          id: string;
+          event_key: string;
+          name: string;
+          description: string;
+          starts_at: string;
+          ends_at: string;
+          multiplier_xp: number;
+          multiplier_gems: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          event_key: string;
+          name: string;
+          description?: string;
+          starts_at: string;
+          ends_at: string;
+          multiplier_xp?: number;
+          multiplier_gems?: number;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          event_key?: string;
+          name?: string;
+          description?: string;
+          starts_at?: string;
+          ends_at?: string;
+          multiplier_xp?: number;
+          multiplier_gems?: number;
+          created_at?: string;
+        };
+      };
+      seasonal_event_participation: {
+        Row: {
+          user_id: string;
+          event_id: string;
+          progress: number;
+          claimed: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          user_id: string;
+          event_id: string;
+          progress?: number;
+          claimed?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          user_id?: string;
+          event_id?: string;
+          progress?: number;
+          claimed?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
     };
   };
 };

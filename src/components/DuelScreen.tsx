@@ -9,6 +9,7 @@ import { useReferral } from '@/hooks/useReferral';
 import { useDailyMissions } from '@/hooks/useDailyMissions';
 import { useAchievements } from '@/hooks/useAchievements';
 import { useSeasons } from '@/hooks/useSeasons';
+import { useSeasonalEvents } from '@/hooks/useSeasonalEvents';
 import { supabase } from '@/lib/supabase';
 import type { Database } from '@/lib/supabase';
 
@@ -58,6 +59,9 @@ export function DuelScreen({ duelId: propDuelId, playerId: propPlayerId }: DuelS
   
   // Seasons
   const { addBattlePassXP } = useSeasons(telegramUser?.id?.toString());
+  
+  // Seasonal Events
+  const { applyEventMultipliers, updateEventProgress } = useSeasonalEvents(telegramUser?.id?.toString());
 
   // WebSocket duel client
   const {
@@ -78,31 +82,42 @@ export function DuelScreen({ duelId: propDuelId, playerId: propPlayerId }: DuelS
       setDuelEnded(true);
       setWinner(result.winner_id === playerId ? 'player' : 'opponent');
       
-      // Award XP based on duel result
-      const xpAmount = result.winner_id === playerId ? 50 : 20;
+      // Award XP and gems based on duel result
+      const baseXP = result.winner_id === playerId ? 50 : 20;
+      const baseGems = result.winner_id === playerId ? 3 : 1;
       const duelResult = result.winner_id === playerId ? 'win' : 'lose';
       
-      // Award gems based on duel result
-      const gemsAmount = result.winner_id === playerId ? 3 : 1;
-      
-      // Update missions and achievements for win
-      if (result.winner_id === playerId) {
-        updateMissionProgress('duel_won', 1);
-        updateAchievementProgress('duel_won', 1);
-      }
-      
-      // Update missions and achievements for XP gain
-      updateMissionProgress('xp_gain', xpAmount);
-      updateAchievementProgress('xp_gain', xpAmount);
-      
-      // Add Battle Pass XP
-      addBattlePassXP(xpAmount);
-      
-      awardXpAfterDuel(xpAmount);
-      updateLeaderboardAfterDuel(duelResult);
-      awardGemsAfterDuel(gemsAmount);
+      // Apply seasonal event multipliers
+      applyEventMultipliers(baseXP, baseGems).then(multipliers => {
+        const finalXP = multipliers?.multiplied_xp || baseXP;
+        const finalGems = multipliers?.multiplied_gems || baseGems;
+        
+        // Update missions and achievements for win
+        if (result.winner_id === playerId) {
+          updateMissionProgress('duel_won', 1);
+          updateAchievementProgress('duel_won', 1);
+        }
+        
+        // Update missions and achievements for XP gain
+        updateMissionProgress('xp_gain', finalXP);
+        updateAchievementProgress('xp_gain', finalXP);
+        
+        // Add Battle Pass XP
+        addBattlePassXP(finalXP);
+        
+        // Update event progress for active events
+        updateEventProgress('XP_WEEKEND', 1);
+        updateEventProgress('DOUBLE_GEMS_DAY', 1);
+        updateEventProgress('MEGA_WEEKEND', 1);
+        updateEventProgress('NEW_PLAYER_BOOST', 1);
+        updateEventProgress('ANNIVERSARY_EVENT', 1);
+        
+        awardXpAfterDuel(finalXP);
+        updateLeaderboardAfterDuel(duelResult);
+        awardGemsAfterDuel(finalGems);
+      });
     }
-  }, [result, playerId, updateMissionProgress, updateAchievementProgress, addBattlePassXP]);
+  }, [result, playerId, updateMissionProgress, updateAchievementProgress, addBattlePassXP, applyEventMultipliers, updateEventProgress]);
 
   const initializeUser = async () => {
     if (!telegramUser?.id) {

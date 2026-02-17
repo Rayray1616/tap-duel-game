@@ -12,6 +12,7 @@ import { useReferral } from '@/hooks/useReferral';
 import { useDailyMissions } from '@/hooks/useDailyMissions';
 import { useAchievements } from '@/hooks/useAchievements';
 import { useSeasons } from '@/hooks/useSeasons';
+import { useSeasonalEvents } from '@/hooks/useSeasonalEvents';
 import type { Database } from '@/lib/supabase';
 
 type User = Database['public']['Tables']['users']['Row'];
@@ -52,6 +53,9 @@ export function HomeScreen() {
   
   // Seasons
   const { getClaimableRewards: getClaimableBattlePassRewards } = useSeasons(telegramUser?.id?.toString());
+  
+  // Seasonal Events
+  const { getClaimableRewards: getClaimableEventRewards, getActiveEventCount, hasActiveMultipliers } = useSeasonalEvents(telegramUser?.id?.toString());
 
   useEffect(() => {
     initializeUser();
@@ -429,6 +433,37 @@ export function HomeScreen() {
               </div>
             </button>
           </div>
+
+          {/* Events Button */}
+          <div className="mb-4">
+            <button
+              onClick={() => navigate('/events')}
+              className="w-full neon-events-button"
+            >
+              <div className="flex items-center justify-center space-x-2">
+                <span className="text-orange-400 text-lg">🎁</span>
+                <span className="text-sm font-bold text-orange-400">EVENTS</span>
+                <span className="text-xs text-orange-600">
+                  {getActiveEventCount()} active
+                </span>
+              </div>
+            </button>
+          </div>
+
+          {/* Active Multipliers Display */}
+          {hasActiveMultipliers() && (
+            <div className="mb-4">
+              <div className="bg-gradient-to-r from-orange-900/30 to-blue-900/30 border border-orange-500/50 rounded-lg p-3">
+                <div className="flex items-center justify-center space-x-2">
+                  <div className="text-orange-400 text-sm">🔥</div>
+                  <div className="text-xs font-bold text-orange-300">
+                    Active Bonuses Available!
+                  </div>
+                  <div className="text-orange-400 text-sm">🔥</div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* XP Bar */}
           {!progressionLoading && progression && (
@@ -936,6 +971,46 @@ export function HomeScreen() {
             box-shadow: 
               0 0 30px rgba(255, 0, 255, 0.6),
               inset 0 0 30px rgba(255, 0, 255, 0.2);
+          }
+        }
+
+        .neon-events-button {
+          background: linear-gradient(135deg, rgba(255, 165, 0, 0.2) 0%, rgba(0, 123, 255, 0.1) 100%);
+          border: 2px solid rgba(255, 165, 0, 0.6);
+          border-radius: 12px;
+          padding: 12px 16px;
+          font-family: 'Orbitron', monospace;
+          font-weight: 700;
+          color: #ffa500;
+          cursor: pointer;
+          position: relative;
+          overflow: hidden;
+          transition: all 0.3s ease;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          animation: events-pulse 2s ease-in-out infinite;
+        }
+
+        .neon-events-button:hover {
+          transform: scale(1.05);
+          border-color: rgba(255, 165, 0, 0.8);
+          box-shadow: 
+            0 0 30px rgba(255, 165, 0, 0.6),
+            inset 0 0 30px rgba(255, 165, 0, 0.2);
+        }
+
+        @keyframes events-pulse {
+          0%, 100% { 
+            transform: scale(1);
+            box-shadow: 
+              0 0 20px rgba(255, 165, 0, 0.4),
+              inset 0 0 20px rgba(255, 165, 0, 0.1);
+          }
+          50% { 
+            transform: scale(1.02);
+            box-shadow: 
+              0 0 30px rgba(255, 165, 0, 0.6),
+              inset 0 0 30px rgba(255, 165, 0, 0.2);
           }
         }
 

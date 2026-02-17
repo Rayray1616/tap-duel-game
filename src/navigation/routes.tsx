@@ -12,6 +12,7 @@ import { ReferralScreen } from '@/components/ReferralScreen';
 import { DailyMissionsScreen } from '@/components/DailyMissionsScreen';
 import { AchievementsScreen } from '@/components/AchievementsScreen';
 import { BattlePassScreen } from '@/components/BattlePassScreen';
+import { SeasonalEventsScreen } from '@/components/SeasonalEventsScreen';
 import { InitDataPage } from '@/pages/InitDataPage.tsx';
 import { LaunchParamsPage } from '@/pages/LaunchParamsPage.tsx';
 import { ThemeParamsPage } from '@/pages/ThemeParamsPage.tsx';
@@ -39,6 +40,7 @@ export const routes: Route[] = [
   { path: '/missions', Component: DailyMissionsScreen },
   { path: '/achievements', Component: AchievementsScreen },
   { path: '/battlepass', Component: BattlePassScreen },
+  { path: '/events', Component: SeasonalEventsScreen },
   { path: '/init-data', Component: InitDataPage, title: 'Init Data' },
   { path: '/theme-params', Component: ThemeParamsPage, title: 'Theme Params' },
   { path: '/launch-params', Component: LaunchParamsPage, title: 'Launch Params' },

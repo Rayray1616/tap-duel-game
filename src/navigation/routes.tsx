@@ -14,6 +14,7 @@ import { AchievementsScreen } from '@/components/AchievementsScreen';
 import { BattlePassScreen } from '@/components/BattlePassScreen';
 import { SeasonalEventsScreen } from '@/components/SeasonalEventsScreen';
 import { ProfileScreen } from '@/components/ProfileScreen';
+import { PublicProfileScreen } from '@/components/PublicProfileScreen';
 import { InitDataPage } from '@/pages/InitDataPage.tsx';
 import { LaunchParamsPage } from '@/pages/LaunchParamsPage.tsx';
 import { ThemeParamsPage } from '@/pages/ThemeParamsPage.tsx';
@@ -43,6 +44,7 @@ export const routes: Route[] = [
   { path: '/battlepass', Component: BattlePassScreen },
   { path: '/events', Component: SeasonalEventsScreen },
   { path: '/profile', Component: ProfileScreen },
+  { path: '/profile/:userId', Component: PublicProfileScreen },
   { path: '/init-data', Component: InitDataPage, title: 'Init Data' },
   { path: '/theme-params', Component: ThemeParamsPage, title: 'Theme Params' },
   { path: '/launch-params', Component: LaunchParamsPage, title: 'Launch Params' },

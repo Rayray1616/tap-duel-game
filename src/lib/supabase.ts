@@ -638,6 +638,38 @@ export type Database = {
           acquired_at?: string;
         };
       };
+      public_profiles: {
+        Row: {
+          user_id: string;
+          username: string;
+          bio: string | null;
+          country_code: string | null;
+          avatar_emoji: string | null;
+          is_public: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          user_id: string;
+          username: string;
+          bio?: string | null;
+          country_code?: string | null;
+          avatar_emoji?: string | null;
+          is_public?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          user_id?: string;
+          username?: string;
+          bio?: string | null;
+          country_code?: string | null;
+          avatar_emoji?: string | null;
+          is_public?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
     };
   };
 };

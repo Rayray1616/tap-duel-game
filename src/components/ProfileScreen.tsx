@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProfile } from '@/hooks/useProfile';
+import { usePublicProfiles } from '@/hooks/usePublicProfiles';
 import { useGems } from '@/hooks/useGems';
 import { useTelegram } from '@/telegram/useTelegram';
 import { 
@@ -36,10 +37,22 @@ export function ProfileScreen() {
     getUnownedTitles,
     getProfileDisplay
   } = useProfile(user?.id?.toString());
+  const { 
+    myPublicProfile, 
+    updateMyPublicProfile 
+  } = usePublicProfiles(user?.id?.toString());
   const { gemsInfo } = useGems(user?.id?.toString());
   const [activeTab, setActiveTab] = useState<'aura' | 'frame' | 'emoji' | 'title'>('aura');
   const [showEquipAnimation, setShowEquipAnimation] = useState(false);
-  const [equippedItem, setEquippedItem] = useState<string>('');
+  const [equippedItem, setEquippedItem] = useState('');
+  const [showPublicSettings, setShowPublicSettings] = useState(false);
+  const [publicSettings, setPublicSettings] = useState({
+    username: '',
+    bio: '',
+    country_code: '',
+    avatar_emoji: '',
+    is_public: true
+  });
 
   const profileDisplay = getProfileDisplay();
 
@@ -261,6 +274,127 @@ export function ProfileScreen() {
         {/* Tab Description */}
         <div className="mt-2 text-center text-xs text-gray-400">
           {getCosmeticTypeDescription(activeTab)}
+        </div>
+      </div>
+
+      {/* Public Profile Settings */}
+      <div className="relative z-10 mb-6">
+        <div className="bg-gray-900/80 border border-cyan-500/50 rounded-lg p-4 backdrop-blur-sm">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-lg font-bold text-cyan-400">Public Profile Settings</h3>
+            <button
+              onClick={() => setShowPublicSettings(!showPublicSettings)}
+              className="text-cyan-400 hover:text-cyan-300 transition-colors text-sm"
+            >
+              {showPublicSettings ? 'Hide' : 'Show'}
+            </button>
+          </div>
+          
+          {showPublicSettings && (
+            <div className="space-y-3">
+              {/* Public Toggle */}
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-300">Make profile public</span>
+                <button
+                  onClick={() => setPublicSettings(prev => ({ ...prev, is_public: !prev.is_public }))}
+                  className={`w-12 h-6 rounded-full transition-colors ${
+                    publicSettings.is_public ? 'bg-cyan-500' : 'bg-gray-600'
+                  }`}
+                >
+                  <div className={`w-5 h-5 bg-white rounded-full transition-transform ${
+                    publicSettings.is_public ? 'translate-x-6' : 'translate-x-0.5'
+                  }`} />
+                </button>
+              </div>
+              
+              {/* Username */}
+              <div>
+                <label className="text-sm text-gray-300 block mb-1">Username</label>
+                <input
+                  type="text"
+                  value={publicSettings.username}
+                  onChange={(e) => setPublicSettings(prev => ({ ...prev, username: e.target.value }))}
+                  className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-white text-sm"
+                  placeholder="Enter username"
+                />
+              </div>
+              
+              {/* Bio */}
+              <div>
+                <label className="text-sm text-gray-300 block mb-1">Bio</label>
+                <textarea
+                  value={publicSettings.bio}
+                  onChange={(e) => setPublicSettings(prev => ({ ...prev, bio: e.target.value }))}
+                  className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-white text-sm resize-none"
+                  placeholder="Tell us about yourself..."
+                  rows={2}
+                />
+              </div>
+              
+              {/* Country */}
+              <div>
+                <label className="text-sm text-gray-300 block mb-1">Country</label>
+                <select
+                  value={publicSettings.country_code}
+                  onChange={(e) => setPublicSettings(prev => ({ ...prev, country_code: e.target.value }))}
+                  className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-white text-sm"
+                >
+                  <option value="">Select country</option>
+                  <option value="US">🇺🇸 United States</option>
+                  <option value="GB">🇬🇧 United Kingdom</option>
+                  <option value="CA">🇨🇦 Canada</option>
+                  <option value="AU">🇦🇺 Australia</option>
+                  <option value="DE">🇩🇪 Germany</option>
+                  <option value="FR">🇫🇷 France</option>
+                  <option value="IT">🇮🇹 Italy</option>
+                  <option value="ES">🇪🇸 Spain</option>
+                  <option value="NL">🇳🇱 Netherlands</option>
+                  <option value="JP">🇯🇵 Japan</option>
+                  <option value="KR">🇰🇷 South Korea</option>
+                  <option value="CN">🇨🇳 China</option>
+                  <option value="IN">🇮🇳 India</option>
+                  <option value="BR">🇧🇷 Brazil</option>
+                  <option value="MX">🇲🇽 Mexico</option>
+                  <option value="RU">🇷🇺 Russia</option>
+                </select>
+              </div>
+              
+              {/* Avatar Emoji */}
+              <div>
+                <label className="text-sm text-gray-300 block mb-1">Avatar Emoji</label>
+                <input
+                  type="text"
+                  value={publicSettings.avatar_emoji}
+                  onChange={(e) => setPublicSettings(prev => ({ ...prev, avatar_emoji: e.target.value }))}
+                  className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-white text-sm"
+                  placeholder="Enter emoji"
+                />
+              </div>
+              
+              {/* Action Buttons */}
+              <div className="flex space-x-2 pt-2">
+                <button
+                  onClick={async () => {
+                    const result = await updateMyPublicProfile(publicSettings);
+                    if (result?.success) {
+                      console.log('Profile updated successfully!');
+                    }
+                  }}
+                  disabled={updating}
+                  className="flex-1 bg-gradient-to-r from-cyan-500 to-magenta-500 text-white px-4 py-2 rounded text-sm font-bold hover:from-cyan-600 hover:to-magenta-600 transition-all disabled:opacity-50"
+                >
+                  {updating ? 'Saving...' : 'Save Settings'}
+                </button>
+                
+                <button
+                  onClick={() => navigate(`/profile/${user?.id}`)}
+                  className="flex-1 bg-gray-800 text-cyan-400 px-4 py-2 rounded text-sm font-bold hover:bg-gray-700 transition-all"
+                >
+                  View Public Profile
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

@@ -82,42 +82,10 @@ export function DuelScreen({ duelId: propDuelId, playerId: propPlayerId }: DuelS
       setDuelEnded(true);
       setWinner(result.winner_id === playerId ? 'player' : 'opponent');
       
-      // Award XP and gems based on duel result
-      const baseXP = result.winner_id === playerId ? 50 : 20;
-      const baseGems = result.winner_id === playerId ? 3 : 1;
-      const duelResult = result.winner_id === playerId ? 'win' : 'lose';
-      
-      // Apply seasonal event multipliers
-      applyEventMultipliers(baseXP, baseGems).then(multipliers => {
-        const finalXP = multipliers?.multiplied_xp || baseXP;
-        const finalGems = multipliers?.multiplied_gems || baseGems;
-        
-        // Update missions and achievements for win
-        if (result.winner_id === playerId) {
-          updateMissionProgress('duel_won', 1);
-          updateAchievementProgress('duel_won', 1);
-        }
-        
-        // Update missions and achievements for XP gain
-        updateMissionProgress('xp_gain', finalXP);
-        updateAchievementProgress('xp_gain', finalXP);
-        
-        // Add Battle Pass XP
-        addBattlePassXP(finalXP);
-        
-        // Update event progress for active events
-        updateEventProgress('XP_WEEKEND', 1);
-        updateEventProgress('DOUBLE_GEMS_DAY', 1);
-        updateEventProgress('MEGA_WEEKEND', 1);
-        updateEventProgress('NEW_PLAYER_BOOST', 1);
-        updateEventProgress('ANNIVERSARY_EVENT', 1);
-        
-        awardXpAfterDuel(finalXP);
-        updateLeaderboardAfterDuel(duelResult);
-        awardGemsAfterDuel(finalGems);
-      });
+      // Handle duel end with complete reward system
+      handleDuelEnd(result.winner_id === playerId ? 'player' : 'opponent');
     }
-  }, [result, playerId, updateMissionProgress, updateAchievementProgress, addBattlePassXP, applyEventMultipliers, updateEventProgress]);
+  }, [result, playerId]);
 
   const initializeUser = async () => {
     if (!telegramUser?.id) {
@@ -138,6 +106,97 @@ export function DuelScreen({ duelId: propDuelId, playerId: propPlayerId }: DuelS
       console.error('Error initializing user:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDuelEnd = async (duelWinner: 'player' | 'opponent') => {
+    if (!telegramUser?.id) return;
+
+    try {
+      // Calculate base rewards
+      const baseXP = duelWinner === 'player' ? 100 : 25;
+      const baseGems = duelWinner === 'player' ? 50 : 10;
+      
+      // Apply seasonal event multipliers
+      const multipliers = await applyEventMultipliers(baseXP, baseGems);
+      const finalXP = multipliers?.multiplied_xp || baseXP;
+      const finalGems = multipliers?.multiplied_gems || baseGems;
+      
+      console.log(`Duel ended - Winner: ${duelWinner}, Base XP: ${baseXP}, Base Gems: ${baseGems}`);
+      console.log(`After multipliers - Final XP: ${finalXP}, Final Gems: ${finalGems}`);
+      
+      // 1. Add XP using RPC
+      const { data: xpResult, error: xpError } = await supabase.rpc('award_xp', {
+        user_id: telegramUser.id.toString(),
+        amount: finalXP
+      });
+      
+      if (xpError) {
+        console.error('Error adding XP:', xpError);
+      } else {
+        console.log('XP added successfully:', xpResult);
+      }
+      
+      // 2. Add gems using RPC
+      const { data: gemsResult, error: gemsError } = await supabase.rpc('add_gems', {
+        user_id: telegramUser.id.toString(),
+        amount: finalGems
+      });
+      
+      if (gemsError) {
+        console.error('Error adding gems:', gemsError);
+      } else {
+        console.log('Gems added successfully:', gemsResult);
+      }
+      
+      // 3. Add Battle Pass XP
+      await addBattlePassXP(finalXP);
+      
+      // 4. Update mission progress for duels
+      await updateMissionProgress('duels', 1);
+      
+      // 5. Update mission progress for wins
+      if (duelWinner === 'player') {
+        await updateMissionProgress('duel_won', 1);
+        await updateAchievementProgress('duel_won', 1);
+      }
+      
+      // 6. Update mission progress for XP gain
+      await updateMissionProgress('xp_gain', finalXP);
+      await updateAchievementProgress('xp_gain', finalXP);
+      
+      // 7. Update mission progress for gems earned
+      await updateMissionProgress('gem_earned', finalGems);
+      await updateAchievementProgress('gem_earned', finalGems);
+      
+      // 8. Update event progress for active events
+      await updateEventProgress('XP_WEEKEND', 1);
+      await updateEventProgress('DOUBLE_GEMS_DAY', 1);
+      await updateEventProgress('MEGA_WEEKEND', 1);
+      await updateEventProgress('NEW_PLAYER_BOOST', 1);
+      await updateEventProgress('ANNIVERSARY_EVENT', 1);
+      
+      // 9. Update leaderboard
+      await updateLeaderboardAfterDuel(duelWinner === 'player' ? 'win' : 'lose');
+      
+      // 10. Award XP and gems using existing functions (for UI updates)
+      await awardXpAfterDuel(finalXP);
+      await awardGemsAfterDuel(finalGems);
+      
+      // 11. Check and confirm referral after first duel
+      if (hasUsedCode) {
+        const referralResult = await confirmReferral();
+        if (referralResult?.success) {
+          console.log('Referral confirmed! Rewards awarded:', referralResult);
+          await updateMissionProgress('referral_confirmed', 1);
+          await updateAchievementProgress('referral_confirmed', 1);
+        }
+      }
+      
+      console.log('Duel rewards processed successfully');
+      
+    } catch (error) {
+      console.error('Error processing duel rewards:', error);
     }
   };
 
@@ -200,25 +259,7 @@ export function DuelScreen({ duelId: propDuelId, playerId: propPlayerId }: DuelS
   const awardGemsAfterDuel = async (amount: number) => {
     try {
       await addGems(amount);
-      
-      // Update missions and achievements for duel played
-      await updateMissionProgress('duel_played', 1);
-      await updateAchievementProgress('duel_played', 1);
-      
-      // Update missions and achievements for gems earned
-      await updateMissionProgress('gem_earned', amount);
-      await updateAchievementProgress('gem_earned', amount);
-      
-      // Check and confirm referral after first duel
-      if (hasUsedCode) {
-        const result = await confirmReferral();
-        if (result?.success) {
-          console.log('Referral confirmed! Rewards awarded:', result);
-          // Update missions and achievements for referral confirmed
-          await updateMissionProgress('referral_confirmed', 1);
-          await updateAchievementProgress('referral_confirmed', 1);
-        }
-      }
+      console.log(`Gems awarded: ${amount}`);
     } catch (error) {
       console.error('Error awarding gems:', error);
     }

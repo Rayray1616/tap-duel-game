@@ -1,7 +1,7 @@
-import { Navigate, Route, Routes, HashRouter } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { AppRoot } from '@telegram-apps/telegram-ui';
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { TonConnectButton } from './TonConnectButton';
 
 import { routes } from '@/navigation/routes.tsx';
@@ -10,12 +10,28 @@ import DuelScreen from '../screens/DuelScreen';
 import NewLobbyRedirect from '../screens/NewLobbyRedirect';
 import { useTelegram } from "@/telegram/useTelegram";
 
-export function App() {
-  const { user, isTelegram } = useTelegram();
-  const navigate = useNavigate();
+// Wrapper components to extract route params
+function LobbyScreenWrapper() {
+  const { duelId } = useParams<{ duelId: string }>();
+  const { user } = useTelegram();
+  const playerId = user?.id?.toString() || "guest_" + Math.random().toString(36).slice(2);
   
-  // TON Connect functionality removed - walletAddress will be null
-  const walletAddress = null;
+  if (!duelId) return <Navigate to="/" />;
+  return <LobbyScreen duelId={duelId} playerId={playerId} />;
+}
+
+function DuelScreenWrapper() {
+  const { duelId } = useParams<{ duelId: string }>();
+  const { user } = useTelegram();
+  const playerId = user?.id?.toString() || "guest_" + Math.random().toString(36).slice(2);
+  
+  if (!duelId) return <Navigate to="/" />;
+  return <DuelScreen duelId={duelId} playerId={playerId} />;
+}
+
+export function App() {
+  const { user } = useTelegram();
+  const navigate = useNavigate();
 
   // Store Telegram user ID as playerId
   const playerId = user?.id?.toString() || "guest_" + Math.random().toString(36).slice(2);
@@ -38,15 +54,13 @@ export function App() {
       <div style={{ padding: 12, display: "flex", justifyContent: "flex-end" }}>
         <TonConnectButton />
       </div>
-      <HashRouter>
-        <Routes>
-          {routes.map((route) => <Route key={route.path} {...route} />)}
-          <Route path="/lobby/:duelId" element={<LobbyScreen playerId={playerId} walletAddress={walletAddress} />} />
-          <Route path="/duel/:duelId" element={<DuelScreen playerId={playerId} walletAddress={walletAddress} />} />
-          <Route path="/lobby/new" element={<NewLobbyRedirect />} />
-          <Route path="*" element={<Navigate to="/"/>}/>
-        </Routes>
-      </HashRouter>
+      <Routes>
+        {routes.map((route) => <Route key={route.path} {...route} />)}
+        <Route path="/lobby/:duelId" element={<LobbyScreenWrapper />} />
+        <Route path="/duel/:duelId" element={<DuelScreenWrapper />} />
+        <Route path="/lobby/new" element={<NewLobbyRedirect />} />
+        <Route path="*" element={<Navigate to="/"/>}/>
+      </Routes>
     </AppRoot>
   );
 }

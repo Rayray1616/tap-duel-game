@@ -1,7 +1,7 @@
 import type { ComponentType, JSX } from 'react';
 
 import { HomePage } from '@/pages/HomePage/HomePage';
-import { DuelPage } from '@/pages/DuelPage/DuelPage';
+import { DuelScreen } from '@/components/DuelScreen';
 import { LeaderboardPage } from '@/pages/LeaderboardPage/LeaderboardPage';
 import { RewardsPage } from '@/pages/RewardsPage/RewardsPage';
 import { ShopPage } from '@/pages/ShopPage/ShopPage';
@@ -21,7 +21,7 @@ interface Route {
 export const routes: Route[] = [
   { path: '/', Component: HomePage },
   { path: '/matchmaking', Component: MatchmakingScreen },
-  { path: '/duel', Component: DuelPage },
+  { path: '/duel', Component: DuelScreen },
   { path: '/leaderboard', Component: LeaderboardPage },
   { path: '/rewards', Component: RewardsPage },
   { path: '/shop', Component: ShopPage },

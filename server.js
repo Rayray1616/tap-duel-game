@@ -12,6 +12,60 @@ import { WalletContractV4, internal } from "ton";
 import { createClient } from '@supabase/supabase-js';
 import { existsSync, readdirSync } from 'fs';
 
+// === RAILWAY DEPLOYMENT DIAGNOSTICS ===
+console.log('🚀 === RAILWAY DEPLOYMENT DIAGNOSTICS ===');
+console.log('📁 process.cwd():', process.cwd());
+console.log('📁 __dirname:', __dirname);
+console.log('📁 __filename:', __filename);
+
+const projectRoot = process.cwd();
+const serverDir = __dirname;
+const distPath = path.join(projectRoot, 'dist');
+const distPathFromServer = path.join(serverDir, 'dist');
+
+console.log('🎯 Absolute path to dist folder (from cwd):', distPath);
+console.log('🎯 Absolute path to dist folder (from __dirname):', distPathFromServer);
+
+console.log('📂 Contents of process.cwd():');
+try {
+  console.log(readdirSync(projectRoot));
+} catch (err) {
+  console.error('❌ Error reading process.cwd():', err.message);
+}
+
+console.log('📂 Contents of __dirname:');
+try {
+  console.log(readdirSync(serverDir));
+} catch (err) {
+  console.error('❌ Error reading __dirname:', err.message);
+}
+
+console.log('✅ Does dist exist in project root?', existsSync(distPath));
+console.log('✅ Does dist exist in server directory?', existsSync(distPathFromServer));
+
+if (existsSync(distPath)) {
+  console.log('📁 Contents of dist/ (project root):', readdirSync(distPath));
+  
+  // Check for build timestamp
+  const buildInfoPath = path.join(distPath, 'build-info.txt');
+  if (existsSync(buildInfoPath)) {
+    try {
+      const buildInfo = require('fs').readFileSync(buildInfoPath, 'utf8');
+      console.log('⏰ Build info:', buildInfo.trim());
+    } catch (err) {
+      console.log('⏰ Build info exists but could not read:', err.message);
+    }
+  } else {
+    console.log('⏰ No build-info.txt found - build may not have run properly');
+  }
+}
+if (existsSync(distPathFromServer)) {
+  console.log('📁 Contents of dist/ (server directory):', readdirSync(distPathFromServer));
+}
+
+console.log('🔍 === END DIAGNOSTICS ===');
+// === END DIAGNOSTICS ===
+
 // Supabase client will be initialized after environment variables are available
 let supabase = null;
 
@@ -220,24 +274,24 @@ app.get("/api/ton/validate-stake", async (req, res) => {
 });
 
 // Serve static files (React app)
-const distPath = path.join(__dirname, 'dist');
-console.log('🔍 Dist path:', distPath);
+const staticDistPath = path.join(__dirname, 'dist');
+console.log('🔍 Static dist path (for serving):', staticDistPath);
 
 // Check if dist folder exists
-if (!existsSync(distPath)) {
-  console.error('❌ ERROR: dist folder does not exist at:', distPath);
+if (!existsSync(staticDistPath)) {
+  console.error('❌ ERROR: dist folder does not exist at:', staticDistPath);
   console.error('📁 Available files in current directory:', readdirSync(__dirname));
 } else {
-  console.log('✅ dist folder exists');
-  console.log('📁 Files in dist:', readdirSync(distPath));
+  console.log('✅ dist folder exists for static serving');
+  console.log('📁 Files in dist:', readdirSync(staticDistPath));
   
-  const assetsPath = path.join(distPath, 'assets');
+  const assetsPath = path.join(staticDistPath, 'assets');
   if (existsSync(assetsPath)) {
     console.log('📁 Files in dist/assets:', readdirSync(assetsPath));
   }
 }
 
-app.use(express.static(distPath));
+app.use(express.static(staticDistPath));
 
 // Explicit static serving for assets folder
 app.use('/assets', express.static(path.join(__dirname, 'dist/assets')));

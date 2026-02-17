@@ -4,6 +4,7 @@ import { supabase } from '@/lib/supabase';
 import { useTelegram } from '@/telegram/useTelegram';
 import { usePlayerProgression } from '@/hooks/usePlayerProgression';
 import { useRewards } from '@/hooks/useRewards';
+import { useTonWallet } from '@/hooks/useTonWallet';
 import type { Database } from '@/lib/supabase';
 
 type User = Database['public']['Tables']['users']['Row'];
@@ -20,6 +21,9 @@ export function HomeScreen() {
   
   // Daily rewards
   const { rewardStatus, loading: rewardsLoading } = useRewards(telegramUser?.id?.toString());
+  
+  // TON wallet
+  const { walletInfo, balance, loading: walletLoading } = useTonWallet(telegramUser?.id?.toString());
 
   useEffect(() => {
     initializeUser();
@@ -244,6 +248,39 @@ export function HomeScreen() {
             </div>
           )}
 
+          {/* TON Wallet Status */}
+          {!walletLoading && (
+            <div className="mb-4">
+              {walletInfo?.connected ? (
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-blue-400 text-lg">💎</span>
+                    <span className="text-xs text-blue-600 uppercase tracking-wider">TON Balance</span>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm font-bold text-blue-400">
+                      {balance !== null ? balance.toFixed(4) : '0.0000'} TON
+                    </div>
+                    <div className="text-xs text-blue-600">
+                      {walletInfo.ton_address ? `${walletInfo.ton_address.slice(0, 6)}...${walletInfo.ton_address.slice(-4)}` : ''}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  onClick={() => navigate('/wallet')}
+                  className="w-full neon-wallet-badge"
+                >
+                  <div className="flex items-center justify-center space-x-2">
+                    <span className="text-lg">💎</span>
+                    <span className="text-sm font-bold">Connect TON Wallet</span>
+                    <span className="text-lg animate-pulse">✨</span>
+                  </div>
+                </button>
+              )}
+            </div>
+          )}
+
           {/* XP Bar */}
           {!progressionLoading && progression && (
             <div className="space-y-2 mb-4">
@@ -418,6 +455,31 @@ export function HomeScreen() {
             inset 0 0 30px rgba(255, 215, 0, 0.2);
         }
 
+        .neon-wallet-badge {
+          background: linear-gradient(135deg, rgba(0, 136, 255, 0.2) 0%, rgba(128, 0, 255, 0.2) 100%);
+          border: 2px solid rgba(0, 136, 255, 0.6);
+          border-radius: 12px;
+          padding: 12px 16px;
+          font-family: 'Orbitron', monospace;
+          font-weight: 700;
+          color: #0088ff;
+          cursor: pointer;
+          position: relative;
+          overflow: hidden;
+          transition: all 0.3s ease;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          animation: wallet-pulse 2s ease-in-out infinite;
+        }
+
+        .neon-wallet-badge:hover {
+          transform: scale(1.05);
+          border-color: rgba(0, 136, 255, 0.8);
+          box-shadow: 
+            0 0 30px rgba(0, 136, 255, 0.6),
+            inset 0 0 30px rgba(0, 136, 255, 0.2);
+        }
+
         @keyframes reward-pulse {
           0%, 100% { 
             transform: scale(1);
@@ -430,6 +492,21 @@ export function HomeScreen() {
             box-shadow: 
               0 0 30px rgba(255, 215, 0, 0.6),
               inset 0 0 30px rgba(255, 215, 0, 0.2);
+          }
+        }
+
+        @keyframes wallet-pulse {
+          0%, 100% { 
+            transform: scale(1);
+            box-shadow: 
+              0 0 20px rgba(0, 136, 255, 0.4),
+              inset 0 0 20px rgba(0, 136, 255, 0.1);
+          }
+          50% { 
+            transform: scale(1.02);
+            box-shadow: 
+              0 0 30px rgba(0, 136, 255, 0.6),
+              inset 0 0 30px rgba(0, 136, 255, 0.2);
           }
         }
 

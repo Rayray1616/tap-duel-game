@@ -193,6 +193,26 @@ export type Database = {
           updated_at?: string;
         };
       };
+      player_wallets: {
+        Row: {
+          user_id: string;
+          ton_address: string | null;
+          connected: boolean;
+          updated_at: string;
+        };
+        Insert: {
+          user_id: string;
+          ton_address?: string | null;
+          connected?: boolean;
+          updated_at?: string;
+        };
+        Update: {
+          user_id?: string;
+          ton_address?: string | null;
+          connected?: boolean;
+          updated_at?: string;
+        };
+      };
     };
   };
 };

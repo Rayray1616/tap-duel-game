@@ -3,13 +3,13 @@ import { Title } from '@telegram-apps/telegram-ui';
 import { supabase } from '@/lib/supabase';
 import { useEnergyRegeneration } from '@/hooks/useEnergyRegeneration';
 import { WalletConnect } from '@/components/WalletConnect';
+import { useTelegram } from '@/telegram/useTelegram';
 import type { Database } from '@/lib/supabase';
 
 type User = Database['public']['Tables']['users']['Row'];
 
 export function HomePage() {
-  // Telegram WebApp functionality removed
-  const initData = '';
+  const { user: telegramUser } = useTelegram();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [gameActive, setGameActive] = useState(false);
@@ -21,7 +21,7 @@ export function HomePage() {
 
   useEffect(() => {
     initializeUser();
-  }, []);
+  }, [telegramUser]);
 
   useEffect(() => {
     if (gameActive && timeLeft > 0) {
@@ -33,8 +33,10 @@ export function HomePage() {
   }, [gameActive, timeLeft]);
 
   const initializeUser = async () => {
-    const telegramUser = (initData as any)?.user;
-    if (!telegramUser?.id) return;
+    if (!telegramUser?.id) {
+      setLoading(false);
+      return;
+    }
 
     try {
       const { data: existingUser } = await supabase
